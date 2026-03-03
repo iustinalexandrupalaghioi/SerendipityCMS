@@ -1,0 +1,5 @@
+If appointment is >7 days away → 2h payment window
+
+If appointment is tomorrow → 15 min window
+
+If appointment is today → 5 min window
