@@ -72,6 +72,7 @@ const UpdateAndApproveDialog = ({
           email: values.email,
           end_time: endTime,
           duration: values.duration,
+          advance_payment: values.advance_payment,
           price: values.price,
           status: "approved",
           notes: values.notes,
