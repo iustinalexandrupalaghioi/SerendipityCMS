@@ -76,7 +76,7 @@ function DataTable<TData, TValue>({
   const [selectedEnumValues, setSelectedEnumValues] = useState<
     Record<string, string>
   >({});
-  const [pageIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
   const filterTextColumnsCondition =
@@ -329,6 +329,7 @@ function DataTable<TData, TValue>({
       </Table>
 
       <DataTablePagination
+        setPageIndex={setPageIndex}
         pageSize={pageSize}
         setPageSize={setPageSize}
         table={table}

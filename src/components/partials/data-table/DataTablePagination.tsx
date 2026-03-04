@@ -19,6 +19,7 @@ interface DataTablePaginationProps<TData> {
   table: Table<TData>;
   pageSize: number;
   setPageSize: Dispatch<SetStateAction<number>>;
+  setPageIndex?: Dispatch<SetStateAction<number>>;
 }
 
 export function DataTablePagination<TData>({
