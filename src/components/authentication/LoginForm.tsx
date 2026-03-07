@@ -207,7 +207,7 @@ export function LoginForm({
               {/* Divider */}
               <div className="relative text-center text-sm">
                 <span className="bg-background px-2 text-muted-foreground relative z-10">
-                  or continue with
+                  or
                 </span>
                 <div className="absolute inset-0 top-1/2 border-t"></div>
               </div>
