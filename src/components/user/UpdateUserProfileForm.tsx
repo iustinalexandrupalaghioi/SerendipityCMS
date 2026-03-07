@@ -44,8 +44,14 @@ export default function UpdateUserProfileForm({
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: user?.user_metadata.first_name || "",
-      lastName: user?.user_metadata.last_name || "",
+      firstName:
+        user?.user_metadata.first_name ||
+        user?.user_metadata.full_name?.split(" ")[0] ||
+        "",
+      lastName:
+        user?.user_metadata.last_name ||
+        user?.user_metadata.full_name?.split(" ")[1] ||
+        "",
       email: user?.email || "",
       date_of_birth: user?.user_metadata.date_of_birth || "",
     },
