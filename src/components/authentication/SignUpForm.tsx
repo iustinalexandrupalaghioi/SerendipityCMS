@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff, LockIcon, User, Mail } from "lucide-react";
 import Logo from "@/assets/logo.png";
+import google from "@/assets/google-icon-logo.svg";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -70,6 +71,15 @@ export function SignUpForm({
       confirmPassword: "",
     },
   });
+
+  const loginWithGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+  };
 
   const onSubmit = async (values: SignUpFormValues) => {
     setIsLoading(true);
@@ -271,6 +281,25 @@ export function SignUpForm({
               {/* Submit */}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Creating account..." : "Sign up"}
+              </Button>
+
+              {/* Divider */}
+              <div className="relative text-center text-sm">
+                <span className="bg-background px-2 text-muted-foreground relative z-10">
+                  or continue with
+                </span>
+                <div className="absolute inset-0 top-1/2 border-t"></div>
+              </div>
+
+              {/* Google Login */}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full hover:bg-muted"
+                onClick={loginWithGoogle}
+              >
+                <img className="h-4 w-4" src={google} />
+                Continue with Google
               </Button>
 
               {/* Redirect */}
