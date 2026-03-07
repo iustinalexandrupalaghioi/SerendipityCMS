@@ -72,12 +72,16 @@ export default function UserProfileCard({
           {!isEditing ? (
             <div className="flex flex-col items-center gap-2">
               {user?.user_metadata.first_name &&
-                user.user_metadata.last_name && (
-                  <CardTitle>
-                    {user.user_metadata.first_name}{" "}
-                    {user.user_metadata.last_name}
-                  </CardTitle>
-                )}
+              user.user_metadata.last_name ? (
+                <CardTitle>
+                  {user.user_metadata.first_name} {user.user_metadata.last_name}
+                </CardTitle>
+              ) : (
+                user?.user_metadata.full_name && (
+                  <CardTitle>{user.user_metadata.full_name}</CardTitle>
+                )
+              )}
+
               <CardDescription>{user?.email}</CardDescription>
               {user?.user_metadata.date_of_birth && (
                 <CardDescription>
