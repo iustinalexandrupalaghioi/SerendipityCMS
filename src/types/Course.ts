@@ -57,6 +57,7 @@ export type Enrollment = {
   enrollment_date: string;
   course_date: string;
   price: number;
+  payment_type: "deposit" | "full";
   advance_price: number;
   advance_paid: boolean;
   created_at: string;
