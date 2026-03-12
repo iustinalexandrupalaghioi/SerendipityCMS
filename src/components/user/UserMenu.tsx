@@ -33,11 +33,6 @@ const UserMenu = () => {
         </Link>
 
         <DropdownMenuSeparator />
-        <Link to="/user-appointments">
-          <DropdownMenuItem>Appointments</DropdownMenuItem>
-        </Link>
-
-        <DropdownMenuSeparator />
         <DropdownMenuItem className="h-8">
           <LogoutButton />
         </DropdownMenuItem>
