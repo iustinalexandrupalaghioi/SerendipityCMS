@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { PenIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { UpdateCourseEnrollmentDialog } from "../form/UpdateCourseEnrollmentDialog";
+import CompleteCourseEnrollment from "../actions/CompleteCourseEnrollment";
 
 export const CourseEnrollmentColumns: ColumnDef<Enrollment>[] = [
   {
@@ -125,6 +126,9 @@ export const CourseEnrollmentColumns: ColumnDef<Enrollment>[] = [
       const enrollment = row.original;
       return (
         <div className="flex gap-2">
+          {enrollment.status === "confirmed" && (
+            <CompleteCourseEnrollment id={enrollment.id} />
+          )}
           <Button
             size="icon"
             onClick={() => setEditOpen(true)}
