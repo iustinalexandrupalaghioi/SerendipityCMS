@@ -45,7 +45,7 @@ export type CourseLevel = "beginner" | "intermediate" | "advanced";
 export type EnrollmentStatus =
   | "submitted"
   | "confirmed"
-  | "cancelled"
+  | "canceled"
   | "completed";
 
 export type Enrollment = {

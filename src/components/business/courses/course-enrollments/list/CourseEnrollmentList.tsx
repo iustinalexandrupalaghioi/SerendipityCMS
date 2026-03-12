@@ -11,7 +11,7 @@ interface CourseEnrollmentListProps {
 const statusEnum: Enum[] = [
   { value: "submitted", label: "Submitted" },
   { value: "confirmed", label: "Confirmed" },
-  { value: "cancelled", label: "Cancelled" },
+  { value: "canceled", label: "Canceled" },
   { value: "completed", label: "Completed" },
 ];
 

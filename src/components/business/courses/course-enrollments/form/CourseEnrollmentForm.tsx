@@ -70,8 +70,8 @@ const CourseEnrollmentForm = ({
       value: "confirmed",
     },
     {
-      label: "Cancelled",
-      value: "cancelled",
+      label: "Canceled",
+      value: "canceled",
     },
   ];
 
