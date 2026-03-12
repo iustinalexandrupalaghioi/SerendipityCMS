@@ -48,7 +48,7 @@ const ActionDialog = ({
         <DialogContent
           // onInteractOutside={(e) => e.preventDefault()}
           className={cn(
-            "md:min-w-xl max-w-full mt-4 md:top-0 translate-y-0 max-h-[70vh] md:max-h-screen overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary",
+            "md:min-w-xl max-w-full mt-4 top-0 translate-y-0 max-h-[70vh] md:max-h-screen overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary",
             className,
           )}
         >
