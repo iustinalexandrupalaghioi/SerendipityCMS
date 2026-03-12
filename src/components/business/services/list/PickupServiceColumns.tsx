@@ -30,7 +30,7 @@ export const PickupServiceColumns = (
         </Button>
       );
     },
-    maxSize: 50,
+    maxSize: 100,
     enableSorting: false,
     enableHiding: false,
   },

@@ -29,7 +29,7 @@ export const PickupUserColumns = (
         </Button>
       );
     },
-    maxSize: 30,
+    maxSize: 100,
     enableSorting: false,
     enableHiding: false,
   },
