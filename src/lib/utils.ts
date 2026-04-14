@@ -57,3 +57,6 @@ export function useDocumentTitle(title: string) {
     document.title = title;
   }, [title]);
 }
+
+export const colVar = (id: string) =>
+  id.replace(/[^a-zA-Z0-9-]/g, "-").toLowerCase();

@@ -9,7 +9,7 @@ const NavigationBar = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
   return (
-    <NavigationMenu className="w-full py-3 flex items-center justify-between px-10">
+    <NavigationMenu className="w-full py-3 flex items-center justify-between px-4">
       <div className="flex gap-3 items-center">
         <a href="/" className="flex gap-1 items-center">
           <img
@@ -18,7 +18,9 @@ const NavigationBar = () => {
             alt="GTA Nail Salon & Training Centre Logo"
           />
         </a>
+        <div id="toolbar-slot" className="flex items-center gap-2" />
       </div>
+
       {!isMobile ? (
         <>{user ? <UserMenu /> : <AuthButton />}</>
       ) : (

@@ -1,11 +1,12 @@
+import Breadcrumb from "@/components/partials/Breadcrumb";
 import DetailsScreen from "@/components/partials/DetailsScreen";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2Icon, SaveIcon, XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ChevronLeftIcon, Loader2Icon, SaveIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -14,11 +15,18 @@ import { CourseSchema, type CourseFormValues } from "./form-schema";
 import { CollapsibleContent } from "@/components/ui/collapsible";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
+import ToolbarActions from "@/components/toolbar/ToolbarActions";
 
 const AddCourseScreen = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const breadcrumbItems = [
+    { path: "/", label: "Home" },
+    { path: "/courses", label: "Courses" },
+    { label: "Add Course" },
+  ];
 
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(CourseSchema),
@@ -40,10 +48,6 @@ const AddCourseScreen = () => {
 
   const { control, setValue, handleSubmit, formState, reset } = form;
 
-  useEffect(() => {
-    if (!open) reset();
-  }, [open]);
-
   const addCourseMutation = useMutation({
     mutationFn: async (values: CourseFormValues) => {
       if (!values.image) {
@@ -54,14 +58,12 @@ const AddCourseScreen = () => {
       const folder = Date.now().toString();
       const filePath = `${folder}/${values.image.name}`;
 
-      // 1️⃣ Upload image
       const { error: uploadError } = await supabase.storage
         .from(bucket)
         .upload(filePath, values.image, { upsert: false });
 
       if (uploadError) throw uploadError;
 
-      // 3️⃣ Insert course
       const { error, data } = await supabase
         .from("course")
         .insert({
@@ -101,47 +103,45 @@ const AddCourseScreen = () => {
   const onSubmit = handleSubmit((values) => addCourseMutation.mutate(values));
 
   return (
-    <DetailsScreen
-      mode="Add"
-      title="Add Course"
-      isOpen={open}
-      setOpen={setOpen}
-    >
-      <CollapsibleContent>
-        <p className="text-muted-foreground text-sm my-2">
-          Update the course details below.
+    <form onSubmit={onSubmit} className="space-y-6">
+      <Breadcrumb items={breadcrumbItems} />
+
+      <ToolbarActions>
+        <div className="flex items-center gap-2">
+          <Link to="/courses">
+            <Button title="Back" type="button" size="icon" variant="ghost">
+              <ChevronLeftIcon />
+            </Button>
+          </Link>
+
+          <Button
+            title="Save"
+            type="button"
+            size="icon"
+            variant="ghost"
+            disabled={!formState.isDirty || addCourseMutation.isPending}
+            onClick={onSubmit}
+          >
+            {addCourseMutation.isPending ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <SaveIcon />
+            )}
+          </Button>
+        </div>
+      </ToolbarActions>
+
+      <DetailsScreen
+        mode="Add"
+        title="Add Course"
+        isOpen={open}
+        setOpen={setOpen}
+      >
+        <p className="text-muted-foreground text-sm mb-4">
+          Fill in the course details below.
         </p>
         <Form {...form}>
-          <form onSubmit={onSubmit} className="space-y-2 w-full">
-            <div className="flex w-full flex-col md:flex-row gap-2 mt-4">
-              <Button
-                type="submit"
-                disabled={!formState.isDirty || addCourseMutation.isPending}
-              >
-                {addCourseMutation.isPending ? (
-                  <>
-                    <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <SaveIcon className="h-4 w-4" />
-                    Add
-                  </>
-                )}
-              </Button>
-
-              <Link to="/courses" className="w-full">
-                <Button
-                  type="button"
-                  className="w-full md:w-auto"
-                  variant="outline"
-                >
-                  <XIcon className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-              </Link>
-            </div>
+          <CollapsibleContent>
             <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
               <CourseForm
                 mode="Add"
@@ -150,10 +150,10 @@ const AddCourseScreen = () => {
                 setValue={setValue}
               />
             </Card>
-          </form>
+          </CollapsibleContent>
         </Form>
-      </CollapsibleContent>
-    </DetailsScreen>
+      </DetailsScreen>
+    </form>
   );
 };
 
