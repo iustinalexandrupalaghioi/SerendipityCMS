@@ -7,9 +7,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   BookAlertIcon,
   BookOpenIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
   Loader2Icon,
   SaveIcon,
+  Settings,
   TrashIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -29,6 +31,12 @@ import OpenCourseEnrollmentDialog from "../actions/OpenCourseEnrollmentDialog";
 import CourseForm from "./CourseForm";
 import CourseDetailsTabs from "./CourseTabs";
 import { CourseSchema, type CourseFormValues } from "./form-schema";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const UpdateCourseScreen = () => {
   const queryClient = useQueryClient();
@@ -151,29 +159,30 @@ const UpdateCourseScreen = () => {
             )}
           </Button>
 
-          {!course.is_open && (
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              title="Open enrollments"
-              onClick={() => setOpenEnrollmentsOpen(true)}
-            >
-              <BookOpenIcon />
-            </Button>
-          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="lg" variant="ghost">
+                <Settings /> <ChevronDownIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-fit" align="start">
+              <DropdownMenuItem
+                disabled={!course.is_open}
+                onSelect={() => setCloseEnrollmentsOpen(true)}
+              >
+                <BookAlertIcon />
+                Close enrollments
+              </DropdownMenuItem>
 
-          {course.is_open && (
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              title="Close enrollments"
-              onClick={() => setCloseEnrollmentsOpen(true)}
-            >
-              <BookAlertIcon />
-            </Button>
-          )}
+              <DropdownMenuItem
+                disabled={course.is_open}
+                onSelect={() => setOpenEnrollmentsOpen(true)}
+              >
+                <BookOpenIcon />
+                Open enrollments
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Button
             type="button"

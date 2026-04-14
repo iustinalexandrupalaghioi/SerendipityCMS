@@ -75,10 +75,7 @@ const DeleteDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent
-        // onInteractOutside={(e) => e.preventDefault()}
-        className="md:min-w-2xl max-w-full mt-4 top-4 translate-y-0"
-      >
+      <DialogContent className="md:min-w-2xl max-w-full mt-4 top-4 translate-y-0">
         <DialogHeader>
           <DialogTitle className="text-primary">{title}</DialogTitle>
           <DialogDescription className="text-foreground">

@@ -9,7 +9,7 @@ interface CourseDayListProps {
 
 const CourseDayList = ({ course }: CourseDayListProps) => {
   return (
-    <div className="w-full py-2">
+    <div className="w-full overflow-x-auto py-2">
       <AddButton path={`/courses/update/${course.id}/course-days/add`} />
 
       <DataTable columns={CourseDayColumns} data={course.course_day || []} />

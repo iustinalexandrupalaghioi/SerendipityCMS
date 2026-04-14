@@ -17,7 +17,7 @@ const statusEnum: Enum[] = [
 
 const CourseEnrollmentList = ({ course }: CourseEnrollmentListProps) => {
   return (
-    <div className="w-full py-2">
+    <div className="w-full overflow-x-auto py-2">
       {course.is_open && <AddCourseEnrollmentDialog course={course} />}
       <DataTable
         columns={CourseEnrollmentColumns}
