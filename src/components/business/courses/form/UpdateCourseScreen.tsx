@@ -125,7 +125,7 @@ const UpdateCourseScreen = () => {
   if (!course && error) return <Navigate to="/courses" />;
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <div className="space-y-6">
       <Breadcrumb items={breadcrumbItems} />
 
       <ToolbarActions>
@@ -246,7 +246,7 @@ const UpdateCourseScreen = () => {
         courseId={course.id}
         courseTitle={course.title}
       />
-    </form>
+    </div>
   );
 };
 

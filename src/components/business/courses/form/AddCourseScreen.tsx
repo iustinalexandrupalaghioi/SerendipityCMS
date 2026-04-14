@@ -103,7 +103,7 @@ const AddCourseScreen = () => {
   const onSubmit = handleSubmit((values) => addCourseMutation.mutate(values));
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <div className="space-y-6">
       <Breadcrumb items={breadcrumbItems} />
 
       <ToolbarActions>
@@ -153,7 +153,7 @@ const AddCourseScreen = () => {
           </CollapsibleContent>
         </Form>
       </DetailsScreen>
-    </form>
+    </div>
   );
 };
 

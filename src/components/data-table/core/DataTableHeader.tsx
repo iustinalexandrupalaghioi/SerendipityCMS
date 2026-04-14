@@ -114,7 +114,7 @@ export function DataTableHeader<TData>() {
 
   const handleApplyFilter = (rule: FilterRule) => {
     setFilters((prev) => {
-      const exists = prev.find((f) => f.columnId !== rule.columnId);
+      const exists = prev.find((f) => f.columnId === rule.columnId);
       return exists
         ? prev.map((f) => (f.columnId === rule.columnId ? rule : f))
         : [...prev, rule];
