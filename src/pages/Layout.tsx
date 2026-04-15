@@ -4,7 +4,7 @@ import { Outlet } from "react-router";
 const Layout = () => {
   return (
     <main className="min-h-screen flex flex-col items-center">
-      <div className="w-full bg-background sticky top-0 z-50 flex justify-center border-b border-b-foreground/10 h-16">
+      <div className="w-full bg-background sticky top-0 z-50 mb-4 flex justify-center border-b border-b-foreground/10 h-16">
         <NavigationBar />
       </div>
 

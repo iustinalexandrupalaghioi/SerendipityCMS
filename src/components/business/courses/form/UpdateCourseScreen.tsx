@@ -12,7 +12,7 @@ import {
   Loader2Icon,
   SaveIcon,
   Settings,
-  TrashIcon,
+  Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,6 +24,12 @@ import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { Card } from "@/components/ui/card";
 import { CollapsibleContent } from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Loader from "@/components/ui/loader";
 import { useCourse } from "@/hooks/useCourses";
 import CloseCourseEnrollmentDialog from "../actions/CloseCourseEnrollmentsDialog";
@@ -31,12 +37,6 @@ import OpenCourseEnrollmentDialog from "../actions/OpenCourseEnrollmentDialog";
 import CourseForm from "./CourseForm";
 import CourseDetailsTabs from "./CourseTabs";
 import { CourseSchema, type CourseFormValues } from "./form-schema";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const UpdateCourseScreen = () => {
   const queryClient = useQueryClient();
@@ -191,7 +191,7 @@ const UpdateCourseScreen = () => {
             title="Delete"
             onClick={() => setDeleteOpen(true)}
           >
-            <TrashIcon />
+            <Trash2 />
           </Button>
         </div>
       </ToolbarActions>

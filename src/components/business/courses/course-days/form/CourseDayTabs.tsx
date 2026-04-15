@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { CourseDay } from "@/types/Course";
 import { CalendarDaysIcon } from "lucide-react";
-import CourseDayActivitiesList from "../course-day-activities/list/CourseDayActivityList";
+import CourseDayActivitiesOverview from "../course-day-activities/nav-overview/ActivityOverview";
 
 interface CourseDayTabsProps {
   courseDay: CourseDay;
@@ -19,7 +19,10 @@ const CourseDayTabs = ({ courseDay }: CourseDayTabsProps) => {
         </TabsTrigger>
       </TabsList>
       <TabsContent className="bg-card rounded-b-lg p-3" value="activities">
-        <CourseDayActivitiesList courseDay={courseDay} />
+        <CourseDayActivitiesOverview
+          slotId="course-day-activities-toolbar-slot"
+          courseDay={courseDay}
+        />
       </TabsContent>
     </Tabs>
   );

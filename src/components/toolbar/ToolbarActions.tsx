@@ -1,19 +1,23 @@
-import { useEffect, useState } from "react"
-import { createPortal } from "react-dom"
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface ToolbarActionsProps {
-  children: React.ReactNode
+  children: React.ReactNode;
+  slotId?: string;
 }
 
-const ToolbarActions = ({ children }: ToolbarActionsProps) => {
-  const [slot, setSlot] = useState<Element | null>(null)
+const ToolbarActions = ({
+  children,
+  slotId = "toolbar-slot",
+}: ToolbarActionsProps) => {
+  const [slot, setSlot] = useState<Element | null>(null);
 
   useEffect(() => {
-    setSlot(document.getElementById("toolbar-slot"))
-  }, [])
+    setSlot(document.getElementById(slotId));
+  }, [slotId]);
 
-  if (!slot) return null
-  return createPortal(children, slot)
-}
+  if (!slot) return null;
+  return createPortal(children, slot);
+};
 
-export default ToolbarActions
+export default ToolbarActions;

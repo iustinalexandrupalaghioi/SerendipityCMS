@@ -1,35 +1,34 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Course } from "@/types/Course";
 import { BookCheckIcon, CalendarDaysIcon } from "lucide-react";
-import CourseDayList from "../course-days/list/CourseDayList";
+import CourseDayOverview from "../course-days/nav-overview/CourseDayOverview";
 import CourseEnrollmentList from "../course-enrollments/list/CourseEnrollmentList";
 
 interface CourseTabsProps {
   course: Course;
 }
+
 const CourseTabs = ({ course }: CourseTabsProps) => {
   return (
     <Tabs defaultValue="days" className="w-full gap-0 mt-2">
-      <TabsList className="w-full rounded-b-none justify-start bg-card">
-        <TabsTrigger title="Course days tab" className="max-w-fit" value="days">
-          <CalendarDaysIcon /> Course days
-        </TabsTrigger>
-        <TabsTrigger
-          title="Course enrollments tab"
-          className="max-w-fit"
-          value="enrollments"
-        >
-          <BookCheckIcon /> Course enrollments
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent className="bg-card rounded-b-lg p-3" value="days">
-        <CourseDayList course={course} />
+      <div className="overflow-x-auto">
+        <TabsList className="w-max min-w-full justify-start bg-transparent border-b rounded-none h-auto p-0 mb-1 gap-1">
+          <TabsTrigger title="Course days tab" value="days">
+            <CalendarDaysIcon className="size-4" /> Course days
+          </TabsTrigger>
+          <TabsTrigger title="Course enrollments tab" value="enrollments">
+            <BookCheckIcon className="size-4" /> Course enrollments
+          </TabsTrigger>
+        </TabsList>
+      </div>
+
+      <TabsContent className="mt-0 pt-3" value="days">
+        <CourseDayOverview slotId="course-days-toolbar-slot" course={course} />
       </TabsContent>
-      <TabsContent className="bg-card rounded-b-lg p-3" value="enrollments">
+      <TabsContent className="mt-0 pt-3" value="enrollments">
         <CourseEnrollmentList course={course} />
       </TabsContent>
     </Tabs>
   );
 };
-
 export default CourseTabs;

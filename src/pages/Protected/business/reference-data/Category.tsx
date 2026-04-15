@@ -1,4 +1,4 @@
-import CategoryList from "@/components/business/categories/list/CategoryList";
+import CategoryOverview from "@/components/business/categories/overview/CategoryOverview";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import { useDocumentTitle } from "@/lib/utils";
 
@@ -10,7 +10,7 @@ const Category = () => {
   return (
     <>
       <Breadcrumb items={breadcrumbItems} />
-      <CategoryList />
+      <CategoryOverview />
     </>
   );
 };

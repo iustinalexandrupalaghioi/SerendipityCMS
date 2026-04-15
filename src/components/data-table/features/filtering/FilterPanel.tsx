@@ -1,8 +1,4 @@
 // FilterPanel.tsx
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   OPERATOR_LABELS,
   OPERATORS_BY_TYPE,
@@ -10,7 +6,9 @@ import {
   type FilterOperator,
   type FilterRule,
 } from "@/components/data-table/features/filtering/filters";
-import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -26,7 +24,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { YesNoSwitch } from "@/components/ui/yes-no-switch";
 import { X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface FilterPanelProps {
   open: boolean;
@@ -185,18 +185,18 @@ function ValueInput({
     return (
       <div className="flex flex-col gap-2">
         {(selectOptions ?? []).map((opt) => (
-          <div key={opt} className="flex items-center gap-2">
-            <Checkbox
+          <div key={opt} className="grid grid-cols-2 gap-2">
+            <Label
+              htmlFor={`opt-${opt}`}
+              className="cursor-pointer font-normal capitalize"
+            >
+              {opt}
+            </Label>
+            <YesNoSwitch
               id={`opt-${opt}`}
               checked={selected.includes(opt)}
               onCheckedChange={() => toggle(opt)}
             />
-            <Label
-              htmlFor={`opt-${opt}`}
-              className="cursor-pointer font-normal"
-            >
-              {opt}
-            </Label>
           </div>
         ))}
         {!selectOptions?.length && (
@@ -216,7 +216,7 @@ function ValueInput({
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select value..." />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="capitalize">
           {(selectOptions ?? []).map((opt) => (
             <SelectItem key={opt} value={opt}>
               {opt}
@@ -347,7 +347,7 @@ export function FilterPanel({
             {isBooleanType ? (
               // Boolean: skip operator dropdown, show checkbox with label
               <div className="flex items-center gap-2">
-                <Checkbox
+                <YesNoSwitch
                   id="boolean-value"
                   checked={operator === "is_true"}
                   onCheckedChange={(checked) =>
@@ -356,7 +356,7 @@ export function FilterPanel({
                 />
                 <Label
                   htmlFor="boolean-value"
-                  className="cursor-pointer font-normal"
+                  className="cursor-pointer font-normal hidden"
                 >
                   {operator === "is_true" ? "Is true" : "Is false"}
                 </Label>

@@ -53,6 +53,7 @@ interface DataTableProps<TData, TValue> {
   onSortingChange?: (sorting: SortingState) => void;
   quickSearchEnabled?: boolean;
   onFiltersChange?: (filters: FilterRule[]) => void;
+  slotId?: string;
 }
 
 function DataTable<TData, TValue>({
@@ -71,8 +72,9 @@ function DataTable<TData, TValue>({
   tableId,
   defaultViewName,
   onSortingChange,
-  quickSearchEnabled = false,
+  quickSearchEnabled = true,
   onFiltersChange,
+  slotId,
 }: DataTableProps<TData, TValue>) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -187,9 +189,13 @@ function DataTable<TData, TValue>({
       }}
     >
       <div id={tableId} className="w-full overflow-hidden">
-        <div className="mb-2 flex items-start justify-between gap-2">
+        <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-center md:gap-2">
-            <TableViewsBar />
+            <div className="flex items-center gap-2">
+              <TableViewsBar />
+              <div id={slotId} />
+            </div>
+
             <FilterChips />
           </div>
           <div className="flex shrink-0 items-center justify-end bg-background px-2 py-1 text-sm text-primary">
