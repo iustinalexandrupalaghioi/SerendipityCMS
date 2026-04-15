@@ -123,7 +123,7 @@ export function DataTableHeader<TData>() {
   };
 
   return (
-    <TableHeader className="sticky top-0 z-10 bg-background">
+    <TableHeader className=" top-0 z-10 bg-background">
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {headerGroup.headers.map((header) => {
@@ -146,6 +146,7 @@ export function DataTableHeader<TData>() {
                 key={header.id}
                 style={{
                   top: 0,
+                  position: "sticky", // ← always sticky
                   width: isLast
                     ? undefined
                     : `calc(var(--header-${header.id}-size) * 1px)`,
@@ -155,7 +156,6 @@ export function DataTableHeader<TData>() {
                   maxWidth: isLast
                     ? undefined
                     : `calc(var(--header-${header.id}-size) * 1px)`,
-                  position: "sticky",
                   left: isPinned ? header.column.getStart("left") : undefined,
                   zIndex: isPinned ? 30 : 20,
                 }}

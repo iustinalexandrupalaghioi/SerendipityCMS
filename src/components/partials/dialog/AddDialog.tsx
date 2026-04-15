@@ -19,6 +19,7 @@ interface AddDialogProps {
   children: ReactNode; // The form will be inside here
   className?: string;
   triggerVariant?: "default" | "outline" | "ghost";
+  showTrigger?: boolean;
 }
 
 const AddDialog = ({
@@ -29,17 +30,20 @@ const AddDialog = ({
   children,
   className = "",
   triggerVariant = "default",
+  showTrigger = true,
 }: AddDialogProps) => {
   return (
     <Dialog modal={false} open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant={triggerVariant}
-          className="w-full sm:w-auto cursor-pointer mb-2"
-        >
-          <PlusIcon /> Add
-        </Button>
-      </DialogTrigger>
+      {showTrigger && (
+        <DialogTrigger asChild>
+          <Button
+            variant={triggerVariant}
+            className="w-full sm:w-auto cursor-pointer mb-2"
+          >
+            <PlusIcon /> Add
+          </Button>
+        </DialogTrigger>
+      )}
 
       {open && (
         <DialogContent

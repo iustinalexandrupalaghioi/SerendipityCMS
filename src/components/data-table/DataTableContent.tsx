@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { DataTableBody } from "./core/DataTableBody";
 import { DataTableHeader } from "./core/DataTableHeader";
 import { useDataTableContext } from "./DataTableContext";
+import { SearchIcon, X } from "lucide-react";
 
 // ─────────────────────────────────────────────
 // DataTableContent
@@ -56,12 +57,34 @@ export function DataTableContent() {
   return (
     <>
       {quickSearchEnabled && (
-        <Input
-          placeholder="Quick search..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="mb-2 w-full"
-        />
+        <div className="relative mx-2 my-4">
+          {/* Left search icon */}
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <SearchIcon className="text-muted-foreground h-4 w-4" />
+          </span>
+
+          <Input
+            placeholder="Quick search..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="pl-10 pr-8 md:min-w-xs"
+          />
+
+          {/* Right clear button */}
+          {globalFilter && (
+            <button
+              type="button"
+              aria-label="Clear search text"
+              title="Clear search text"
+              onClick={() => {
+                setGlobalFilter("");
+              }}
+              className="absolute inset-y-0 right-0 flex items-center pr-2"
+            >
+              <X className="h-4 w-4 text-muted-foreground hover:text-primary" />
+            </button>
+          )}
+        </div>
       )}
 
       <div style={columnSizeVars as React.CSSProperties}>

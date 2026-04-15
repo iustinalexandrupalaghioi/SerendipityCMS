@@ -4,7 +4,7 @@ import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2Icon, SaveIcon, TrashIcon, XIcon } from "lucide-react";
+import { ChevronLeftIcon, Loader2Icon, SaveIcon, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, Navigate, useNavigate, useParams } from "react-router";
@@ -12,13 +12,14 @@ import { toast } from "sonner";
 
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
+import ToolbarActions from "@/components/toolbar/ToolbarActions";
+import { Card } from "@/components/ui/card";
 import { CollapsibleContent } from "@/components/ui/collapsible";
 import Loader from "@/components/ui/loader";
 import { useCourseDay } from "@/hooks/useCourses";
 import CourseDayForm from "./CourseDayForm";
 import CourseDayTabs from "./CourseDayTabs";
 import { CourseDaySchema, type CourseDayFormValues } from "./form-schema";
-import { Card } from "@/components/ui/card";
 
 const UpdateCourseDayScreen = () => {
   const queryClient = useQueryClient();
@@ -50,44 +51,26 @@ const UpdateCourseDayScreen = () => {
     },
   });
 
-  /* =====================
-     RESET ON LOAD
-  ====================== */
   useEffect(() => {
     if (!courseDay) return;
-
-    form.reset({
-      ...courseDay,
-      image: undefined,
-    });
-
+    form.reset({ ...courseDay, image: undefined });
     setExistingImageUrl(courseDay.image_url || "");
   }, [courseDay, form]);
 
-  /* =====================
-     UPDATE MUTATION
-  ====================== */
   const updateCourseDayMutation = useMutation({
     mutationFn: async (values: CourseDayFormValues) => {
       const bucket = "courses";
-
       let imagePath = values.image_path;
 
-      // 🔁 Replace image only if a new one is selected
       if (values.image) {
-        if (imagePath) {
-          await supabase.storage.from(bucket).remove([imagePath]);
-        }
+        if (imagePath) await supabase.storage.from(bucket).remove([imagePath]);
 
-        const folder = `${values.course.id}/${Date.now().toString()}`;
+        const folder = `${values.course.id}/${Date.now()}`;
         const newPath = `${folder}/${values.image.name}`;
-
         const { error: uploadError } = await supabase.storage
           .from(bucket)
           .upload(newPath, values.image, { upsert: false });
-
         if (uploadError) throw uploadError;
-
         imagePath = newPath;
       }
 
@@ -96,7 +79,6 @@ const UpdateCourseDayScreen = () => {
         .from("course_day")
         .update({
           ...updateValues,
-
           image_path: imagePath,
           course_id: course.id,
         })
@@ -105,10 +87,8 @@ const UpdateCourseDayScreen = () => {
         .single();
 
       if (error) throw error;
-
       return { courseDay: data };
     },
-
     onSuccess: ({ courseDay }) => {
       toast.success(`Course day "${courseDay.title}" updated`);
       setExistingImageUrl(courseDay.image_url || "");
@@ -117,7 +97,6 @@ const UpdateCourseDayScreen = () => {
       queryClient.refetchQueries({ queryKey: ["course", courseDay.course_id] });
       queryClient.refetchQueries({ queryKey: ["course-day", courseDay.id] });
     },
-
     onError: (err: any) => {
       toast.error(err.message ?? "Failed to update course day");
     },
@@ -127,80 +106,53 @@ const UpdateCourseDayScreen = () => {
     updateCourseDayMutation.mutate(values),
   );
 
-  if (isLoading) return <Loader />;
-
-  if (!courseDay && error) {
-    return <Navigate to="/course-days" />;
-  }
+  if (isLoading || !courseDay) return <Loader />;
+  if (!courseDay && error) return <Navigate to="/courses" />;
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <div className="space-y-6">
       <Breadcrumb items={breadcrumbItems} />
-      {/* ACTIONS */}
-      <div className="flex flex-col md:flex-row gap-2">
-        <Button
-          type="submit"
-          disabled={
-            !form.formState.isDirty || updateCourseDayMutation.isPending
-          }
-        >
-          {updateCourseDayMutation.isPending ? (
-            <>
-              <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <SaveIcon className="h-4 w-4 mr-2" />
-              Save
-            </>
-          )}
-        </Button>
 
-        <Link to={`/courses/update/${courseDay?.course?.id}`}>
-          <Button type="button" className="w-full md:w-auto" variant="outline">
-            <XIcon className="h-4 w-4 mr-2" />
-            Cancel
+      <ToolbarActions>
+        <div className="flex items-center gap-2">
+          <Link to={`/courses/update/${courseDay.course?.id}`}>
+            <Button title="Back" type="button" size="icon" variant="ghost">
+              <ChevronLeftIcon />
+            </Button>
+          </Link>
+
+          <Button
+            title="Save"
+            type="button"
+            size="icon"
+            variant="ghost"
+            disabled={
+              !form.formState.isDirty || updateCourseDayMutation.isPending
+            }
+            onClick={onSubmit}
+          >
+            {updateCourseDayMutation.isPending ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <SaveIcon />
+            )}
           </Button>
-        </Link>
 
-        <Button
-          type="button"
-          variant="destructive"
-          title="Delete"
-          onClick={() => setDeleteOpen(true)}
-        >
-          <TrashIcon /> Delete
-        </Button>
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            title="Delete"
+            onClick={() => setDeleteOpen(true)}
+          >
+            <Trash2 />
+          </Button>
+        </div>
+      </ToolbarActions>
 
-        {isDeleteOpen && (
-          <DeleteDialog
-            title="Delete Course Day"
-            confirmationMessage={
-              <>
-                You're about to delete the course day{" "}
-                <span className="font-semibold">"{courseDay?.title}"</span> .
-                <br /> Once deleted, the data cannot be recovered.
-              </>
-            }
-            id={courseDay!.id}
-            queryKeys={[
-              ["courses"],
-              ["course", courseDay?.course_id],
-              ["course-days", courseDay?.id],
-            ]}
-            open={isDeleteOpen}
-            setOpen={setDeleteOpen}
-            onSuccess={() =>
-              navigate("/courses/update/" + courseDay?.course_id)
-            }
-            target="course_day"
-          />
-        )}
-      </div>
       <DetailsScreen
         mode="Update"
-        title={courseDay?.title || "Update Course Day"}
+        title={courseDay.title || "Update Course Day"}
         isOpen={isOpen}
         setOpen={setOpen}
       >
@@ -208,7 +160,6 @@ const UpdateCourseDayScreen = () => {
           Update the course day details below.
         </p>
         <Form {...form}>
-          {/* FORM */}
           <CollapsibleContent>
             <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
               <CourseDayForm
@@ -221,9 +172,30 @@ const UpdateCourseDayScreen = () => {
           </CollapsibleContent>
         </Form>
 
-        <CourseDayTabs courseDay={courseDay!} />
+        <CourseDayTabs courseDay={courseDay} />
       </DetailsScreen>
-    </form>
+
+      <DeleteDialog
+        title="Delete Course Day"
+        confirmationMessage={
+          <>
+            You're about to delete{" "}
+            <span className="font-semibold">"{courseDay.title}"</span>.
+            <br /> Once deleted, the data cannot be recovered.
+          </>
+        }
+        id={courseDay.id}
+        queryKeys={[
+          ["courses"],
+          ["course", courseDay.course_id],
+          ["course-days", courseDay.id],
+        ]}
+        open={isDeleteOpen}
+        setOpen={setDeleteOpen}
+        onSuccess={() => navigate(`/courses/update/${courseDay.course_id}`)}
+        target="course_day"
+      />
+    </div>
   );
 };
 

@@ -1,4 +1,10 @@
-import { ChevronDownIcon, Plus, Settings, Trash2 } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  Plus,
+  Settings,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ToolbarActions from "./ToolbarActions";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 
 export interface TableAction<TData> {
@@ -18,6 +24,7 @@ export interface TableAction<TData> {
 
 interface ToolbarProps<TData> {
   selectedRows: TData[];
+  slotId?: string;
   selectedCount: number;
   actions?: TableAction<TData>[];
   onDelete?: (rows: TData[]) => void;
@@ -36,6 +43,7 @@ export function Toolbar<TData>({
   addPath,
   onAdd,
   setRowSelection,
+  slotId,
 }: ToolbarProps<TData>) {
   const navigate = useNavigate();
 
@@ -49,8 +57,16 @@ export function Toolbar<TData>({
     : selectedRows;
 
   return (
-    <ToolbarActions>
+    <ToolbarActions slotId={slotId}>
       <div className="flex items-center gap-2">
+        {!slotId && (
+          <Link to="/">
+            <Button title="Back" type="button" size="icon" variant="ghost">
+              <ChevronLeftIcon />
+            </Button>
+          </Link>
+        )}
+
         {/* ── Add ── */}
         {(addPath || onAdd) && (
           <Button

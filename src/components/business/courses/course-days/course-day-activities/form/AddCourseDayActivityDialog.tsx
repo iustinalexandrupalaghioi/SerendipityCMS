@@ -5,10 +5,11 @@ import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { Card } from "@/components/ui/card";
 import { useCourseDay } from "@/hooks/useCourses";
 import { useParams } from "react-router";
 import CourseDayActivityForm from "./CourseDayActivityForm";
@@ -16,10 +17,15 @@ import {
   CourseDayActivitySchema,
   type CourseDayActivityFormValues,
 } from "./form-schema";
-import { Card } from "@/components/ui/card";
 
-const AddCourseDayActivityDialog = () => {
-  const [open, setOpen] = useState(false);
+interface AddCourseDayActivityDialogProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+const AddCourseDayActivityDialog = ({
+  open,
+  setOpen,
+}: AddCourseDayActivityDialogProps) => {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const { data: courseDay } = useCourseDay(id);
@@ -88,6 +94,7 @@ const AddCourseDayActivityDialog = () => {
 
   return (
     <AddDialog
+      showTrigger={false}
       open={open}
       setOpen={setOpen}
       title="Add Course Day Activity"

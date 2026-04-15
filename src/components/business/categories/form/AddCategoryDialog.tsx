@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { supabase } from "@/lib/supabaseClient";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import AddDialog from "@/components/partials/dialog/AddDialog";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
+import { supabase } from "@/lib/supabaseClient";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loader2Icon } from "lucide-react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import CategoryForm from "../form/CategoryForm";
 import { categorySchema, type CategoryFormValues } from "../form/form-schema";
-import { Loader2Icon } from "lucide-react";
-import { Card } from "@/components/ui/card";
 
-export function AddCategoryDialog() {
-  const [open, setOpen] = useState(false);
+interface AddCatecoryDialogProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+export function AddCategoryDialog({ open, setOpen }: AddCatecoryDialogProps) {
   const queryClient = useQueryClient();
 
   const form = useForm<CategoryFormValues>({
@@ -60,6 +63,7 @@ export function AddCategoryDialog() {
 
   return (
     <AddDialog
+      showTrigger={false}
       open={open}
       setOpen={setOpen}
       title="Add Category"
