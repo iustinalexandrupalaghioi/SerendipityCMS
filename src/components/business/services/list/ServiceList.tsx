@@ -6,7 +6,6 @@ import type { Enum } from "@/types/EnumType";
 import { useMemo } from "react";
 import { Navigate } from "react-router";
 import { ServiceColumns } from "./ServiceColumns";
-import AddServiceDialog from "../form/AddServiceDialog";
 
 const booleanEnum: Enum[] = [
   { value: "true", label: "Yes" },
@@ -29,7 +28,7 @@ const ServiceList = () => {
 
   return (
     <div className="w-full py-2">
-      <AddServiceDialog />
+      {/* <AddServiceDialog /> */}
       {isLoading && <Loader />}
       {error && <Navigate to="/error" />}
       {!isLoading && !error && data && (

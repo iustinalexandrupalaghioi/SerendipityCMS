@@ -1,20 +1,23 @@
 import AddDialog from "@/components/partials/dialog/AddDialog";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 import type { Category } from "@/types/Category";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import ServiceForm from "./ServiceForm";
 import { ServiceSchema, type ServiceFormValues } from "./form-schema";
-import { Card } from "@/components/ui/card";
 
-const AddServiceDialog = () => {
-  const [open, setOpen] = useState(false);
+interface AddServiceDialogProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+const AddServiceDialog = ({ open, setOpen }: AddServiceDialogProps) => {
   const queryClient = useQueryClient();
 
   const form = useForm<ServiceFormValues>({
@@ -109,6 +112,7 @@ const AddServiceDialog = () => {
       setOpen={setOpen}
       title="Add Service"
       description="Fill in the details to create a new service."
+      showTrigger={false}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">

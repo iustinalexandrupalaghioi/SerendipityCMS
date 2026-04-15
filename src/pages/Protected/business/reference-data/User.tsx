@@ -1,4 +1,4 @@
-import UserList from "@/components/business/users/list/UserList";
+import UserOverview from "@/components/business/users/overview/UserOverview";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import { useDocumentTitle } from "@/lib/utils";
 
@@ -10,7 +10,7 @@ const User = () => {
   return (
     <>
       <Breadcrumb items={breadcrumbItems} />
-      <UserList />
+      <UserOverview />
     </>
   );
 };

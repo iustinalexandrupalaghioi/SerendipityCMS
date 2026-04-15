@@ -7,7 +7,6 @@ import {
   CalendarIcon,
   CalendarOffIcon,
   Clock2Icon,
-  CopyrightIcon,
   FolderOpenIcon,
   Settings2Icon,
   Users2Icon,
@@ -134,13 +133,7 @@ const menuItems: MenuSection[] = [
         title: "View all courses",
         icon: BookOpenTextIcon,
       },
-      {
-        type: "link",
-        name: "Certificates",
-        path: "/certificates",
-        title: "View all certificates",
-        icon: CopyrightIcon,
-      },
+
       {
         type: "link",
         name: "Users",

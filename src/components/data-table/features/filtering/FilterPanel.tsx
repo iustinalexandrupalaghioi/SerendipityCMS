@@ -7,8 +7,14 @@ import {
   type FilterRule,
 } from "@/components/data-table/features/filtering/filters";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -25,7 +31,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { YesNoSwitch } from "@/components/ui/yes-no-switch";
-import { X } from "lucide-react";
+import { format, isValid } from "date-fns";
+import { ChevronDownIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface FilterPanelProps {
@@ -251,12 +258,46 @@ function ValueInput({
 
   // Date
   if (columnType === "date") {
+    const selectedDate =
+      typeof value === "string" && value ? new Date(value) : undefined;
+    const effectiveEndMonth = new Date(
+      new Date().getFullYear() + 100,
+      new Date().getMonth(),
+    );
     return (
-      <Input
-        type="date"
-        value={Array.isArray(value) ? "" : value}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            className="justify-between font-normal"
+          >
+            {selectedDate && isValid(selectedDate)
+              ? format(selectedDate, "dd-MM-yyyy")
+              : "Select date"}
+            <ChevronDownIcon className="ml-2 h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            startMonth={selectedDate}
+            endMonth={effectiveEndMonth}
+            captionLayout="dropdown"
+            onSelect={(date) => {
+              if (!date) {
+                onChange("");
+                return;
+              }
+
+              const iso = format(date, "yyyy-MM-dd");
+              onChange(iso);
+            }}
+          />
+        </PopoverContent>
+      </Popover>
     );
   }
 
