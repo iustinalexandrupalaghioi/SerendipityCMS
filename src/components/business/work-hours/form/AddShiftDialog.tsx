@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import AddDialog from "@/components/partials/dialog/AddDialog";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
+import { Loader2Icon } from "lucide-react";
 import ShiftForm from "../form/ShiftForm";
 import { shiftSchema, type ShiftFormValues } from "../form/form-schema";
-import { Loader2Icon } from "lucide-react";
-import { Card } from "@/components/ui/card";
 
-export function AddShiftDialog() {
-  const [open, setOpen] = useState(false);
+interface AddShiftDialogProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+export function AddShiftDialog({ open, setOpen }: AddShiftDialogProps) {
   const queryClient = useQueryClient();
 
   const form = useForm<ShiftFormValues>({
@@ -83,6 +86,7 @@ export function AddShiftDialog() {
       setOpen={setOpen}
       title="Add Shift"
       description="Create a new employee shift."
+      showTrigger={false}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">

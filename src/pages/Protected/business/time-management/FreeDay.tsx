@@ -1,4 +1,4 @@
-import FreeDayList from "@/components/business/free-days/list/FreeDayList";
+import FreeDayOverview from "@/components/business/free-days/overview/FreeDayOverview";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import { useDocumentTitle } from "@/lib/utils";
 
@@ -8,10 +8,10 @@ const FreeDay = () => {
   useDocumentTitle("Free days");
 
   return (
-    <div>
+    <>
       <Breadcrumb items={breadcrumbItems} />
-      <FreeDayList />
-    </div>
+      <FreeDayOverview />
+    </>
   );
 };
 

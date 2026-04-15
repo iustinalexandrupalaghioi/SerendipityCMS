@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { supabase } from "@/lib/supabaseClient";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import AddDialog from "@/components/partials/dialog/AddDialog";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
+import { supabase } from "@/lib/supabaseClient";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { freeDaySchema, type FreeDayFormValues } from "./form-schema";
 import FreeDayForm from "./FreeDayForm";
-import { Card } from "@/components/ui/card";
 
-export function AddFreeDayDialog() {
-  const [open, setOpen] = useState(false);
+interface AddFreeDayDialogProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+export function AddFreeDayDialog({ open, setOpen }: AddFreeDayDialogProps) {
   const queryClient = useQueryClient();
 
   const form = useForm<FreeDayFormValues>({
@@ -62,6 +65,7 @@ export function AddFreeDayDialog() {
       setOpen={setOpen}
       title="Add Free Days"
       description="Create a new free days entry."
+      showTrigger={false}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">

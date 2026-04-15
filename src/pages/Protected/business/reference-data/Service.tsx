@@ -1,4 +1,4 @@
-import ServiceList from "@/components/business/services/list/ServiceList";
+import ServiceOverview from "@/components/business/services/overview/ServiceOVerview";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import { useDocumentTitle } from "@/lib/utils";
 
@@ -10,7 +10,7 @@ const Service = () => {
   return (
     <>
       <Breadcrumb items={breadcrumbItems} />
-      <ServiceList />
+      <ServiceOverview />
     </>
   );
 };

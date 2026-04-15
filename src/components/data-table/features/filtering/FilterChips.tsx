@@ -5,6 +5,7 @@ import {
 } from "@/components/data-table/features/filtering/filters";
 import { X } from "lucide-react";
 import { useDataTableContext } from "../../DataTableContext";
+import { format } from "date-fns";
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -18,9 +19,23 @@ function formatFilterValue(rule: FilterRule): string {
     rule.operator === "is_false";
 
   if (noValue) return "";
+
+  // ✅ Handle date formatting
+  if (rule.columnType === "date") {
+    if (!rule.value) return "";
+
+    try {
+      return format(new Date(rule.value as string), "dd-MM-yyyy");
+    } catch {
+      return String(rule.value);
+    }
+  }
+
   if (Array.isArray(rule.value))
     return rule.value.length > 0 ? rule.value.join(", ") : "";
+
   if (rule.value === null || rule.value === undefined) return "";
+
   return String(rule.value);
 }
 
@@ -38,13 +53,14 @@ function FilterChip({
   onEdit: () => void;
 }) {
   const formattedValue = formatFilterValue(rule);
+
   const operatorLabel = OPERATOR_LABELS[rule.operator];
 
   return (
     <Badge
       variant="outline"
       className="flex h-8 cursor-pointer items-center gap-1 rounded-md px-2 py-0 text-sm font-normal"
-      title={`${rule.columnId} ${operatorLabel.toLowerCase()}${formattedValue ? ` ${formattedValue}` : ""}`}
+      title={`${rule.columnName} ${operatorLabel.toLowerCase()}${formattedValue ? ` ${formattedValue}` : ""}`}
       onClick={onEdit}
     >
       <span className="font-medium">{rule.columnName}</span>

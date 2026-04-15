@@ -1,4 +1,4 @@
-import ShiftList from "@/components/business/work-hours/list/ShiftList";
+import ShiftOverview from "@/components/business/work-hours/overview/ShiftOverview";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import { useDocumentTitle } from "@/lib/utils";
 
@@ -11,10 +11,10 @@ const Shift = () => {
   useDocumentTitle("Business hours");
 
   return (
-    <div>
+    <>
       <Breadcrumb items={breadcrumbItems} />
-      <ShiftList />
-    </div>
+      <ShiftOverview />
+    </>
   );
 };
 
