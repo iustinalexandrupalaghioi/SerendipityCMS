@@ -1,4 +1,4 @@
-import CourseEnrollmentList from "@/components/business/courses/course-enrollments/list/EnrollmentList";
+import AllEnrollmentsOverview from "@/components/business/courses/course-enrollments/overview/AllEnrollmentsOverview";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import { useDocumentTitle } from "@/lib/utils";
 
@@ -13,7 +13,7 @@ const Enrollment = () => {
   return (
     <>
       <Breadcrumb items={breadcrumbItems} />
-      <CourseEnrollmentList />
+      <AllEnrollmentsOverview />
     </>
   );
 };

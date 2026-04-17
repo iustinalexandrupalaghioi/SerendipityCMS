@@ -2,7 +2,7 @@
 // import { useBookedDates } from "@/hooks/common/use-booked-dates";
 import useUserStore from "@/stores/UserStore";
 
-import PickupUserList from "@/components/business/users/list/PickupUserList";
+import UserPickup from "@/components/business/users/pickup/UserPickup";
 import { Combobox } from "@/components/partials/Combobox";
 import PickupFormInput from "@/components/partials/PickupFormInput";
 import { FormItem, FormLabel } from "@/components/ui/form";
@@ -17,7 +17,7 @@ import type {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-import PickupCourseDialog from "../../list/PickupCourseList";
+import CoursePickup from "../../pickup/CoursePickup";
 import type { EnrollmentFormValues } from "./form-schema";
 
 interface CourseEnrollmentFormProps {
@@ -124,7 +124,11 @@ const CourseEnrollmentForm = ({
         />
 
         {isUserPickupOpen && (
-          <PickupUserList open={isUserPickupOpen} setOpen={setUserPickupOpen} />
+          <UserPickup
+            onSelect={setSelectedUser}
+            open={isUserPickupOpen}
+            setOpen={setUserPickupOpen}
+          />
         )}
 
         {/* Course  */}
@@ -140,7 +144,8 @@ const CourseEnrollmentForm = ({
         />
 
         {isCoursePickupOpen && (
-          <PickupCourseDialog
+          <CoursePickup
+            onSelect={setselectedCourse}
             open={isCoursePickupOpen}
             setOpen={setCoursePickupOpen}
           />

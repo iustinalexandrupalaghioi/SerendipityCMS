@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Course } from "@/types/Course";
 import { BookCheckIcon, CalendarDaysIcon } from "lucide-react";
 import CourseDayOverview from "../course-days/nav-overview/CourseDayOverview";
-import CourseEnrollmentList from "../course-enrollments/list/CourseEnrollmentList";
+import EnrollmentOverview from "../course-enrollments/nav-overview/EnrollmentOverview";
 
 interface CourseTabsProps {
   course: Course;
@@ -26,7 +26,10 @@ const CourseTabs = ({ course }: CourseTabsProps) => {
         <CourseDayOverview slotId="course-days-toolbar-slot" course={course} />
       </TabsContent>
       <TabsContent className="mt-0 pt-3" value="enrollments">
-        <CourseEnrollmentList course={course} />
+        <EnrollmentOverview
+          slotId="course-enrollments-toolbar-slot"
+          course={course}
+        />
       </TabsContent>
     </Tabs>
   );

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -10,13 +10,18 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 
+import { format } from "date-fns";
 import AppointmentForm from "./AppointmentForm";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
-import { format } from "date-fns";
-import { Card } from "@/components/ui/card";
 
-export function AppointmentAddDialog() {
-  const [open, setOpen] = useState(false);
+interface AppointmentAddDialogProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+export function AppointmentAddDialog({
+  open,
+  setOpen,
+}: AppointmentAddDialogProps) {
   const queryClient = useQueryClient();
 
   const form = useForm<AppointmentFormValues>({
@@ -96,18 +101,17 @@ export function AppointmentAddDialog() {
       setOpen={setOpen}
       title="Add Appointment"
       description="Fill the form below to book a new appointment."
+      showTrigger={false}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto">
-            <AppointmentForm
-              setValue={form.setValue}
-              control={form.control}
-              errors={form.formState.errors}
-              watch={form.watch}
-              mode="Add"
-            />
-          </Card>
+          <AppointmentForm
+            setValue={form.setValue}
+            control={form.control}
+            errors={form.formState.errors}
+            watch={form.watch}
+            mode="Add"
+          />
 
           <div className="flex flex-col md:flex-row-reverse gap-2 pt-4">
             <Button

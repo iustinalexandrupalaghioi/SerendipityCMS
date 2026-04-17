@@ -1,4 +1,4 @@
-import AppointmentList from "@/components/business/appointments/list/AppointmentList";
+import AppointmentOverview from "@/components/business/appointments/overview/AppointmentOverview";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import { useDocumentTitle } from "@/lib/utils";
 
@@ -13,7 +13,7 @@ const Appointment = () => {
   return (
     <>
       <Breadcrumb items={breadcrumbItems} />
-      <AppointmentList />
+      <AppointmentOverview />
     </>
   );
 };
