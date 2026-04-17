@@ -57,7 +57,7 @@ const ActionDialog = ({
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
           {children && (
-            <Card className="border-accent flex flex-col items-center w-full overflow-x-auto">
+            <Card className="border-accent flex flex-col items-center w-full overflow-x-auto ps-2">
               {children}
             </Card>
           )}

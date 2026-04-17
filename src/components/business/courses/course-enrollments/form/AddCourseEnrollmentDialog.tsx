@@ -5,22 +5,25 @@ import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { Card } from "@/components/ui/card";
+import type { Course } from "@/types/Course";
 import CourseEnrollmentForm from "./CourseEnrollmentForm";
 import { EnrollmentSchema, type EnrollmentFormValues } from "./form-schema";
-import type { Course } from "@/types/Course";
-import { Card } from "@/components/ui/card";
 
 interface AddCourseEnrollmentDialogProps {
   course?: Course;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 const AddCourseEnrollmentDialog = ({
   course,
+  open,
+  setOpen,
 }: AddCourseEnrollmentDialogProps) => {
-  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const form = useForm<EnrollmentFormValues>({
@@ -76,6 +79,7 @@ const AddCourseEnrollmentDialog = ({
       setOpen={setOpen}
       title="Add Enrollment"
       description="Enroll a user into a course."
+      showTrigger={false}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">

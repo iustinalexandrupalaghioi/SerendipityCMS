@@ -47,7 +47,14 @@ export function Toolbar<TData>({
 }: ToolbarProps<TData>) {
   const navigate = useNavigate();
 
-  if (!actions?.length && !onDelete && !addPath && !onAdd) return null;
+  if (
+    !actions?.length &&
+    !onDelete &&
+    !addPath &&
+    !onAdd &&
+    slotId !== undefined
+  )
+    return null;
 
   // Actions and delete are only supported for single selection
   const isMulti = selectedCount > 1;
@@ -66,7 +73,6 @@ export function Toolbar<TData>({
             </Button>
           </Link>
         )}
-
         {/* ── Add ── */}
         {(addPath || onAdd) && (
           <Button
@@ -136,7 +142,7 @@ export function Toolbar<TData>({
             }
             onClick={() => {
               if (isMulti) return;
-              onDelete(eligibleForDelete);
+              onDelete?.(eligibleForDelete);
               setRowSelection({});
             }}
           >

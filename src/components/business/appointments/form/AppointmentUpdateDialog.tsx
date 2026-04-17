@@ -13,7 +13,6 @@ import type { Appointment } from "@/types/Appointment";
 import { DialogClose } from "@radix-ui/react-dialog";
 import AppointmentForm from "./AppointmentForm";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
-import { Card } from "@/components/ui/card";
 
 interface AppointmentUpdateDialogProps {
   appointment: Appointment;
@@ -106,16 +105,14 @@ const AppointmentUpdateDialog = ({
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto">
-            <AppointmentForm
-              setValue={form.setValue}
-              control={form.control}
-              errors={form.formState.errors}
-              watch={form.watch}
-              mode="Update"
-              existingImageUrl={appointment.service.image_public_url}
-            />
-          </Card>
+          <AppointmentForm
+            setValue={form.setValue}
+            control={form.control}
+            errors={form.formState.errors}
+            watch={form.watch}
+            mode="Update"
+            existingImageUrl={appointment.service.image_public_url}
+          />
 
           <div className="flex flex-col md:flex-row-reverse gap-2 pt-4">
             <DialogClose asChild className="flex-1">
