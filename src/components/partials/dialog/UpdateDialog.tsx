@@ -28,27 +28,24 @@ const UpdateDialog = ({
   disableUpdate,
 }: UpdateDialogProps) => {
   return (
-    <Dialog modal={false} open={open} onOpenChange={setOpen}>
-      {open && (
-        <DialogContent
-          onPointerDownOutside={(e) => e.preventDefault()}
-          // onInteractOutside={(e) => e.preventDefault()}
-          className={cn(
-            "md:min-w-xl max-w-full mt-4 top-0 translate-y-0 max-h-[80vh]  md:max-h-[90vh] overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary",
-            className,
-          )}
-        >
-          <DialogHeader className="text-start">
-            <DialogTitle className="text-primary">
-              {title}{" "}
-              {!disableUpdate && <span className="text-accent">(update)</span>}
-            </DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent
+        // onInteractOutside={(e) => e.preventDefault()}
+        className={cn(
+          "md:min-w-xl max-w-full mt-4 top-0 translate-y-0 max-h-[80vh]  md:max-h-[90vh] overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary",
+          className,
+        )}
+      >
+        <DialogHeader className="text-start">
+          <DialogTitle className="text-primary">
+            {title}{" "}
+            {!disableUpdate && <span className="text-accent">(update)</span>}
+          </DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
 
-          {children}
-        </DialogContent>
-      )}
+        {children}
+      </DialogContent>
     </Dialog>
   );
 };
