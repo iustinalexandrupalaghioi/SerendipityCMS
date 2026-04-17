@@ -99,6 +99,9 @@ const AppointmentForm = ({
   const handleServiceSelect = (service: Service) => {
     setValue("service", service, { shouldDirty: true });
     setValue("price", Number(service.price), { shouldDirty: true });
+    setValue("advance_payment", Number(service.advance_price), {
+      shouldDirty: true,
+    });
     setValue("duration", Number(service.duration), { shouldDirty: true });
   };
 
@@ -268,6 +271,32 @@ const AppointmentForm = ({
                   </div>
                 </FormControl>
                 <FormMessage>{errors.price?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="advance_payment"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Advance price</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      className="pr-12"
+                      placeholder="e.g. 49.99"
+                      disabled={disabled}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      EUR
+                    </span>
+                  </div>
+                </FormControl>
+                <FormMessage>{errors.advance_payment?.message}</FormMessage>
               </FormItem>
             )}
           />

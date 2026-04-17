@@ -39,6 +39,7 @@ const AppointmentUpdateDialog = ({
       start_time: appointment.start_time.slice(0, 5),
       duration: Number(appointment.duration) || undefined,
       price: Number(appointment.price) || undefined,
+      advance_payment: Number(appointment.advance_payment),
     },
   });
 
@@ -75,6 +76,7 @@ const AppointmentUpdateDialog = ({
           end_time: endTime,
           duration: values.duration,
           price: values.price,
+          advance_payment: values.advance_payment,
         })
         .eq("id", values.id);
 
@@ -101,7 +103,7 @@ const AppointmentUpdateDialog = ({
       setOpen={setOpen}
       title="Appointment"
       description="Appointment details."
-      className="md:max-w-6xl"
+      className="md:max-w-2xl"
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">

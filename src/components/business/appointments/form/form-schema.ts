@@ -23,6 +23,9 @@ export const AppointmentSchema = z.object({
   price: z
     .number({ error: "Price is a mandatory field" })
     .min(1, "Price must be a number greater than 1"),
+  advance_payment: z
+    .number({ error: "Advance price is a mandatory field" })
+    .min(1, "Advance price must be a number greater than 1"),
   name: z
     .string({ error: "Name is a mandatory field" })
     .min(2, "Name must be at least 2 characters long")

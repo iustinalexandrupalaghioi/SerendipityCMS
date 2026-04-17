@@ -47,10 +47,12 @@ function FilterChip({
   rule,
   onRemove,
   onEdit,
+  locked = false,
 }: {
   rule: FilterRule;
   onRemove: () => void;
   onEdit: () => void;
+  locked?: boolean;
 }) {
   const formattedValue = formatFilterValue(rule);
 
@@ -61,7 +63,7 @@ function FilterChip({
       variant="outline"
       className="flex h-8 cursor-pointer items-center gap-1 rounded-md px-2 py-0 text-sm font-normal"
       title={`${rule.columnName} ${operatorLabel.toLowerCase()}${formattedValue ? ` ${formattedValue}` : ""}`}
-      onClick={onEdit}
+      onClick={!locked ? onEdit : undefined}
     >
       <span className="font-medium">{rule.columnName}</span>
       <span className="text-muted-foreground">
@@ -70,17 +72,19 @@ function FilterChip({
       {formattedValue && (
         <span className="max-w-30 truncate">{formattedValue}</span>
       )}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove();
-        }}
-        title={`Remove filter on ${rule.columnName}`}
-        className="ml-0.5 rounded-sm opacity-60 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
-        aria-label={`Remove filter on ${rule.columnName}`}
-      >
-        <X className="h-4 w-4" />
-      </button>
+      {!locked && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          title={`Remove filter on ${rule.columnName}`}
+          className="ml-0.5 rounded-sm opacity-60 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
+          aria-label={`Remove filter on ${rule.columnName}`}
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
     </Badge>
   );
 }
@@ -90,8 +94,12 @@ function FilterChip({
 // ─────────────────────────────────────────────
 
 export function FilterChips() {
-  const { views } = useDataTableContext();
+  const { views, preFilters } = useDataTableContext();
   const { filters, setFilters } = views;
+  const isLocked = (filter: FilterRule) =>
+    preFilters.some(
+      (p) => p.columnId === filter.columnId && p.operator === filter.operator,
+    );
 
   if (filters.length === 0) return null;
 
@@ -112,6 +120,8 @@ export function FilterChips() {
     setFilters([]);
   };
 
+  const removableCount = filters.filter((f) => !isLocked(f)).length;
+
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       {filters.map((rule) => (
@@ -120,9 +130,10 @@ export function FilterChips() {
           rule={rule}
           onRemove={() => handleRemove(rule.columnId)}
           onEdit={() => handleEdit(rule.columnId)}
+          locked={isLocked(rule)}
         />
       ))}
-      {filters.length > 1 && (
+      {removableCount > 1 && (
         <button
           onClick={handleClearAll}
           className="text-xs text-muted-foreground underline-offset-2 hover:underline"

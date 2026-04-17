@@ -5,11 +5,13 @@ import {
   initialFilters,
   initialSorting,
 } from "@/components/data-table/hooks/useTableViews";
+import Breadcrumb from "@/components/partials/Breadcrumb";
 import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
 import { Toolbar } from "@/components/toolbar/Toolbar";
 import { supabase } from "@/lib/supabaseClient";
 import { isAppointmentStatus } from "@/lib/utils";
 import type { Appointment } from "@/types/Appointment";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Row } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { Navigate, useParams } from "react-router";
@@ -24,7 +26,6 @@ import {
 } from "./AppointmentColumns";
 import { useAppointmentActions } from "./useAppointmentActions";
 import { QUERY_KEY, useAppointments } from "./useAppointments";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const APPOINTMENTS_OVERVIEW_KEY = "appointments-overview";
 
@@ -33,22 +34,12 @@ TODAY_START.setHours(0, 0, 0, 0);
 const TODAY_END = new Date();
 TODAY_END.setHours(23, 59, 59, 999);
 
-const TODAY_FILTERS: FilterRule[] = [
-  {
-    columnId: "date",
-    columnType: "date",
-    columnName: "Date",
-    operator: "gte",
-    value: TODAY_START.toISOString(),
-  },
-  {
-    columnId: "date",
-    columnType: "date",
-    columnName: "Date",
-    operator: "lte",
-    value: TODAY_END.toISOString(),
-  },
-];
+const LABEL_MAP: Record<string, string> = {
+  appointments: "Appointments",
+  confirmed: "Today",
+  pending: "Pending",
+  approved: "Approved",
+};
 
 const AppointmentOverview = () => {
   const queryClient = useQueryClient();
@@ -65,12 +56,10 @@ const AppointmentOverview = () => {
   const [sorting, setSorting] = useState<SortRule[]>(() =>
     initialSorting(APPOINTMENTS_OVERVIEW_KEY),
   );
-  const [filters, setFilters] = useState<FilterRule[]>(() => {
-    const saved = initialFilters(APPOINTMENTS_OVERVIEW_KEY);
-    const preFilters: FilterRule[] = [];
-
+  const preFilters = useMemo<FilterRule[]>(() => {
+    const pre: FilterRule[] = [];
     if (status) {
-      preFilters.push({
+      pre.push({
         columnId: "status",
         columnType: "select",
         columnName: "Status",
@@ -78,13 +67,22 @@ const AppointmentOverview = () => {
         value: status,
       });
     }
-
     if (isToday) {
-      preFilters.push(...TODAY_FILTERS);
+      pre.push({
+        columnId: "date",
+        columnType: "date",
+        columnName: "Date",
+        operator: "equals",
+        value: new Date().toISOString(),
+      });
     }
+    return pre;
+  }, [status, isToday]);
 
-    return preFilters.length ? [...preFilters, ...saved] : saved;
-  });
+  // Keep filters state only for the query — but initialise it simply:
+  const [filters, setFilters] = useState<FilterRule[]>(() =>
+    initialFilters(APPOINTMENTS_OVERVIEW_KEY),
+  );
 
   // ── Dialog state ──────────────────────────────────────────────────────────
   const [isAddOpen, setAddOpen] = useState(false);
@@ -98,9 +96,29 @@ const AppointmentOverview = () => {
     useState<Appointment | null>(null);
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data, isLoading, isError } = useAppointments(sorting, filters);
+  const { data, isLoading, isError } = useAppointments(sorting, [
+    ...preFilters,
+    ...filters,
+  ]);
   const appointments = data?.items ?? [];
   const total = data?.total ?? 0;
+
+  const breadcrumbItems = useMemo(() => {
+    const pathnames = location.pathname.split("/").filter(Boolean);
+
+    const crumbs = pathnames.map((segment, index) => {
+      const path = "/" + pathnames.slice(0, index + 1).join("/");
+
+      return {
+        path,
+        label:
+          LABEL_MAP[segment] ??
+          segment.charAt(0).toUpperCase() + segment.slice(1),
+      };
+    });
+
+    return [{ path: "/", label: "Home" }, ...crumbs];
+  }, [location.pathname]);
 
   // ── Actions ───────────────────────────────────────────────────────────────
   const handleApprove = useCallback(
@@ -187,6 +205,8 @@ const AppointmentOverview = () => {
 
   return (
     <div className="my-2 flex flex-1 min-h-0 w-full flex-col">
+      <Breadcrumb items={breadcrumbItems} />
+
       <Toolbar
         selectedRows={selectedRows}
         selectedCount={Object.keys(rowSelection).length}
@@ -223,6 +243,7 @@ const AppointmentOverview = () => {
         isFetchingNextPage={false}
         hasNextPage={false}
         fetchNextPage={() => {}}
+        preFilters={preFilters}
       />
 
       {/* ── Dialogs ── */}
