@@ -132,6 +132,7 @@ export function DataTableHeader<TData>() {
           {headerGroup.headers.map((header) => {
             const isLast = header.column.id === lastLeafColumnId;
             const canSort = header.column.getCanSort();
+            const canFilter = header.column.getCanFilter();
             const columnName =
               header.column.columnDef.meta?.columnName ?? header.column.id;
             const columnId = header.column.id;
@@ -192,6 +193,7 @@ export function DataTableHeader<TData>() {
                       columnName={columnName}
                       handleOpenFilterDrawer={handleOpenFilterDrawer}
                       locked={lockedColumnIds.has(columnId)}
+                      canFilter={canFilter}
                     />
                   )}
                 </div>
