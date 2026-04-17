@@ -34,6 +34,8 @@ interface DataTableHeaderDropdownProps {
     columnName?: string | null,
   ) => void;
   selectOptions?: string[];
+  canFilter?: boolean;
+  locked?: boolean;
 }
 
 export function DataTableHeaderDropdown({
@@ -50,12 +52,17 @@ export function DataTableHeaderDropdown({
   onClearSort,
   handleOpenFilterDrawer,
   selectOptions,
+  canFilter = true,
+  locked = false,
 }: DataTableHeaderDropdownProps) {
   const SortIcon = sortRule
     ? sortRule.desc
       ? ArrowDownIcon
       : ArrowUpIcon
     : null;
+  if (!canSort && (!canFilter || locked)) {
+    return <span className="px-0.5">{columnName}</span>;
+  }
 
   return (
     <DropdownMenu modal={false}>
@@ -69,71 +76,71 @@ export function DataTableHeaderDropdown({
         </button>
       </DropdownMenuTrigger>
 
-      {canSort && (
-        <DropdownMenuContent align="start" className="w-44">
-          {sortRule?.desc !== false ? (
-            <DropdownMenuItem onClick={() => onPrimarySort(columnId, false)}>
-              <ArrowUpAzIcon className="mr-2 h-3.5 w-3.5" />
-              Sort ascending
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem
-              onClick={() => onClearSort(columnId)}
-              className=""
-            >
-              <X className="mr-2 h-3.5 w-3.5" />
-              Remove sort
-            </DropdownMenuItem>
-          )}
-
-          {sortRule?.desc !== true ? (
-            <DropdownMenuItem onClick={() => onPrimarySort(columnId, true)}>
-              <ArrowDownZaIcon className="mr-2 h-3.5 w-3.5" />
-              Sort descending
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem
-              onClick={() => onClearSort(columnId)}
-              className=""
-            >
-              <X className="mr-2 h-3.5 w-3.5" />
-              Remove sort
-            </DropdownMenuItem>
-          )}
-
-          {sorting.length > 0 && (
-            <>
-              <DropdownMenuItem
-                onClick={() => onAlsoSort(columnId, false)}
-                disabled={sortRule?.desc === false && !isMultiSort}
-              >
+      <DropdownMenuContent align="start" className="w-44">
+        {" "}
+        {/* ← no canSort wrapper */}
+        {canSort && (
+          <>
+            {sortRule?.desc !== false ? (
+              <DropdownMenuItem onClick={() => onPrimarySort(columnId, false)}>
                 <ArrowUpAzIcon className="mr-2 h-3.5 w-3.5" />
-                Also sort ascending
+                Sort ascending
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onAlsoSort(columnId, true)}
-                disabled={sortRule?.desc === true && !isMultiSort}
-              >
+            ) : (
+              <DropdownMenuItem onClick={() => onClearSort(columnId)}>
+                <X className="mr-2 h-3.5 w-3.5" />
+                Remove sort
+              </DropdownMenuItem>
+            )}
+
+            {sortRule?.desc !== true ? (
+              <DropdownMenuItem onClick={() => onPrimarySort(columnId, true)}>
                 <ArrowDownZaIcon className="mr-2 h-3.5 w-3.5" />
-                Also sort descending
+                Sort descending
               </DropdownMenuItem>
-            </>
-          )}
+            ) : (
+              <DropdownMenuItem onClick={() => onClearSort(columnId)}>
+                <X className="mr-2 h-3.5 w-3.5" />
+                Remove sort
+              </DropdownMenuItem>
+            )}
+
+            {sorting.length > 0 && (
+              <>
+                <DropdownMenuItem
+                  onClick={() => onAlsoSort(columnId, false)}
+                  disabled={sortRule?.desc === false && !isMultiSort}
+                >
+                  <ArrowUpAzIcon className="mr-2 h-3.5 w-3.5" />
+                  Also sort ascending
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onAlsoSort(columnId, true)}
+                  disabled={sortRule?.desc === true && !isMultiSort}
+                >
+                  <ArrowDownZaIcon className="mr-2 h-3.5 w-3.5" />
+                  Also sort descending
+                </DropdownMenuItem>
+              </>
+            )}
+          </>
+        )}
+        {canFilter && !locked && (
           <DropdownMenuItem
-            onSelect={() => {
+            onSelect={() =>
               handleOpenFilterDrawer(
                 columnId,
                 columnType,
                 selectOptions,
                 columnName ?? columnId,
-              );
-            }}
+              )
+            }
           >
             <FilterIcon className="mr-2 h-3.5 w-3.5" />
             Add filter
           </DropdownMenuItem>
-        </DropdownMenuContent>
-      )}
+        )}
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }

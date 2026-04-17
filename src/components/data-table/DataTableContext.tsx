@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 import type { Column, Table } from "@tanstack/react-table";
 import type { RefObject } from "react";
 import type { useTableViews } from "./hooks/useTableViews";
+import type { FilterRule } from "./features/filtering/filters";
 
 // ─────────────────────────────────────────────
 // Context shape
@@ -48,6 +49,8 @@ export interface DataTableContextValue<TData> {
   quickSearchEnabled: boolean;
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
+
+  preFilters: FilterRule[]; // ← add
 }
 
 // ─────────────────────────────────────────────

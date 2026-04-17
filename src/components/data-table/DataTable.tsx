@@ -54,6 +54,7 @@ interface DataTableProps<TData, TValue> {
   quickSearchEnabled?: boolean;
   onFiltersChange?: (filters: FilterRule[]) => void;
   slotId?: string;
+  preFilters?: FilterRule[];
 }
 
 function DataTable<TData, TValue>({
@@ -75,6 +76,7 @@ function DataTable<TData, TValue>({
   quickSearchEnabled = true,
   onFiltersChange,
   slotId,
+  preFilters,
 }: DataTableProps<TData, TValue>) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -84,6 +86,7 @@ function DataTable<TData, TValue>({
     tableId,
     initialColumnVisibility,
     defaultViewName,
+    preFilters,
   );
   const { columnVisibility, columnSizing } = views;
 
@@ -186,6 +189,7 @@ function DataTable<TData, TValue>({
         quickSearchEnabled,
         globalFilter,
         setGlobalFilter,
+        preFilters: preFilters ?? [],
       }}
     >
       <div id={tableId} className="w-full overflow-hidden">

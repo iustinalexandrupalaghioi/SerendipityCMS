@@ -15,8 +15,11 @@ import { FilterPanel } from "../features/filtering/FilterPanel";
 // to override context values for a one-off embedded usage.
 
 export function DataTableHeader<TData>() {
-  const { table, lastLeafColumnId, views } = useDataTableContext<TData>();
+  const { table, lastLeafColumnId, views, preFilters } =
+    useDataTableContext<TData>();
   const { sorting, filters, setSorting, setFilters } = views;
+
+  const lockedColumnIds = new Set(preFilters.map((p) => p.columnId));
 
   // ── Filter drawer — local UI state, not shared ──
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
@@ -131,6 +134,7 @@ export function DataTableHeader<TData>() {
             const canSort = header.column.getCanSort();
             const columnName =
               header.column.columnDef.meta?.columnName ?? header.column.id;
+            const columnId = header.column.id;
             const columnType = header.column.columnDef.meta?.columnType ?? null;
             const selectOptions =
               header.column.columnDef.meta?.selectOptions ?? [];
@@ -187,6 +191,7 @@ export function DataTableHeader<TData>() {
                       onClearSort={handleClearSort}
                       columnName={columnName}
                       handleOpenFilterDrawer={handleOpenFilterDrawer}
+                      locked={lockedColumnIds.has(columnId)}
                     />
                   )}
                 </div>
