@@ -43,7 +43,7 @@ const ActionDialog = ({
   isDirty,
 }: AddDialogProps) => {
   return (
-    <Dialog modal={false} open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       {open && (
         <DialogContent
           // onInteractOutside={(e) => e.preventDefault()}
