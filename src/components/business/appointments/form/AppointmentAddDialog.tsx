@@ -35,6 +35,7 @@ export function AppointmentAddDialog({
       start_time: "",
       duration: 0,
       price: 0,
+      advance_payment: 0,
     },
   });
 
@@ -70,6 +71,7 @@ export function AppointmentAddDialog({
           start_time: values.start_time,
           duration: values.duration,
           price: values.price,
+          advance_payment: values.advance_payment,
           end_time: endTime,
         },
       ]);
