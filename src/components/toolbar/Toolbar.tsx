@@ -105,7 +105,11 @@ export function Toolbar<TData>({
                 <Settings /> <ChevronDownIcon />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-fit" align="start">
+            <DropdownMenuContent
+              onCloseAutoFocus={(e) => e.preventDefault()}
+              className="w-fit"
+              align="start"
+            >
               {actions.map((action, i) => {
                 const eligible = selectedRows.filter(
                   (r) => action.isEligible?.(r) ?? true,
