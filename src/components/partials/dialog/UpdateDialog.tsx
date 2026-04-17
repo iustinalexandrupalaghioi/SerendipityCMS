@@ -31,6 +31,7 @@ const UpdateDialog = ({
     <Dialog modal={false} open={open} onOpenChange={setOpen}>
       {open && (
         <DialogContent
+          onPointerDownOutside={(e) => e.preventDefault()}
           // onInteractOutside={(e) => e.preventDefault()}
           className={cn(
             "md:min-w-xl max-w-full mt-4 top-0 translate-y-0 max-h-[80vh]  md:max-h-[90vh] overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary",
