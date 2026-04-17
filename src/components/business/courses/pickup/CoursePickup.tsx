@@ -82,7 +82,7 @@ const CoursePickup = ({ open, setOpen, onSelect }: CoursePickupProps) => {
       setOpen={setOpen}
       title="Courses"
       description="Select a course from the list"
-      className="md:max-w-7xl max-w-screen max-h-[90vh] overflow-y-auto"
+      className="md:max-w-7xl max-w-screen max-h-[80vh] md:max-h-[90vh] overflow-y-auto"
       isPending={isLoading}
       showFooter={false}
     >

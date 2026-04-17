@@ -90,7 +90,7 @@ export function Toolbar<TData>({
 
         {/* ── Actions dropdown — disabled for multi-selection ── */}
         {!!actions?.length && (
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button
                 size="lg"

@@ -66,7 +66,7 @@ const UserPickup = ({ open, setOpen, onSelect }: UserPickupProps) => {
       setOpen={setOpen}
       title="Customers"
       description="Select a customer from the list"
-      className="md:max-w-7xl max-h-[90vh] overflow-y-auto"
+      className="md:max-w-7xl max-h-[80vh] md:max-h-[90vh] overflow-y-auto"
       isPending={isLoading}
       showFooter={false}
     >
