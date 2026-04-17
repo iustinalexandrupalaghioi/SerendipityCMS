@@ -67,7 +67,7 @@ const ServicePickup = ({ open, setOpen, onSelect }: ServicePickupProps) => {
       setOpen={setOpen}
       title="Active Services"
       description="Select a service from the list"
-      className="md:max-w-7xl max-w-screen max-h-[90vh] overflow-y-auto"
+      className="md:max-w-7xl max-w-screen max-h-[80vh] md:max-h-[90vh] overflow-y-auto"
       isPending={isLoading}
       showFooter={false}
     >
