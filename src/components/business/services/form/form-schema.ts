@@ -32,13 +32,7 @@ export const ServiceSchema = z.object({
     .min(1, `Price must be greater than 0`),
   advance_price: z
     .number({ message: `Advance price must be a number` })
-    .min(0, `Advance price must be greater than 0`),
-  fill_price: z
-    .number({ message: `Fill price must be a number` })
-    .min(1, `Fill price must be greater than 0`),
-  advance_fill_price: z
-    .number({ message: `Advance fill price must be a number` })
-    .min(0, `Advance fill price must be greater than 0`),
+    .min(1, `Advance price must be greater than 0`),
   duration: z
     .number({ message: `Duration must be a number` })
     .min(1, `Duration must be greater than 0`),

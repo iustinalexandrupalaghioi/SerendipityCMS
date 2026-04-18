@@ -70,7 +70,12 @@ export function PickupFormInput<T extends FieldValues>({
 
         return (
           <div className={cn("grid gap-2", className)}>
-            <div className="flex items-center">
+            <div
+              className={cn(
+                "flex items-center",
+                (error || hasError) && "text-destructive",
+              )}
+            >
               <Label htmlFor={id || name}>{label}</Label>
             </div>
             <div className="relative flex w-full items-center gap-2">
@@ -82,6 +87,8 @@ export function PickupFormInput<T extends FieldValues>({
                 className={cn(
                   type === "time" &&
                     "appearance-none pl-8 [&::-webkit-calendar-picker-indicator]:hidden",
+                  (error || hasError) &&
+                    "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
                 )}
                 placeholder={placeholder}
                 value={displayValue}

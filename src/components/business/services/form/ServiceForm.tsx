@@ -1,21 +1,26 @@
+import FileUpload from "@/components/partials/FileUpload";
+import PickupFormInput from "@/components/partials/PickupFormInput";
+import SectionCard from "@/components/partials/SectionCard";
 import {
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { YesNoSwitch } from "@/components/ui/yes-no-switch";
-
-import { useEffect, useState } from "react";
-
-import type { Control, FieldErrors, UseFormSetValue } from "react-hook-form";
-import type { ServiceFormValues } from "./form-schema";
 import useCategoryStore from "@/stores/CategoryStore";
-import LookupFormInput from "@/components/partials/LookupFormInput";
-import LookupCategoryDialog from "../../categories/list/PickupCategoryList";
-import FileUpload from "@/components/partials/FileUpload";
+import { useEffect, useState } from "react";
+import type {
+  Control,
+  FieldErrors,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
+import CategoryPickup from "../../categories/pickup/CategoryPickup";
+import type { ServiceFormValues } from "./form-schema";
 
 interface ServiceFormProps {
   control: Control<ServiceFormValues>;
@@ -23,6 +28,7 @@ interface ServiceFormProps {
   setValue: UseFormSetValue<ServiceFormValues>;
   mode: "Add" | "Update";
   existingImageUrl?: string;
+  watch: UseFormWatch<ServiceFormValues>;
 }
 
 const ServiceForm = ({
@@ -31,12 +37,12 @@ const ServiceForm = ({
   setValue,
   mode,
   existingImageUrl,
+  watch,
 }: ServiceFormProps) => {
   const { selectedCategory, setSelectedCategory } = useCategoryStore();
-
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
+  const price = watch("price");
 
-  /** When picking a category, update form value */
   useEffect(() => {
     if (selectedCategory) {
       setValue("category", selectedCategory, {
@@ -47,11 +53,20 @@ const ServiceForm = ({
     }
   }, [selectedCategory]);
 
+  useEffect(() => {
+    if (price) {
+      setValue("advance_price", Number(price) / 2, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [price]);
+
   return (
-    <div className="w-full flex flex-col gap-6">
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex-1 flex flex-col gap-6">
-          {/* ID (update only) */}
+    <div className="w-full py-2 space-y-4">
+      {/* ── General ── */}
+      <SectionCard title="General">
+        <div className="grid grid-cols-1 gap-6">
           {mode === "Update" && (
             <FormField
               control={control}
@@ -68,7 +83,6 @@ const ServiceForm = ({
             />
           )}
 
-          {/* Name */}
           <FormField
             control={control}
             name="title"
@@ -83,7 +97,41 @@ const ServiceForm = ({
             )}
           />
 
-          {/* Active + Popular */}
+          <FormField
+            control={control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Detailed description of the service"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage>{errors.description?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+
+          <PickupFormInput
+            displayKey="name"
+            control={control}
+            name="category"
+            label="Category"
+            placeholder="Select a category"
+            error={errors.category?.message}
+            setOpen={setOpenCategoryDialog}
+          />
+
+          {openCategoryDialog && (
+            <CategoryPickup
+              onSelect={setSelectedCategory}
+              open={openCategoryDialog}
+              setOpen={setOpenCategoryDialog}
+            />
+          )}
+
           <div className="flex gap-6">
             <FormField
               control={control}
@@ -118,134 +166,95 @@ const ServiceForm = ({
               )}
             />
           </div>
+        </div>
+      </SectionCard>
 
-          {/* Description (rich text placeholder keeps logic but uses Input for now) */}
+      {/* ── Pricing & Duration ── */}
+      <SectionCard title="Pricing & Duration">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-start">
           <FormField
             control={control}
-            name="description"
+            name="duration"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
+              <FormItem className="w-full">
+                <FormLabel>Duration (minutes)</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Detailed description of the service"
+                    type="number"
+                    placeholder="Duration"
                     {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
                   />
                 </FormControl>
-                <FormMessage>{errors.description?.message}</FormMessage>
+                {errors.duration && (
+                  <div className="min-h-5">
+                    <FormMessage>{errors.duration?.message}</FormMessage>
+                  </div>
+                )}
               </FormItem>
             )}
           />
 
-          {/* Category Picker */}
           <FormField
             control={control}
-            name="category"
+            name="price"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Service Category</FormLabel>
+              <FormItem className="w-full">
+                <FormLabel>Price (EUR)</FormLabel>
                 <FormControl>
-                  <LookupFormInput
-                    control={control}
-                    displayKey="name"
-                    name="category"
-                    placeholder="Choose category"
-                    value={field.value}
-                    setOpen={setOpenCategoryDialog}
+                  <Input
+                    type="number"
+                    placeholder="Price"
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
                   />
                 </FormControl>
-                <FormMessage>{errors.category?.message}</FormMessage>
+                {errors.price && (
+                  <div className="min-h-5">
+                    <FormMessage>{errors.price?.message}</FormMessage>
+                  </div>
+                )}
               </FormItem>
             )}
           />
 
-          {openCategoryDialog && (
-            <LookupCategoryDialog
-              open={openCategoryDialog}
-              setOpen={setOpenCategoryDialog}
-            />
-          )}
+          <FormField
+            control={control}
+            name="advance_price"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Advance price (EUR)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="Advance price"
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
+                </FormControl>
+                {errors.advance_price && (
+                  <div className="min-h-5">
+                    <FormMessage>{errors.advance_price?.message}</FormMessage>
+                  </div>
+                )}
+              </FormItem>
+            )}
+          />
+        </div>
+      </SectionCard>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-start w-full">
-            <FormField
-              control={control}
-              name="duration"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Duration (minutes)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Duration"
-                      {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  {errors.duration ? (
-                    <FormMessage>{errors.duration?.message}</FormMessage>
-                  ) : errors.fill_price || errors.price ? (
-                    "\u00A0"
-                  ) : null}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="price"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Price (EUR)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Price"
-                      {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  {errors.price ? (
-                    <FormMessage>{errors.price?.message}</FormMessage>
-                  ) : errors.fill_price || errors.duration ? (
-                    "\u00A0"
-                  ) : null}
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="fill_price"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Fill price (EUR)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Fill price"
-                      {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  {errors.fill_price ? (
-                    <FormMessage>{errors.fill_price?.message}</FormMessage>
-                  ) : errors.price || errors.duration ? (
-                    "\u00A0"
-                  ) : null}
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Image Upload */}
+      {/* ── Service image ── */}
+      <SectionCard title="Service image">
+        <div className="grid grid-cols-1 gap-6">
           <FormField
             control={control}
             name="image"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Service image</FormLabel>
+                <FormLabel>Upload image</FormLabel>
                 <FormControl>
                   <FileUpload
                     type="file"
@@ -261,20 +270,19 @@ const ServiceForm = ({
               </FormItem>
             )}
           />
-        </div>
 
-        {/* Preview image */}
-        {existingImageUrl && (
-          <div className="flex flex-col gap-2 pt-6">
-            <img
-              src={existingImageUrl}
-              alt="Current service image"
-              className="h-36 w-full rounded-md border object-cover shadow-sm"
-            />
-            <p className="text-sm text-muted-foreground">Current image</p>
-          </div>
-        )}
-      </div>
+          {existingImageUrl && (
+            <div className="flex flex-col gap-2">
+              <img
+                src={existingImageUrl}
+                alt="Current service image"
+                className="h-36 w-auto rounded-md border object-cover shadow-sm"
+              />
+              <p className="text-sm text-muted-foreground">Current image</p>
+            </div>
+          )}
+        </div>
+      </SectionCard>
     </div>
   );
 };

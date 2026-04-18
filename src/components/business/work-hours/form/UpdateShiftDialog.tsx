@@ -1,19 +1,18 @@
-import { useEffect, type Dispatch, type SetStateAction } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import UpdateDialog from "@/components/partials/dialog/UpdateDialog";
-import ShiftForm from "../form/ShiftForm";
-import { shiftSchema, type ShiftFormValues } from "../form/form-schema";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { formatTime } from "@/lib/utils";
 import type { Shift } from "@/types/Shift";
 import { Loader2Icon } from "lucide-react";
-import { formatTime } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
+import ShiftForm from "../form/ShiftForm";
+import { shiftSchema, type ShiftFormValues } from "../form/form-schema";
 
 interface UpdateShiftDialogProps {
   shift: Shift;
@@ -91,13 +90,13 @@ export function UpdateShiftDialog({
     },
 
     onSuccess: () => {
-      toast.success("Shift updated successfully!");
+      toast.success("Business hours updated successfully!");
       queryClient.refetchQueries({ queryKey: ["shifts"] });
       setOpen(false);
     },
 
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update shift.");
+      toast.error(error.message || "Failed to update business hours.");
     },
   });
 
@@ -109,14 +108,12 @@ export function UpdateShiftDialog({
     <UpdateDialog
       open={open}
       setOpen={setOpen}
-      title="Update Shift"
-      description="Modify the selected shift."
+      title="Business hours"
+      description="Modify the selected business hours entry."
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <ShiftForm control={form.control} mode="Update" />
-          </Card>
+          <ShiftForm control={form.control} mode="Update" />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button

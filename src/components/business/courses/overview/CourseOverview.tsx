@@ -179,12 +179,12 @@ const CoursesOverview = () => {
           open={!!deletingCourse}
           setOpen={(open) => !open && setDeletingCourse(null)}
           id={deletingCourse.id}
-          title="Delete Course"
+          title="Delete course"
           target="course"
           queryKeys={[QUERY_KEY]}
           confirmationMessage={
             <>
-              You're about to delete{" "}
+              You're about to delete the course{" "}
               <span className="font-semibold">"{deletingCourse.title}"</span>.
               <br />
               Once deleted, the data cannot be recovered.

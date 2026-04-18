@@ -13,7 +13,6 @@ import ServiceForm from "../form/ServiceForm";
 import { ServiceSchema, type ServiceFormValues } from "../form/form-schema";
 
 import type { Service } from "@/types/Service";
-import { Card } from "@/components/ui/card";
 
 interface UpdateServiceDialogProps {
   service: Service;
@@ -37,8 +36,6 @@ export function UpdateServiceDialog({
       duration: service.duration,
       price: service.price,
       advance_price: service.advance_price,
-      fill_price: service.fill_price,
-      advance_fill_price: service.advance_fill_price,
       category: service.category,
       is_active: service.is_active,
       is_popular: service.is_popular,
@@ -55,8 +52,6 @@ export function UpdateServiceDialog({
         duration: service.duration,
         price: service.price,
         advance_price: service.advance_price,
-        fill_price: service.fill_price,
-        advance_fill_price: service.advance_fill_price,
         category: service.category,
         is_active: service.is_active,
         is_popular: service.is_popular,
@@ -99,9 +94,7 @@ export function UpdateServiceDialog({
           description: values.description,
           duration: Number(values.duration),
           price: Number(values.price),
-          advance_price: Number(values.price / 2),
-          fill_price: Number(values.fill_price),
-          advance_fill_price: Number(values.fill_price / 2),
+          advance_price: Number(values.advance_price),
           is_active: values.is_active,
           is_popular: values.is_popular,
           category_id: values.category?.id,
@@ -137,19 +130,18 @@ export function UpdateServiceDialog({
       setOpen={setOpen}
       title={service.title}
       description="Update the details of the service below."
-      className="md:max-w-6xl"
+      className="md:max-w-lg"
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <ServiceForm
-              mode="Update"
-              control={form.control}
-              errors={form.formState.errors}
-              setValue={form.setValue}
-              existingImageUrl={service.image_public_url}
-            />
-          </Card>
+          <ServiceForm
+            mode="Update"
+            control={form.control}
+            errors={form.formState.errors}
+            setValue={form.setValue}
+            watch={form.watch}
+            existingImageUrl={service.image_public_url}
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button

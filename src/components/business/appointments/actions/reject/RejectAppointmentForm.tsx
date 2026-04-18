@@ -26,12 +26,12 @@ const RejectAppointmentForm = ({
   errors,
 }: RejectAppointmentFormProps) => {
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-10">
-      {/* ================= Appointment Details ================= */}
-      <SectionCard title="Appointment details">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="w-full max-w-5xl mx-auto py-2 space-y-4">
+      {/* ── Appointment details ── */}
+
+      <SectionCard title="Customer">
+        <div className="grid grid-cols-1 gap-6">
           <FormField
-            control={control}
             name="name"
             render={({ field }) => (
               <FormItem>
@@ -49,7 +49,6 @@ const RejectAppointmentForm = ({
           />
 
           <FormField
-            control={control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -65,7 +64,11 @@ const RejectAppointmentForm = ({
               </FormItem>
             )}
           />
+        </div>
+      </SectionCard>
 
+      <SectionCard title="Appointment details">
+        <div className="grid grid-cols-1 gap-6">
           <PickupFormInput
             disabled
             displayKey="title"
@@ -135,9 +138,9 @@ const RejectAppointmentForm = ({
         </div>
       </SectionCard>
 
-      {/* ================= Pricing ================= */}
+      {/* ── Pricing ── */}
       <SectionCard title="Pricing">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <FormField
             control={control}
             name="price"
@@ -190,7 +193,7 @@ const RejectAppointmentForm = ({
         </div>
       </SectionCard>
 
-      {/* ================= Customer Notes ================= */}
+      {/* ── Customer notes ── */}
       <SectionCard title="Customer notes">
         <FormField
           control={control}

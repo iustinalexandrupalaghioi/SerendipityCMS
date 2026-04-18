@@ -11,7 +11,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import CategoryForm from "../form/CategoryForm";
 import { categorySchema, type CategoryFormValues } from "../form/form-schema";
-import { Card } from "@/components/ui/card";
 
 interface UpdateCategoryDialogProps {
   category: Category;
@@ -88,13 +87,11 @@ export function UpdateCategoryDialog({
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <CategoryForm
-              control={form.control}
-              errors={form.formState.errors}
-              mode="Update"
-            />
-          </Card>
+          <CategoryForm
+            control={form.control}
+            errors={form.formState.errors}
+            mode="Update"
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button

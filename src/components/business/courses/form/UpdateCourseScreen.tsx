@@ -22,7 +22,6 @@ import { toast } from "sonner";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
-import { Card } from "@/components/ui/card";
 import { CollapsibleContent } from "@/components/ui/collapsible";
 import {
   DropdownMenu,
@@ -208,17 +207,15 @@ const UpdateCourseScreen = () => {
         </p>
         <Form {...form}>
           <CollapsibleContent>
-            <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-              <CourseForm
-                fileInputKey={fileInputKey}
-                mode="Update"
-                control={form.control}
-                errors={form.formState.errors}
-                setValue={form.setValue}
-                initialDate={course.start_date}
-                existingImageUrl={existingImageUrl}
-              />
-            </Card>
+            <CourseForm
+              fileInputKey={fileInputKey}
+              mode="Update"
+              control={form.control}
+              errors={form.formState.errors}
+              setValue={form.setValue}
+              initialDate={course.start_date}
+              existingImageUrl={existingImageUrl}
+            />
           </CollapsibleContent>
         </Form>
 

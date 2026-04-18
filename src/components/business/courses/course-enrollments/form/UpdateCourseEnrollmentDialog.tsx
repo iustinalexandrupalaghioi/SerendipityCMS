@@ -12,7 +12,6 @@ import { DialogClose } from "@/components/ui/dialog";
 import type { Enrollment } from "@/types/Course";
 import CourseEnrollmentForm from "./CourseEnrollmentForm";
 import { EnrollmentSchema, type EnrollmentFormValues } from "./form-schema";
-import { Card } from "@/components/ui/card";
 
 interface UpdateCourseEnrollmentDialogProps {
   enrollment: Enrollment;
@@ -63,13 +62,13 @@ export function UpdateCourseEnrollmentDialog({
     },
 
     onSuccess: () => {
-      toast.success("Enrollment updated successfully!");
+      toast.success("Course enrollment updated successfully!");
       queryClient.refetchQueries({ queryKey: ["course_enrollments"] });
       setOpen(false);
     },
 
     onError: (error: any) => {
-      toast.error(error.message || "Failed to update enrollment.");
+      toast.error(error.message || "Failed to update course enrollment.");
     },
   });
 
@@ -87,16 +86,14 @@ export function UpdateCourseEnrollmentDialog({
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto">
-            <CourseEnrollmentForm
-              enrollment={enrollment}
-              mode="Update"
-              control={control}
-              errors={formState.errors}
-              watch={watch}
-              setValue={setValue}
-            />
-          </Card>
+          <CourseEnrollmentForm
+            enrollment={enrollment}
+            mode="Update"
+            control={control}
+            errors={formState.errors}
+            watch={watch}
+            setValue={setValue}
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <DialogClose asChild className="flex-1">

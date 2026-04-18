@@ -110,7 +110,7 @@ const CourseDayActivitiesOverview = ({
           open={!!deletingActivity}
           setOpen={(open) => !open && setDeletingActivity(null)}
           id={deletingActivity.id}
-          title="Delete Activity"
+          title="Delete activity"
           target="course_day_activity"
           queryKeys={[["course-days"], ["course-day", courseDay.id]]}
           confirmationMessage={

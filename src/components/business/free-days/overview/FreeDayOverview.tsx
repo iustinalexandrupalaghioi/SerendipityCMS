@@ -17,6 +17,7 @@ import {
 import { useFreeDays, QUERY_KEY } from "./useFreeDays";
 import { AddFreeDayDialog } from "../form/AddFreeDayDialog";
 import { UpdateFreeDayDialog } from "../form/UpdateFreeDaydialog";
+import { format } from "date-fns";
 
 export const FREE_DAYS_OVERVIEW_KEY = "free-days-overview";
 
@@ -117,18 +118,18 @@ const FreeDayOverview = () => {
           open={!!deletingFreeDay}
           setOpen={(open) => !open && setDeletingFreeDay(null)}
           id={deletingFreeDay.id}
-          title="Delete Free Day"
+          title="Delete free days entry"
           target="free_day"
           queryKeys={[QUERY_KEY]}
           confirmationMessage={
             <>
-              You're about to delete free day from{" "}
+              You're about to delete free days entry from{" "}
               <span className="font-semibold">
-                "{deletingFreeDay.date_from}"
+                "{format(new Date(deletingFreeDay.date_from), "dd-MM-yyyy")}"
               </span>{" "}
               until{" "}
               <span className="font-semibold">
-                "{deletingFreeDay.date_until}"
+                "{format(new Date(deletingFreeDay.date_until), "dd-MM-yyyy")}"
               </span>
               .
               <br />

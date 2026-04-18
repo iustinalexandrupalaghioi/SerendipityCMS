@@ -9,13 +9,12 @@ import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import type { CourseDay, CourseDayActivity } from "@/types/Course";
 import CourseDayActivityForm from "./CourseDayActivityForm";
 import {
   CourseDayActivitySchema,
   type CourseDayActivityFormValues,
 } from "./form-schema";
-import type { CourseDay, CourseDayActivity } from "@/types/Course";
-import { Card } from "@/components/ui/card";
 
 interface UpdateCourseDayActivityDialogProps {
   activity: CourseDayActivity;
@@ -91,17 +90,15 @@ export function UpdateCourseDayActivityDialog({
       setOpen={setOpen}
       title={activity.activity}
       description="Update the details of the course day activity below."
-      className="md:max-w-4xl"
+      className="md:max-w-lg"
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <CourseDayActivityForm
-              mode="Update"
-              control={form.control}
-              errors={form.formState.errors}
-            />
-          </Card>
+          <CourseDayActivityForm
+            mode="Update"
+            control={form.control}
+            errors={form.formState.errors}
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button

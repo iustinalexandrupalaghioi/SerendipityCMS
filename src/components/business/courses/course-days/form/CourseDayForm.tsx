@@ -64,25 +64,6 @@ const CourseDayForm = ({
 
           <FormField
             control={control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Course day title"
-                    disabled={disableEdit}
-                    {...field}
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-                <FormMessage>{errors.title?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
             name="day_number"
             render={({ field }) => (
               <FormItem>
@@ -98,6 +79,25 @@ const CourseDayForm = ({
                   />
                 </FormControl>
                 <FormMessage>{errors.day_number?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Course day title"
+                    disabled={disableEdit}
+                    {...field}
+                    value={field.value ?? ""}
+                  />
+                </FormControl>
+                <FormMessage>{errors.title?.message}</FormMessage>
               </FormItem>
             )}
           />

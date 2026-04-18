@@ -48,6 +48,7 @@ const AppointmentForm = ({
   const duration = watch("duration");
   const appointmentId = watch("id");
   const date = watch("date");
+  const user = watch("user");
 
   const [disabledNameEmail, setDisabledNameEmail] =
     useState<boolean>(!!appointmentId);
@@ -115,13 +116,13 @@ const AppointmentForm = ({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 space-y-4">
+    <div className="w-full py-2 space-y-4">
       {/* ── Customer ── */}
       <SectionCard title="Customer">
         <div className="grid grid-cols-1 gap-6">
           <PickupFormInput
             disabled={disabled || mode === "Approve"}
-            displayKey="email"
+            displayKey="full_name"
             control={control}
             name="user"
             label="Customer"
@@ -135,25 +136,26 @@ const AppointmentForm = ({
             setOpen={setUserPickupOpen}
           />
 
-          <FormField
-            control={control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Full name</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="e.g. John Doe"
-                    disabled={disabled || disabledNameEmail}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage>{errors.name?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
+          {!user && (
+            <FormField
+              control={control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="e.g. John Doe"
+                      disabled={disabled || disabledNameEmail}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage>{errors.name?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={control}
             name="email"
@@ -240,6 +242,7 @@ const AppointmentForm = ({
                 isLoading={isLoading}
                 error={error}
                 disabled={!duration || !date || disabled}
+                formError={errors.start_time?.message}
               />
             )}
           />
@@ -262,6 +265,7 @@ const AppointmentForm = ({
                       className="pr-12"
                       placeholder="e.g. 49.99"
                       disabled={disabled}
+                      aria-invalid={!!errors.price}
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
@@ -288,6 +292,7 @@ const AppointmentForm = ({
                       className="pr-12"
                       placeholder="e.g. 49.99"
                       disabled={disabled}
+                      aria-invalid={!!errors.advance_payment}
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />

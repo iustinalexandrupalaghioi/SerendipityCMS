@@ -8,12 +8,11 @@ import { toast } from "sonner";
 import UpdateDialog from "@/components/partials/dialog/UpdateDialog";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useAuth } from "@/contexts/AuthContext";
 import type { Profile } from "@/types/User";
 import { Loader2Icon } from "lucide-react";
 import { userProfileSchema, type UserProfileFormValues } from "./form-schema";
 import UserProfileForm from "./UserProfileForm";
-import { useAuth } from "@/contexts/AuthContext";
-import { Card } from "@/components/ui/card";
 
 interface UpdateUserProfileDialogProps {
   userProfile: Profile;
@@ -89,18 +88,16 @@ export function UpdateUserProfileDialog({
     <UpdateDialog
       open={open}
       setOpen={setOpen}
-      title="Update User Profile"
+      title={user?.user_metadata.full_name ?? "User profile"}
       description="Modify the selected user profile."
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <UserProfileForm
-              disabled={userProfile.id === user?.id}
-              control={form.control}
-              mode="Update"
-            />
-          </Card>
+          <UserProfileForm
+            disabled={userProfile.id === user?.id}
+            control={form.control}
+            mode="Update"
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button

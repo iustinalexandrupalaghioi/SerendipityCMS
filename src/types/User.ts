@@ -32,5 +32,6 @@ export type Profile = {
   created_at: string;
   first_name: string;
   last_name: string;
+  full_name: string;
   date_of_birth: string;
 };

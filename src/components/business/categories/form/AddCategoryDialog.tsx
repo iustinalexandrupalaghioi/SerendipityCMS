@@ -1,6 +1,5 @@
 import AddDialog from "@/components/partials/dialog/AddDialog";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,18 +65,16 @@ export function AddCategoryDialog({ open, setOpen }: AddCatecoryDialogProps) {
       showTrigger={false}
       open={open}
       setOpen={setOpen}
-      title="Add Category"
+      title="Category"
       description="Create a new service category."
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <CategoryForm
-              control={form.control}
-              errors={form.formState.errors}
-              mode="Add"
-            />
-          </Card>
+          <CategoryForm
+            control={form.control}
+            errors={form.formState.errors}
+            mode="Add"
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button
