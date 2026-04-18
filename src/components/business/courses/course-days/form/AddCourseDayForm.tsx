@@ -2,7 +2,6 @@ import Breadcrumb from "@/components/partials/Breadcrumb";
 import DetailsScreen from "@/components/partials/DetailsScreen";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { CollapsibleContent } from "@/components/ui/collapsible";
 import { Form } from "@/components/ui/form";
 import { useCourse } from "@/hooks/useCourses";
@@ -28,8 +27,8 @@ const AddCourseDayScreen = () => {
     { path: "/", label: "Home" },
     { path: "/courses", label: "Courses" },
     { path: `/courses/update/${courseId}`, label: course?.title || "Course" },
-    { label: "Course Days" },
-    { label: "Add Course Day" },
+    { label: "Course days" },
+    { label: "Add course day" },
   ];
 
   const form = useForm<CourseDayFormValues>({
@@ -132,13 +131,11 @@ const AddCourseDayScreen = () => {
         </p>
         <Form {...form}>
           <CollapsibleContent>
-            <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-              <CourseDayForm
-                mode="Add"
-                control={control}
-                errors={formState.errors}
-              />
-            </Card>
+            <CourseDayForm
+              mode="Add"
+              control={control}
+              errors={formState.errors}
+            />
           </CollapsibleContent>
         </Form>
       </DetailsScreen>

@@ -75,7 +75,7 @@ const ShiftOverview = () => {
 
       <DataTable
         isLoading={isLoading}
-        defaultViewName="Shifts"
+        defaultViewName="Business hours"
         tableId={SHIFTS_OVERVIEW_KEY}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}
@@ -106,14 +106,17 @@ const ShiftOverview = () => {
           open={!!deletingShift}
           setOpen={(o) => !o && setDeletingShift(null)}
           id={deletingShift.id}
-          title="Delete Shift"
+          title="Delete business hours entry"
           target="shift"
           queryKeys={[QUERY_KEY]}
           confirmationMessage={
             <>
-              You're about to delete shift{" "}
+              You're about to delete business hours entry from{" "}
               <span className="font-semibold">
-                {deletingShift.day_start_time.slice(0, 5)} -{" "}
+                {deletingShift.day_start_time.slice(0, 5)}
+              </span>
+              {" to "}
+              <span className="font-semibold">
                 {deletingShift.day_end_time.slice(0, 5)}
               </span>
               .

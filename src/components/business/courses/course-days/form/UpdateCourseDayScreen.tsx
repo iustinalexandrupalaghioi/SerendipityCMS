@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
-import { Card } from "@/components/ui/card";
 import { CollapsibleContent } from "@/components/ui/collapsible";
 import Loader from "@/components/ui/loader";
 import { useCourseDay } from "@/hooks/useCourses";
@@ -37,8 +36,8 @@ const UpdateCourseDayScreen = () => {
       path: `/courses/update/${courseDay?.course?.id}`,
       label: courseDay?.course?.title || "Course",
     },
-    { label: "Course Days" },
-    { label: courseDay?.title ?? "Update Course Day" },
+    { label: "Course days" },
+    { label: courseDay?.title ?? "Update course day" },
   ];
 
   const form = useForm<CourseDayFormValues>({
@@ -161,14 +160,12 @@ const UpdateCourseDayScreen = () => {
         </p>
         <Form {...form}>
           <CollapsibleContent>
-            <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-              <CourseDayForm
-                mode="Update"
-                control={form.control}
-                errors={form.formState.errors}
-                existingImageUrl={existingImageUrl}
-              />
-            </Card>
+            <CourseDayForm
+              mode="Update"
+              control={form.control}
+              errors={form.formState.errors}
+              existingImageUrl={existingImageUrl}
+            />
           </CollapsibleContent>
         </Form>
 
@@ -176,7 +173,7 @@ const UpdateCourseDayScreen = () => {
       </DetailsScreen>
 
       <DeleteDialog
-        title="Delete Course Day"
+        title="Delete course day"
         confirmationMessage={
           <>
             You're about to delete{" "}

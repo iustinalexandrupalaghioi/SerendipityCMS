@@ -5,13 +5,13 @@ import { supabase } from "@/lib/supabaseClient";
 import type { FreeDay } from "@/types/FreeDay";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { freeDaySchema, type FreeDayFormValues } from "./form-schema";
 import FreeDayForm from "./FreeDayForm";
-import { Card } from "@/components/ui/card";
 
 interface UpdateFreeDayDialogProps {
   freeDay: FreeDay;
@@ -82,18 +82,21 @@ export function UpdateFreeDayDialog({
     <UpdateDialog
       open={open}
       setOpen={setOpen}
-      title={freeDay.date_from + " to " + freeDay.date_until}
-      description="Update the existing service FreeDay below."
+      title={
+        "Free days from " +
+        format(new Date(freeDay.date_from), "dd-MM-yyyy") +
+        " to " +
+        format(new Date(freeDay.date_until), "dd-MM-yyyy")
+      }
+      description="Update the existing free days entry"
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <FreeDayForm
-              control={form.control}
-              errors={form.formState.errors}
-              mode="Update"
-            />
-          </Card>
+          <FreeDayForm
+            control={form.control}
+            errors={form.formState.errors}
+            mode="Update"
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button

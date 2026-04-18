@@ -1,10 +1,13 @@
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import DetailsScreen from "@/components/partials/DetailsScreen";
+import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { Button } from "@/components/ui/button";
+import { CollapsibleContent } from "@/components/ui/collapsible";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { ChevronLeftIcon, Loader2Icon, SaveIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -12,10 +15,6 @@ import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import CourseForm from "./CourseForm";
 import { CourseSchema, type CourseFormValues } from "./form-schema";
-import { CollapsibleContent } from "@/components/ui/collapsible";
-import { format } from "date-fns";
-import { Card } from "@/components/ui/card";
-import ToolbarActions from "@/components/toolbar/ToolbarActions";
 
 const AddCourseScreen = () => {
   const [open, setOpen] = useState(true);
@@ -25,7 +24,7 @@ const AddCourseScreen = () => {
   const breadcrumbItems = [
     { path: "/", label: "Home" },
     { path: "/courses", label: "Courses" },
-    { label: "Add Course" },
+    { label: "Add course" },
   ];
 
   const form = useForm<CourseFormValues>({
@@ -142,14 +141,12 @@ const AddCourseScreen = () => {
         </p>
         <Form {...form}>
           <CollapsibleContent>
-            <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-              <CourseForm
-                mode="Add"
-                control={control}
-                errors={formState.errors}
-                setValue={setValue}
-              />
-            </Card>
+            <CourseForm
+              mode="Add"
+              control={control}
+              errors={formState.errors}
+              setValue={setValue}
+            />
           </CollapsibleContent>
         </Form>
       </DetailsScreen>

@@ -1,5 +1,6 @@
 import FileUpload from "@/components/partials/FileUpload";
 import { FormCalendar } from "@/components/partials/FormCalendar";
+import SectionCard from "@/components/partials/SectionCard";
 import {
   FormControl,
   FormField,
@@ -33,7 +34,7 @@ interface CourseFormProps {
   errors: FieldErrors<CourseFormValues>;
   mode: "Add" | "Update" | "Details";
   setValue: UseFormSetValue<CourseFormValues>;
-  fileInputKey?: number; // Added to reset file input
+  fileInputKey?: number;
   existingImageUrl?: string;
   initialDate?: string;
   disabled?: boolean;
@@ -49,18 +50,13 @@ const CourseForm = ({
   initialDate,
   disabled = false,
 }: CourseFormProps) => {
-  /* =====================
-     MODE RULES (SINGLE SOURCE OF TRUTH)
-  ====================== */
   const isAdd = mode === "Add";
   const isUpdate = mode === "Update";
   const isDetails = mode === "Details";
 
   const disableEdit = disabled || isDetails;
   const disableOnUpdate = disabled || isUpdate || isDetails;
-  /* =====================
-     DATE HANDLING
-  ====================== */
+
   const [date, setDate] = useState<string>(
     initialDate
       ? format(new Date(initialDate), "yyyy-MM-dd")
@@ -68,25 +64,14 @@ const CourseForm = ({
   );
 
   useEffect(() => {
-    if (initialDate) {
-      setDate(format(new Date(initialDate), "yyyy-MM-dd"));
-    }
+    if (initialDate) setDate(format(new Date(initialDate), "yyyy-MM-dd"));
   }, [initialDate]);
 
   useEffect(() => {
-    setValue("start_date", date, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
+    setValue("start_date", date, { shouldDirty: true, shouldValidate: true });
   }, [date, setValue]);
 
-  /* =====================
-     AVAILABLE → REMAINING
-  ====================== */
-  const availableSpots = useWatch({
-    control,
-    name: "available_spots",
-  });
+  const availableSpots = useWatch({ control, name: "available_spots" });
 
   useEffect(() => {
     if (isAdd && typeof availableSpots === "number") {
@@ -98,11 +83,10 @@ const CourseForm = ({
   }, [availableSpots, isAdd, setValue]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 w-full">
-      {/* ================= LEFT FORM ================= */}
-      <div className="lg:col-span-4 flex flex-col gap-8">
-        {/* BASIC INFO */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="w-full  grid grid-cols-1 md:grid-cols-2 gap-4 space-y-4">
+      {/* ── General ── */}
+      <SectionCard title="General">
+        <div className="grid grid-cols-1 gap-6">
           <FormField
             control={control}
             name="title"
@@ -128,7 +112,6 @@ const CourseForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Course Level</FormLabel>
-
                 <Select
                   key={field.value}
                   value={field.value}
@@ -141,22 +124,18 @@ const CourseForm = ({
                         "w-full",
                         "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
                         "data-[state=open]:border-ring data-[state=open]:ring-ring/50 data-[state=open]:ring-[3px]",
-                        "aria-invalid:border-destructive",
-                        "aria-invalid:ring-destructive/20",
-                        "dark:aria-invalid:ring-destructive/40",
+                        "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
                       )}
                     >
                       <SelectValue placeholder="Select level" />
                     </SelectTrigger>
                   </FormControl>
-
                   <SelectContent>
                     <SelectItem value="beginner">Beginner</SelectItem>
                     <SelectItem value="intermediate">Intermediate</SelectItem>
                     <SelectItem value="advanced">Advanced</SelectItem>
                   </SelectContent>
                 </Select>
-
                 <FormMessage>{errors.level?.message}</FormMessage>
               </FormItem>
             )}
@@ -180,17 +159,12 @@ const CourseForm = ({
               </FormItem>
             )}
           />
-        </div>
 
-        {/* DESCRIPTION */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <FormField
             control={control}
             name="description"
             render={({ field }) => (
-              <FormItem
-                className={cn(isAdd ? "md:col-span-2" : "md:col-span-3")}
-              >
+              <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
@@ -205,15 +179,40 @@ const CourseForm = ({
             )}
           />
         </div>
+      </SectionCard>
 
-        {/* DATE & CAPACITY */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {/* ── Schedule & Capacity ── */}
+      <SectionCard title="Schedule & Capacity">
+        <div className="grid grid-cols-1 gap-6">
           <FormCalendar
             disabled={disableOnUpdate}
             value={date}
             label="Start date"
             onChange={setDate}
           />
+
+          {(isUpdate || isDetails) && (
+            <FormField
+              control={control}
+              name="duration_days"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Duration (days)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Duration in days"
+                      disabled={disableOnUpdate}
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage>{errors.duration_days?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={control}
@@ -276,32 +275,11 @@ const CourseForm = ({
             )}
           />
         </div>
+      </SectionCard>
 
-        {/* PRICING */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {(isUpdate || isDetails) && (
-            <FormField
-              control={control}
-              name="duration_days"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Duration (days)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Duration in days"
-                      disabled={disableOnUpdate}
-                      {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.duration_days?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-          )}
-
+      {/* ── Pricing ── */}
+      <SectionCard title="Pricing">
+        <div className="grid grid-cols-1 gap-6">
           <FormField
             control={control}
             name="price"
@@ -313,6 +291,7 @@ const CourseForm = ({
                     type="number"
                     placeholder="Full price"
                     disabled={disableOnUpdate}
+                    aria-invalid={!!errors.price}
                     {...field}
                     value={field.value ?? ""}
                     onChange={(e) => field.onChange(Number(e.target.value))}
@@ -334,6 +313,7 @@ const CourseForm = ({
                     type="number"
                     placeholder="Advance payment amount"
                     disabled={disableOnUpdate}
+                    aria-invalid={!!errors.advance_price}
                     {...field}
                     value={field.value ?? ""}
                     onChange={(e) => field.onChange(Number(e.target.value))}
@@ -344,42 +324,45 @@ const CourseForm = ({
             )}
           />
         </div>
+      </SectionCard>
 
-        {/* IMAGE UPLOAD */}
-        <FormField
-          control={control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Course image</FormLabel>
-              <FormControl>
-                <FileUpload
-                  key={fileInputKey}
-                  disabled={disableEdit}
-                  label="Upload a course image"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    field.onChange(file);
-                  }}
-                />
-              </FormControl>
-              <FormMessage>{errors.image?.message}</FormMessage>
-            </FormItem>
-          )}
-        />
-      </div>
-
-      {/* ================= RIGHT IMAGE PREVIEW ================= */}
-      {existingImageUrl && (
-        <div className="lg:col-span-1 self-start">
-          <img
-            src={existingImageUrl}
-            alt="Current course"
-            className="h-40 w-full rounded-md border object-cover"
+      {/* ── Course image ── */}
+      <SectionCard title="Course image">
+        <div className="grid grid-cols-1 gap-6">
+          <FormField
+            control={control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Upload image</FormLabel>
+                <FormControl>
+                  <FileUpload
+                    key={fileInputKey}
+                    disabled={disableEdit}
+                    label="Upload a course image"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      field.onChange(file);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage>{errors.image?.message}</FormMessage>
+              </FormItem>
+            )}
           />
-          <p className="text-sm text-muted-foreground mt-1">Current image</p>
+
+          {existingImageUrl && (
+            <div className="flex flex-col gap-2">
+              <img
+                src={existingImageUrl}
+                alt="Current course"
+                className="h-36 w-auto rounded-md border object-cover shadow-sm"
+              />
+              <p className="text-sm text-muted-foreground">Current image</p>
+            </div>
+          )}
         </div>
-      )}
+      </SectionCard>
     </div>
   );
 };

@@ -12,7 +12,6 @@ import { supabase } from "@/lib/supabaseClient";
 import type { Appointment } from "@/types/Appointment";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
-import { Card } from "@/components/ui/card";
 import UpdateAndApproveForm from "./UpdateAndApproveForm";
 
 interface UpdateAndApproveDialogProps {
@@ -105,20 +104,19 @@ const UpdateAndApproveDialog = ({
     <UpdateDialog
       open={open}
       setOpen={setOpen}
-      title="Appointment"
+      title="Update and approve appointment"
       description="Update appointment details and approve."
-      className="md:max-w-4xl"
+      className="md:max-w-lg"
+      disableUpdate
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto">
-            <UpdateAndApproveForm
-              setValue={form.setValue}
-              watch={form.watch}
-              control={form.control}
-              errors={form.formState.errors}
-            />
-          </Card>
+          <UpdateAndApproveForm
+            setValue={form.setValue}
+            watch={form.watch}
+            control={form.control}
+            errors={form.formState.errors}
+          />
 
           <div className="flex flex-col md:flex-row-reverse gap-2 pt-4">
             <Button type="submit" className="flex-1">

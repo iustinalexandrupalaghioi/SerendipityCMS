@@ -1,9 +1,7 @@
 import AddDialog from "@/components/partials/dialog/AddDialog";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
-import type { Category } from "@/types/Category";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
@@ -27,16 +25,14 @@ const AddServiceDialog = ({ open, setOpen }: AddServiceDialogProps) => {
       description: "",
       price: 0,
       advance_price: 0,
-      fill_price: 0,
-      advance_fill_price: 0,
       duration: 0,
-      category: {} as Category,
+      category: undefined,
       is_active: true,
       is_popular: false,
     },
   });
 
-  const { control, setValue, handleSubmit, formState, reset } = form;
+  const { control, setValue, handleSubmit, formState, reset, watch } = form;
 
   useEffect(() => {
     if (!open) reset();
@@ -77,9 +73,7 @@ const AddServiceDialog = ({ open, setOpen }: AddServiceDialogProps) => {
           description: values.description,
           duration: Number(values.duration),
           price: Number(values.price),
-          advance_price: Number(values.price / 2),
-          fill_price: Number(values.fill_price),
-          advance_fill_price: Number(values.fill_price / 2),
+          advance_price: Number(values.advance_price),
           is_active: values.is_active,
           is_popular: values.is_popular,
           category_id: values.category?.id,
@@ -110,20 +104,19 @@ const AddServiceDialog = ({ open, setOpen }: AddServiceDialogProps) => {
     <AddDialog
       open={open}
       setOpen={setOpen}
-      title="Add Service"
+      title="Service"
       description="Fill in the details to create a new service."
       showTrigger={false}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <ServiceForm
-              mode="Add"
-              control={control}
-              errors={formState.errors}
-              setValue={setValue}
-            />
-          </Card>
+          <ServiceForm
+            mode="Add"
+            control={control}
+            errors={formState.errors}
+            setValue={setValue}
+            watch={watch}
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button

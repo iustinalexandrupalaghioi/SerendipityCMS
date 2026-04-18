@@ -71,15 +71,13 @@ export function createPickupUserColumns(
     },
     {
       id: "full_name",
-      accessorFn: (user) => `${user.first_name} ${user.last_name}`,
+      accessorKey: "full_name",
       header: undefined,
       meta: {
         columnName: "Name",
         columnType: "text",
       },
       size: 180,
-      enableColumnFilter: false,
-      enableSorting: false,
     },
 
     // ── Email ──

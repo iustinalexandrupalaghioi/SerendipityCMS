@@ -152,7 +152,7 @@ const CourseDayOverview = ({ course, slotId }: CourseDayOverviewProps) => {
           open={!!deletingCourseDay}
           setOpen={(open) => !open && setDeletingCourseDay(null)}
           id={deletingCourseDay.id}
-          title="Delete Course Day"
+          title="Delete course day"
           target="course_day"
           queryKeys={[QUERY_KEY, ["course", course.id]]}
           confirmationMessage={

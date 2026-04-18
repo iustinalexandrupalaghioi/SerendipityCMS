@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -56,11 +55,7 @@ const ActionDialog = ({
             <DialogTitle className="text-primary">{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
-          {children && (
-            <Card className="border-accent flex flex-col items-center w-full overflow-x-auto ps-2">
-              {children}
-            </Card>
-          )}
+          {children && children}
           {showFooter && (
             <DialogFooter className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
               <Button

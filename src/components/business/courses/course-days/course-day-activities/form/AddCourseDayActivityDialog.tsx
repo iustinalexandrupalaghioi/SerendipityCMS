@@ -9,7 +9,6 @@ import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Card } from "@/components/ui/card";
 import { useCourseDay } from "@/hooks/useCourses";
 import { useParams } from "react-router";
 import CourseDayActivityForm from "./CourseDayActivityForm";
@@ -97,18 +96,16 @@ const AddCourseDayActivityDialog = ({
       showTrigger={false}
       open={open}
       setOpen={setOpen}
-      title="Add Course Day Activity"
+      title="Add activity"
       description="Fill in the details to create a new course day activity."
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <CourseDayActivityForm
-              mode="Add"
-              control={control}
-              errors={formState.errors}
-            />
-          </Card>
+          <CourseDayActivityForm
+            mode="Add"
+            control={control}
+            errors={formState.errors}
+          />
 
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button

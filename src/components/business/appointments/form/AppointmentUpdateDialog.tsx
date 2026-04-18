@@ -103,7 +103,8 @@ const AppointmentUpdateDialog = ({
       setOpen={setOpen}
       title="Appointment"
       description="Appointment details."
-      className="md:max-w-2xl"
+      className="md:max-w-lg"
+      disableUpdate
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">

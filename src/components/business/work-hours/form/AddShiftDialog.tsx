@@ -7,7 +7,6 @@ import { toast } from "sonner";
 
 import AddDialog from "@/components/partials/dialog/AddDialog";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Loader2Icon } from "lucide-react";
 import ShiftForm from "../form/ShiftForm";
@@ -65,14 +64,14 @@ export function AddShiftDialog({ open, setOpen }: AddShiftDialogProps) {
     },
 
     onSuccess: () => {
-      toast.success("Shift added successfully!");
+      toast.success("Business hours added successfully!");
       form.reset();
       queryClient.refetchQueries({ queryKey: ["shifts"] });
       setOpen(false);
     },
 
     onError: (error: any) => {
-      toast.error(error.message || "Failed to add shift.");
+      toast.error(error.message || "Failed to add business hours.");
     },
   });
 
@@ -84,16 +83,13 @@ export function AddShiftDialog({ open, setOpen }: AddShiftDialogProps) {
     <AddDialog
       open={open}
       setOpen={setOpen}
-      title="Add Shift"
-      description="Create a new employee shift."
+      title="Business hours"
+      description="Create a new business hours entry"
       showTrigger={false}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <Card className="border-accent flex flex-col items-center w-full overflow-x-auto px-4">
-            <ShiftForm control={form.control} mode="Add" />{" "}
-          </Card>
-
+          <ShiftForm control={form.control} mode="Add" />{" "}
           <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
             <Button
               type="submit"

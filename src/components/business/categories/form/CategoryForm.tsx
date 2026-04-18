@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import type { Control, FieldErrors } from "react-hook-form";
 import type { CategoryFormValues } from "./form-schema";
 import { YesNoSwitch } from "@/components/ui/yes-no-switch";
+import { Textarea } from "@/components/ui/textarea";
 
 interface CategoryFormProps {
   control: Control<CategoryFormValues>;
@@ -59,7 +60,7 @@ const CategoryForm = ({ control, errors, mode }: CategoryFormProps) => {
           <FormItem>
             <FormLabel>Description</FormLabel>
             <FormControl>
-              <Input
+              <Textarea
                 id="description"
                 placeholder="Short description (optional)"
                 {...field}

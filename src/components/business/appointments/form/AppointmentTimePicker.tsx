@@ -16,11 +16,11 @@ interface AppointmentTimePickerProps {
   label?: string;
   value?: string;
   onChange?: (value: string) => void;
-  date?: string | undefined;
+  date?: string;
   disabled?: boolean;
   isLoading?: boolean;
   error?: Error | null;
-  data?: string[] | undefined;
+  data?: string[];
   formError?: string;
   onOpen?: () => void;
 }
@@ -38,37 +38,30 @@ export function AppointmentTimePicker({
   onOpen,
 }: AppointmentTimePickerProps) {
   const [open, setOpen] = useState(false);
-
-  // const times = data?.data?.[0]?.available_times ?? [];
   const times = data ?? [];
+
   return (
     <div className="grid gap-2">
-      <Label>{label}</Label>
+      <Label className={cn(formError && "text-destructive")}>{label}</Label>
 
       <Popover
         open={disabled ? false : open}
         onOpenChange={(isOpen) => {
           if (disabled) return;
-
           setOpen(isOpen);
-
-          if (isOpen) {
-            onOpen?.();
-          }
+          if (isOpen) onOpen?.();
         }}
       >
         <PopoverTrigger asChild>
-          <div className="relative flex w-full items-center gap-2">
+          <div className="relative flex w-full items-center">
             <Clock2Icon className="pointer-events-none absolute left-2.5 size-4 text-muted-foreground" />
 
             <Input
               disabled={disabled}
               value={value || "Select a time"}
               readOnly
-              className={cn(
-                "pl-8 appearance-none",
-                open && "border-ring ring-ring/50 ring-[3px]",
-              )}
+              aria-invalid={!!formError}
+              className="pl-8 pr-8 cursor-pointer"
             />
 
             <ChevronDownIcon className="pointer-events-none absolute right-2.5 size-4 text-muted-foreground" />
@@ -83,25 +76,21 @@ export function AppointmentTimePicker({
                   <Skeleton key={i} className="h-10 w-full rounded-md" />
                 ))
               ) : times.length ? (
-                times.map((time) => {
-                  const isActive = value === time;
-
-                  return (
-                    <Button
-                      key={time}
-                      type="button"
-                      size="lg"
-                      variant={isActive ? "default" : "outline"}
-                      className="w-full shadow-none"
-                      onClick={() => {
-                        onChange?.(time);
-                        setOpen(false);
-                      }}
-                    >
-                      {time}
-                    </Button>
-                  );
-                })
+                times.map((time) => (
+                  <Button
+                    key={time}
+                    type="button"
+                    size="lg"
+                    variant={value === time ? "default" : "outline"}
+                    className="w-full shadow-none"
+                    onClick={() => {
+                      onChange?.(time);
+                      setOpen(false);
+                    }}
+                  >
+                    {time}
+                  </Button>
+                ))
               ) : date ? (
                 <span className="col-span-full text-sm text-muted-foreground">
                   No available time slots for this date.

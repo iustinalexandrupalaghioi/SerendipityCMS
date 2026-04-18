@@ -16,7 +16,7 @@ export const EnrollmentSchema = z.object({
     .refine(
       (val) =>
         val !== null && typeof val === "object" && Object.keys(val).length > 0,
-      { message: "Student is a mandatory field" },
+      { message: "Customer is a mandatory field" },
     ),
 });
 
