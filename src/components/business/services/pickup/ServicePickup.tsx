@@ -65,16 +65,16 @@ const ServicePickup = ({ open, setOpen, onSelect }: ServicePickupProps) => {
     <ActionDialog
       open={open}
       setOpen={setOpen}
-      title="Active Services"
+      title="Select service"
       description="Select a service from the list"
-      className="md:max-w-7xl max-w-screen max-h-[80vh] md:max-h-[90vh] overflow-y-auto"
+      className="md:max-w-7xl max-w-screen max-h-[80vh] md:max-h-[90vh] overflow-y-auto ps-1 md:ps-4"
       isPending={isLoading}
       showFooter={false}
     >
       {isError ? (
         <div>Error loading services</div>
       ) : (
-        <div className="flex flex-1 min-h-0 w-full flex-col">
+        <div className="flex flex-1 min-h-0 min-w-0 w-full flex-col">
           <DataTable
             tableId={PICKUP_SERVICE_KEY}
             defaultViewName="Services"
@@ -91,7 +91,7 @@ const ServicePickup = ({ open, setOpen, onSelect }: ServicePickupProps) => {
             isFetchingNextPage={false}
             hasNextPage={false}
             fetchNextPage={() => {}}
-            height={550}
+            height={450}
           />
         </div>
       )}

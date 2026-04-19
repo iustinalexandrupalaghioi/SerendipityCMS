@@ -66,14 +66,14 @@ const UserPickup = ({ open, setOpen, onSelect }: UserPickupProps) => {
       setOpen={setOpen}
       title="Select customer"
       description="Select a customer from the list"
-      className="md:max-w-4xl max-h-[80vh] md:max-h-[90vh] overflow-y-auto"
+      className="md:max-w-4xl max-h-[80vh] md:max-h-[90vh] overflow-y-auto  px-1 md:px-4"
       isPending={isLoading}
       showFooter={false}
     >
       {isError ? (
         <div>Error loading users</div>
       ) : (
-        <div className="flex flex-1 min-h-0 w-full flex-col">
+        <div className="flex flex-1 min-h-0 w-full flex-col min-w-0">
           <DataTable
             tableId={PICKUP_USER_KEY}
             defaultViewName="Customers"
@@ -90,7 +90,7 @@ const UserPickup = ({ open, setOpen, onSelect }: UserPickupProps) => {
             isFetchingNextPage={false}
             hasNextPage={false}
             fetchNextPage={() => {}}
-            height={550}
+            height={450}
           />
         </div>
       )}

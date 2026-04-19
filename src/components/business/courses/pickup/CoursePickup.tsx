@@ -80,16 +80,16 @@ const CoursePickup = ({ open, setOpen, onSelect }: CoursePickupProps) => {
     <ActionDialog
       open={open}
       setOpen={setOpen}
-      title="Courses"
+      title="Select course"
       description="Select a course from the list"
-      className="md:max-w-7xl max-w-screen max-h-[80vh] md:max-h-[90vh] overflow-y-auto"
+      className="md:max-w-7xl max-w-screen max-h-[80vh] md:max-h-[90vh] overflow-y-auto  px-1 md:px-4"
       isPending={isLoading}
       showFooter={false}
     >
       {isError ? (
         <div>Error loading courses</div>
       ) : (
-        <div className="flex flex-1 min-h-0 w-full flex-col">
+        <div className="flex flex-1 min-h-0 w-full min-w-0 flex-col">
           <DataTable
             tableId={PICKUP_COURSE_KEY}
             defaultViewName="Courses"
@@ -106,7 +106,7 @@ const CoursePickup = ({ open, setOpen, onSelect }: CoursePickupProps) => {
             isFetchingNextPage={false}
             hasNextPage={false}
             fetchNextPage={() => {}}
-            height={550}
+            height={450}
           />
         </div>
       )}
