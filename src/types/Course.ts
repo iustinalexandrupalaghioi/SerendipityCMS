@@ -4,6 +4,7 @@ export type Course = {
   id: string;
   title: string;
   description: string;
+  display_order: number;
   location: string;
   start_date: string;
   available_spots: number;

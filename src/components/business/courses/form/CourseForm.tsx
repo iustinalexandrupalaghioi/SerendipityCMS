@@ -178,6 +178,27 @@ const CourseForm = ({
               </FormItem>
             )}
           />
+
+          <FormField
+            control={control}
+            name="display_order"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Display order</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="e.g. 1"
+                    disabled={disableEdit}
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
+                </FormControl>
+                <FormMessage>{errors.display_order?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
         </div>
       </SectionCard>
 

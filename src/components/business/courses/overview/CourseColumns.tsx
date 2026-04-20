@@ -14,6 +14,7 @@ export const courseColumnVisibility: VisibilityState = {
   id: true,
   title: true,
   image_url: true,
+  display_order: true,
   level: true,
   description: true,
   location: true,
@@ -69,6 +70,18 @@ export function createCourseColumns(
         columnType: "text",
       },
       size: 250,
+    },
+    {
+      id: "display_order",
+      header: undefined,
+      accessorKey: "display_order",
+      meta: {
+        columnName: "Order",
+        columnType: "select",
+        selectOptions: ["beginner", "intermediate", "advanced"],
+      },
+
+      size: 65,
     },
     {
       id: "image_url",
