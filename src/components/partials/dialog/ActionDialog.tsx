@@ -45,19 +45,22 @@ const ActionDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {open && (
         <DialogContent
-          // onInteractOutside={(e) => e.preventDefault()}
           className={cn(
-            "max-w-full md:min-w-xl mt-4 top-0 translate-y-0 max-h-[70vh] md:max-h-[90vh] overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary",
+            "md:min-w-xl max-w-full mt-4 top-4 md:top-0 translate-y-0 max-h-[80vh] md:max-h-[90vh] flex flex-col overflow-hidden",
             className,
           )}
         >
-          <DialogHeader>
+          <DialogHeader className="text-start shrink-0 border-b pb-3">
             <DialogTitle className="text-primary">{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
-          {children && children}
+          {children && (
+            <div className="flex-1 min-h-0 flex flex-col overflow-hidden -mb-5">
+              {children}
+            </div>
+          )}
           {showFooter && (
-            <DialogFooter className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
+            <DialogFooter className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
               <Button
                 className="flex-1"
                 type="submit"
