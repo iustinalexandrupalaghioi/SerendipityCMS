@@ -108,7 +108,7 @@ const AppointmentForm = ({
 
   const handleUserSelect = (user: Profile) => {
     setValue("user", user, { shouldDirty: true });
-    setValue("name", `${user.first_name} ${user.last_name}`, {
+    setValue("name", user.full_name, {
       shouldDirty: true,
     });
     setValue("email", user.email, { shouldDirty: true });

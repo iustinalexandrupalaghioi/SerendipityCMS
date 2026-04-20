@@ -93,14 +93,16 @@ export function UpdateCourseDayActivityDialog({
       className="md:max-w-lg"
     >
       <Form {...form}>
-        <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <CourseDayActivityForm
-            mode="Update"
-            control={form.control}
-            errors={form.formState.errors}
-          />
+        <form onSubmit={onSubmit} className="flex flex-col min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary px-1">
+            <CourseDayActivityForm
+              mode="Add"
+              control={form.control}
+              errors={form.formState.errors}
+            />
+          </div>
 
-          <div className="flex w-full flex-col md:flex-row-reverse gap-2 mt-4">
+          <div className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
             <Button
               type="submit"
               className="flex-1"

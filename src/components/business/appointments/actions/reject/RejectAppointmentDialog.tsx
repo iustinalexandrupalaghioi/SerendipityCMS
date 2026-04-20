@@ -93,13 +93,14 @@ const RejectAppointmentDialog = ({
       disableUpdate
     >
       <Form {...form}>
-        <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <RejectAppointmentForm
-            control={form.control}
-            errors={form.formState.errors}
-          />
-
-          <div className="flex flex-col md:flex-row-reverse gap-2 pt-4">
+        <form onSubmit={onSubmit} className="flex flex-col min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary px-1">
+            <RejectAppointmentForm
+              control={form.control}
+              errors={form.formState.errors}
+            />
+          </div>
+          <div className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
             <Button type="submit" className="flex-1">
               Reject
             </Button>

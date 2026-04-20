@@ -114,7 +114,7 @@ const CourseEnrollmentForm = ({
 
         <PickupFormInput
           disabled={disabled}
-          displayKey="email"
+          displayKey="full_name"
           control={control}
           name="user"
           label="Customer"
