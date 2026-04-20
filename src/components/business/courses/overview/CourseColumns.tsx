@@ -1,8 +1,9 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
+import type { RowAction } from "@/components/data-table/core/types";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { ImagePreview } from "@/components/partials/ImagePreview";
-import type { RowAction } from "@/components/data-table/core/types";
 import type { Course } from "@/types/Course";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 
@@ -215,5 +216,6 @@ export function createCourseColumns(
       },
       size: 85,
     },
+    createBufferColumn<Course>(),
   ];
 }

@@ -1,4 +1,5 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { Badge } from "@/components/ui/badge";
@@ -125,5 +126,6 @@ export function createCourseEnrollmentColumns(
       meta: { columnName: "Advance paid", columnType: "boolean" },
       cell: ({ row }) => <BooleanDisplay value={row.original.advance_paid} />,
     },
+    createBufferColumn<Enrollment>(),
   ];
 }

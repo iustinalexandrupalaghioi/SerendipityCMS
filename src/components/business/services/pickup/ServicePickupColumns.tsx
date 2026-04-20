@@ -1,3 +1,4 @@
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { DataTableColumnvisibilityToggle } from "@/components/data-table/core/DataTableColumnVisibilityToggle";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { ImagePreview } from "@/components/partials/ImagePreview";
@@ -122,5 +123,6 @@ export function createPickupServiceColumns(
       meta: { columnName: "Popular", columnType: "boolean" },
       cell: ({ row }) => <BooleanDisplay value={row.original.is_popular} />,
     },
+    createBufferColumn<Service>(),
   ];
 }

@@ -1,3 +1,4 @@
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { DataTableColumnvisibilityToggle } from "@/components/data-table/core/DataTableColumnVisibilityToggle";
 import { Button } from "@/components/ui/button";
 import type { Profile } from "@/types/User";
@@ -124,5 +125,6 @@ export function createPickupUserColumns(
         <span className="capitalize">{row.original.role}</span>
       ),
     },
+    createBufferColumn<Profile>(),
   ];
 }
