@@ -1,4 +1,5 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
 import type { FreeDay } from "@/types/FreeDay";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
@@ -81,5 +82,6 @@ export function createFreeDayColumns(
       },
       size: 140,
     },
+    createBufferColumn<FreeDay>(),
   ];
 }

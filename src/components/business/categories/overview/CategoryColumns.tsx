@@ -1,4 +1,5 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import type { Category } from "@/types/Category";
@@ -86,5 +87,6 @@ export function createCategoryColumns(
       },
       size: 85,
     },
+    createBufferColumn<Category>(),
   ];
 }

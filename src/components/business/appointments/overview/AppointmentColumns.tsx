@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import type { RowAction } from "@/components/data-table/core/types";
 import type { Appointment } from "@/types/Appointment";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 
 // ─────────────────────────────────────────────
 // Column visibility defaults
@@ -169,5 +170,6 @@ export function createAppointmentColumns(
       meta: { columnName: "Notes", columnType: "text" },
       size: 150,
     },
+    createBufferColumn<Appointment>(),
   ];
 }

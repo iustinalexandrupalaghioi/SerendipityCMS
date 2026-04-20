@@ -1,4 +1,5 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
 import type { RowAction } from "@/components/data-table/core/types";
 import type { CourseDayActivity } from "@/types/Course";
@@ -52,6 +53,8 @@ export function createCourseDayActivityColumns(
         columnName: "Activity",
         columnType: "text",
       },
+      size: 350,
     },
+    createBufferColumn<CourseDayActivity>(),
   ];
 }

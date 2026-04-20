@@ -1,4 +1,5 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
 import type { Profile } from "@/types/User";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
@@ -121,5 +122,6 @@ export function createUserColumns(
         <span className="capitalize">{row.original.role}</span>
       ),
     },
+    createBufferColumn<Profile>(),
   ];
 }

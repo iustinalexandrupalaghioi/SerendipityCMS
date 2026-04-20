@@ -1,3 +1,4 @@
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { DataTableColumnvisibilityToggle } from "@/components/data-table/core/DataTableColumnVisibilityToggle";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { Button } from "@/components/ui/button";
@@ -63,5 +64,6 @@ export function createPickupCategoryColumns(
       meta: { columnName: "Active", columnType: "boolean" },
       cell: ({ row }) => <BooleanDisplay value={row.original.is_active} />,
     },
+    createBufferColumn<Category>(),
   ];
 }

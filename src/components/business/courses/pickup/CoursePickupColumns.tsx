@@ -1,3 +1,4 @@
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { DataTableColumnvisibilityToggle } from "@/components/data-table/core/DataTableColumnVisibilityToggle";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { ImagePreview } from "@/components/partials/ImagePreview";
@@ -197,5 +198,6 @@ export function createPickupCourseColumns(
       },
       size: 85,
     },
+    createBufferColumn<Course>(),
   ];
 }

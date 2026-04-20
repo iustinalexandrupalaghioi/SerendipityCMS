@@ -1,4 +1,5 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { ImagePreview } from "@/components/partials/ImagePreview";
@@ -68,7 +69,7 @@ export function createServiceColumns(
       accessorKey: "description",
       header: undefined,
       meta: { columnName: "Description", columnType: "text" },
-      size: 350,
+      size: 300,
     },
 
     // ── Image ──
@@ -93,7 +94,7 @@ export function createServiceColumns(
       id: "duration",
       accessorKey: "duration",
       header: undefined,
-      size: 130,
+      size: 110,
       meta: { columnName: "Duration (min)", columnType: "number" },
     },
 
@@ -102,7 +103,7 @@ export function createServiceColumns(
       id: "price",
       accessorKey: "price",
       header: undefined,
-      size: 110,
+      size: 100,
       meta: { columnName: "Price (EUR)", columnType: "number" },
     },
 
@@ -125,5 +126,6 @@ export function createServiceColumns(
       meta: { columnName: "Active", columnType: "boolean" },
       cell: ({ row }) => <BooleanDisplay value={row.original.is_active} />,
     },
+    createBufferColumn<Service>(),
   ];
 }

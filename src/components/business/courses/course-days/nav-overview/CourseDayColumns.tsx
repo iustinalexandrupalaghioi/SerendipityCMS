@@ -4,6 +4,7 @@ import { ImagePreview } from "@/components/partials/ImagePreview";
 import type { RowAction } from "@/components/data-table/core/types";
 import type { CourseDay } from "@/types/Course";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 
 // ─────────────────────────────────────────────
 // Column visibility defaults
@@ -98,5 +99,6 @@ export function createCourseDayColumns(
       },
       size: 85,
     },
+    createBufferColumn<CourseDay>(),
   ];
 }
