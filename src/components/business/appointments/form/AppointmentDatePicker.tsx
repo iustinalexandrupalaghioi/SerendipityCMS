@@ -94,13 +94,13 @@ export const AppointmentDatePicker: React.FC<AppointmentDatePickerProps> = ({
             captionLayout="dropdown"
             onSelect={handleSelect}
             disabled={(date) => {
-              const isPast = date < today;
+              const isPastOrToday = date <= today;
 
               const isUnavailable = unavailableDateObjects.some(
                 (d) => d.getTime() === date.getTime(),
               );
 
-              return isPast || isUnavailable;
+              return isPastOrToday || isUnavailable;
             }}
             modifiers={{
               unavailable: unavailableDateObjects,

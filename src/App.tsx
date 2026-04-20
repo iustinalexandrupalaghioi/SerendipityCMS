@@ -15,7 +15,6 @@ import Course from "./pages/Protected/business/commerce/Course";
 import UpdateCourse from "./pages/Protected/business/commerce/UpdateCourse";
 import UpdateCourseDay from "./pages/Protected/business/commerce/UpdateCourseDay";
 import Category from "./pages/Protected/business/reference-data/Category";
-import Certificate from "./pages/Protected/business/reference-data/Certificate";
 import Service from "./pages/Protected/business/reference-data/Service";
 import User from "./pages/Protected/business/reference-data/User";
 import FreeDay from "./pages/Protected/business/time-management/FreeDay";
@@ -46,7 +45,6 @@ function App() {
           <Route path="/users" element={<User />} />
           <Route path="/categories" element={<Category />} />
           <Route path="/services" element={<Service />} />
-          <Route path="/certificates" element={<Certificate />} />
           <Route path="/business-hours" element={<Shift />} />
           <Route path="/free-days" element={<FreeDay />} />
           <Route path="/appointments" element={<Appointment />} />

@@ -30,13 +30,12 @@ const UpdateDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        // onInteractOutside={(e) => e.preventDefault()}
         className={cn(
-          "md:min-w-xl max-w-full mt-4 top-0 translate-y-0 max-h-[80vh]  md:max-h-[90vh] overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary",
+          "md:min-w-xl max-w-full mt-4 top-4 md:top-0 translate-y-0 max-h-[80vh] md:max-h-[90vh] flex flex-col",
           className,
         )}
       >
-        <DialogHeader className="text-start">
+        <DialogHeader className="text-start shrink-0 border-b pb-3">
           <DialogTitle className="text-primary">
             {title}{" "}
             {!disableUpdate && <span className="text-accent">(update)</span>}
@@ -44,7 +43,9 @@ const UpdateDialog = ({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        {children}
+        <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+          {children}
+        </div>
       </DialogContent>
     </Dialog>
   );

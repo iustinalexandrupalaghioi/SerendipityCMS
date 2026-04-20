@@ -47,18 +47,20 @@ const AddDialog = ({
 
       <DialogContent
         className={cn(
-          "md:min-w-xl max-w-full mt-4 top-4 md:top-0 translate-y-0 max-h-[80vh] md:max-h-[90vh] overflow-y-auto dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary scrollbar-thin",
+          "md:min-w-xl max-w-full mt-4 top-4 md:top-0 translate-y-0 max-h-[80vh] md:max-h-[90vh] flex flex-col overflow-hidden",
           className,
         )}
       >
-        <DialogHeader className="text-start">
+        <DialogHeader className="text-start shrink-0 border-b pb-3">
           <DialogTitle className="text-primary">
             {title} <span className="text-accent">(new item)</span>
           </DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        {children}
+        <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+          {children}
+        </div>
       </DialogContent>
     </Dialog>
   );

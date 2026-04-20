@@ -107,17 +107,19 @@ const AppointmentUpdateDialog = ({
       disableUpdate
     >
       <Form {...form}>
-        <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <AppointmentForm
-            setValue={form.setValue}
-            control={form.control}
-            errors={form.formState.errors}
-            watch={form.watch}
-            mode="Update"
-            existingImageUrl={appointment.service.image_public_url}
-          />
+        <form onSubmit={onSubmit} className="flex flex-col min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary px-1">
+            <AppointmentForm
+              setValue={form.setValue}
+              control={form.control}
+              errors={form.formState.errors}
+              watch={form.watch}
+              mode="Update"
+              existingImageUrl={appointment.service.image_public_url}
+            />
+          </div>
 
-          <div className="flex flex-col md:flex-row-reverse gap-2 pt-4">
+          <div className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
             <DialogClose asChild className="flex-1">
               <Button type="button" className="w-full">
                 Ok

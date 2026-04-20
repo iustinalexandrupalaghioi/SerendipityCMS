@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import AppointmentForm from "./AppointmentForm";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
 
@@ -31,7 +31,7 @@ export function AppointmentAddDialog({
       user: undefined,
       name: "",
       email: "",
-      date: format(new Date(), "yyyy-MM-dd"), // yyyy-MM-dd
+      date: format(addDays(new Date(), 1), "yyyy-MM-dd"),
       start_time: "",
       duration: 0,
       price: 0,
@@ -106,16 +106,17 @@ export function AppointmentAddDialog({
       showTrigger={false}
     >
       <Form {...form}>
-        <form onSubmit={onSubmit} className="space-y-2 w-full">
-          <AppointmentForm
-            setValue={form.setValue}
-            control={form.control}
-            errors={form.formState.errors}
-            watch={form.watch}
-            mode="Add"
-          />
-
-          <div className="flex flex-col md:flex-row-reverse gap-2 pt-4">
+        <form onSubmit={onSubmit} className="flex flex-col min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary px-1">
+            <AppointmentForm
+              setValue={form.setValue}
+              control={form.control}
+              errors={form.formState.errors}
+              watch={form.watch}
+              mode="Add"
+            />
+          </div>
+          <div className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
             <Button
               type="submit"
               className="flex-1"

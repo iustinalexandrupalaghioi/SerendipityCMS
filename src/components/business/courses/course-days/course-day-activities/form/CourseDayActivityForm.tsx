@@ -65,6 +65,7 @@ const CourseDayActivityForm = ({
                 <FormLabel>Activity</FormLabel>
                 <FormControl>
                   <Textarea
+                    className="mb-2"
                     {...field}
                     disabled={disableEdit}
                     placeholder="Activity"
