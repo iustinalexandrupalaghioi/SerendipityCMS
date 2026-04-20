@@ -21,6 +21,9 @@ export const CourseSchema = z.object({
   price: z
     .number({ message: "Price must be a number" })
     .min(1, "Price must be a number greater than 0"),
+  display_order: z
+    .number({ message: "Display order must be a number" })
+    .min(1, "Display order must be a number greater than 0"),
   location: z.string().min(3, "Location must be at least 3 characters"),
   level: z.custom<CourseLevel>(),
   duration_days: z.number({ message: "Duration must be a number" }).optional(),

@@ -65,6 +65,7 @@ const UpdateCourseScreen = () => {
       title: "",
       location: "",
       description: "",
+      display_order: 0,
       level: "beginner",
       start_date: "",
       available_spots: 0,
