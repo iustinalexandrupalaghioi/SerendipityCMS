@@ -102,9 +102,9 @@ const CourseEnrollmentForm = ({
               </FormItem>
 
               <FormItem className="w-full capitalize">
-                <FormLabel>Advance paid</FormLabel>
+                <FormLabel>Deposit paid</FormLabel>
                 <YesNoSwitch
-                  checked={enrollment?.advance_paid ?? false}
+                  checked={enrollment?.advance_payment_paid ?? false}
                   disabled
                 />
               </FormItem>

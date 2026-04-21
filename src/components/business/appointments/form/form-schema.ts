@@ -41,6 +41,7 @@ export const AppointmentSchema = z.object({
     .max(255, "Notes must be at most 255 characters long")
     .optional(),
   status: z.custom<AppointmentStatus>().optional(),
+  advance_payment_paid: z.boolean().optional(),
 });
 
 export type AppointmentFormValues = z.infer<typeof AppointmentSchema>;

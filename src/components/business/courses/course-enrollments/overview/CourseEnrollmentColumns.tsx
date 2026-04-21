@@ -16,7 +16,7 @@ export const courseEnrollmentColumnVisibility: VisibilityState = {
   course_date: true,
   price: true,
   advance_price: true,
-  advance_paid: true,
+  advance_payment_paid: true,
 };
 
 const statusVariantMap: Record<
@@ -120,11 +120,13 @@ export function createCourseEnrollmentColumns(
       size: 130,
     },
     {
-      id: "advance_paid",
-      accessorKey: "advance_paid",
+      id: "advance_payment_paid",
+      accessorKey: "advance_payment_paid",
       header: undefined,
-      meta: { columnName: "Advance paid", columnType: "boolean" },
-      cell: ({ row }) => <BooleanDisplay value={row.original.advance_paid} />,
+      meta: { columnName: "Deposit paid", columnType: "boolean" },
+      cell: ({ row }) => (
+        <BooleanDisplay value={row.original.advance_payment_paid} />
+      ),
     },
     createBufferColumn<Enrollment>(),
   ];
