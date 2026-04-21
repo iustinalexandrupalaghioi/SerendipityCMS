@@ -40,6 +40,8 @@ const AppointmentUpdateDialog = ({
       duration: Number(appointment.duration) || undefined,
       price: Number(appointment.price) || undefined,
       advance_payment: Number(appointment.advance_payment),
+      advance_payment_paid: appointment.advance_payment_paid,
+      status: appointment.status,
     },
   });
 

@@ -157,7 +157,7 @@ export function createAppointmentColumns(
       id: "advance_payment_paid",
       accessorKey: "advance_payment_paid",
       header: undefined,
-      meta: { columnName: "Advance paid", columnType: "boolean" },
+      meta: { columnName: "Deposit paid", columnType: "boolean" },
       size: 90,
       cell: ({ row }) => (
         <BooleanDisplay value={row.original.advance_payment_paid} />

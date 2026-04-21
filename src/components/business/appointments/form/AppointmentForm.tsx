@@ -25,6 +25,9 @@ import UserPickup from "../../users/pickup/UserPickup";
 import { AppointmentDatePicker } from "./AppointmentDatePicker";
 import { AppointmentTimePicker } from "./AppointmentTimePicker";
 import type { AppointmentFormValues } from "./form-schema";
+import { Combobox } from "@/components/partials/Combobox";
+import { YesNoSwitch } from "@/components/ui/yes-no-switch";
+import { APPOINTMENT_STATUS_OPTIONS } from "@/types/Appointment";
 
 interface AppointmentFormProps {
   control: Control<AppointmentFormValues>;
@@ -49,6 +52,7 @@ const AppointmentForm = ({
   const appointmentId = watch("id");
   const date = watch("date");
   const user = watch("user");
+  const advance_payment_paid = watch("advance_payment_paid");
 
   const [disabledNameEmail, setDisabledNameEmail] =
     useState<boolean>(!!appointmentId);
@@ -305,6 +309,28 @@ const AppointmentForm = ({
               </FormItem>
             )}
           />
+          {mode === "Update" && (
+            <div className="flex flex-col md:flex-row gap-4">
+              <FormItem className="w-full capitalize">
+                <FormLabel>Status</FormLabel>
+                <Combobox
+                  items={APPOINTMENT_STATUS_OPTIONS}
+                  value={watch("status") ?? "pending"}
+                  placeholder="Appointment status"
+                  disabled
+                  className="w-full"
+                />
+              </FormItem>
+
+              <FormItem className="w-full">
+                <FormLabel>Advance paid</FormLabel>
+                <YesNoSwitch
+                  checked={advance_payment_paid ? true : false}
+                  disabled
+                />
+              </FormItem>
+            </div>
+          )}
         </div>
       </SectionCard>
 

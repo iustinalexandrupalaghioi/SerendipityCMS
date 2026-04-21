@@ -46,10 +46,30 @@ function buildFilterRule(
 ): FilterRule | null {
   const { columnId, columnType, columnName, copyValue } = state;
 
-  // Can't filter without a type or if value is empty
   if (!columnType) return null;
+
   if (copyValue === null || copyValue === undefined || copyValue === "")
     return null;
+
+  // Boolean columns use is_true / is_false — no value needed
+  if (columnType === "boolean") {
+    const boolOperator =
+      copyValue === true || copyValue === "true"
+        ? operator === "equals"
+          ? "is_true"
+          : "is_false"
+        : operator === "equals"
+          ? "is_false"
+          : "is_true";
+
+    return {
+      columnId,
+      columnType,
+      columnName,
+      operator: boolOperator,
+      value: null,
+    };
+  }
 
   return {
     columnId,

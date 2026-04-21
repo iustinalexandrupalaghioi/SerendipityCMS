@@ -12,6 +12,22 @@ export const APPOINTMENT_STATUSES = [
 
 export type AppointmentStatus = (typeof APPOINTMENT_STATUSES)[number];
 
+export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
+  pending: "Pending",
+  approved: "Approved",
+  confirmed: "Confirmed",
+  rejected: "Rejected",
+  completed: "Completed",
+  canceled: "Canceled",
+};
+
+export const APPOINTMENT_STATUS_OPTIONS = APPOINTMENT_STATUSES.map(
+  (status) => ({
+    label: APPOINTMENT_STATUS_LABELS[status],
+    value: status,
+  }),
+);
+
 export type Appointment = {
   id: string;
   user_id: string;
