@@ -85,7 +85,7 @@ const CourseDayActivitiesOverview = ({
     setRowSelection({});
   }, []);
 
-  if (isError) return <div>Error loading course days</div>;
+  if (isError) return <div>Error loading course day activities</div>;
 
   return (
     <div className="my-2 flex flex-1 min-h-0 w-full flex-col">

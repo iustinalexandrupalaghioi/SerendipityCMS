@@ -89,6 +89,8 @@ const EnrollmentOverview = ({ course, slotId }: EnrollmentOverviewProps) => {
     setRowSelection({});
   }, []);
 
+  if (error) return <div>Error loading course enrollments</div>;
+
   return (
     <div className="my-2 flex flex-1 min-h-0 w-full flex-col">
       <Toolbar
