@@ -4,18 +4,21 @@ import {
 } from "@/components/data-table/features/filtering/filters";
 import type { SortRule } from "@/components/data-table/features/views/sort";
 import { supabase } from "@/lib/supabaseClient";
-import type { Service } from "@/types/Service";
+import type { CourseDayActivity } from "@/types/Course";
 import { useQuery } from "@tanstack/react-query";
 
-export const QUERY_KEY = ["services"];
+export const QUERY_KEY = ["course_day_activities"];
 
-const fetchServices = async (
+const fetchCourseDayActivities = async (
   sorting: SortRule[],
   filters: FilterRule[],
-): Promise<{ items: Service[]; total: number }> => {
+  courseDayId: string | undefined,
+): Promise<{ items: CourseDayActivity[]; total: number }> => {
   let query = supabase
-    .from("service")
-    .select("*, category!inner(id, name)", { count: "exact" });
+    .from("course_day_activity")
+    .select("*", { count: "exact" });
+
+  if (courseDayId) query = query.eq("course_day_id", courseDayId);
 
   query = applyFilters(query, filters);
 
@@ -29,27 +32,18 @@ const fetchServices = async (
   }
 
   const { data, count, error } = await query;
-
   if (error) throw new Error(error.message);
-
-  const items = (data ?? []).map((service) => {
-    if (!service.image_path) return { ...service, image_public_url: "" };
-    const { data: urlData } = supabase.storage
-      .from("services")
-      .getPublicUrl(service.image_path);
-    return { ...service, image_public_url: urlData.publicUrl };
-  });
-
-  return { items, total: count ?? 0 };
+  return { items: data ?? [], total: count ?? 0 };
 };
 
-export const useServices = (
+export const useCourseDayActivities = (
   sorting: SortRule[] = [],
   filters: FilterRule[] = [],
+  courseDayId?: string,
 ) => {
   return useQuery({
-    queryKey: [...QUERY_KEY, sorting, filters],
-    queryFn: () => fetchServices(sorting, filters),
+    queryKey: [...QUERY_KEY, courseDayId, sorting, filters],
+    queryFn: () => fetchCourseDayActivities(sorting, filters, courseDayId),
     staleTime: 1000 * 60 * 5,
   });
 };

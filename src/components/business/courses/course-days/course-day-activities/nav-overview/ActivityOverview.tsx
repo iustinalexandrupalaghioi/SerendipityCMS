@@ -11,6 +11,13 @@ import {
 import AddCourseDayActivityDialog from "../form/AddCourseDayActivityDialog";
 import { UpdateCourseDayActivityDialog } from "../form/UpdateCourseDayActivityDialog";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useCourseDayActivities } from "./useDayActivities";
+import type { SortRule } from "@/components/data-table/features/views/sort";
+import type { FilterRule } from "@/components/data-table/features/filtering/filters";
+import {
+  initialFilters,
+  initialSorting,
+} from "@/components/data-table/hooks/useTableViews";
 
 export const COURSE_DAY_ACTIVITIES_OVERVIEW_KEY =
   "course-day-activities-overview";
@@ -24,7 +31,21 @@ const CourseDayActivitiesOverview = ({
   courseDay,
   slotId,
 }: CourseDayActivitiesOverviewProps) => {
-  const activities = courseDay.course_day_activity ?? [];
+  const [sorting, setSorting] = useState<SortRule[]>(() =>
+    initialSorting(COURSE_DAY_ACTIVITIES_OVERVIEW_KEY),
+  );
+  const [filters, setFilters] = useState<FilterRule[]>(() =>
+    initialFilters(COURSE_DAY_ACTIVITIES_OVERVIEW_KEY),
+  );
+
+  const { data, isLoading, isError } = useCourseDayActivities(
+    sorting,
+    filters,
+    courseDay.id,
+  );
+  const activities = data?.items ?? [];
+  const total = data?.total ?? 0;
+
   const isMobile = useIsMobile();
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
@@ -59,6 +80,13 @@ const CourseDayActivitiesOverview = ({
     [activities, rowSelection],
   );
 
+  const handleFiltersChange = useCallback((filters: FilterRule[]) => {
+    setFilters(filters);
+    setRowSelection({});
+  }, []);
+
+  if (isError) return <div>Error loading course days</div>;
+
   return (
     <div className="my-2 flex flex-1 min-h-0 w-full flex-col">
       <Toolbar
@@ -77,7 +105,7 @@ const CourseDayActivitiesOverview = ({
 
       <DataTable
         slotId={slotId}
-        isLoading={false}
+        isLoading={isLoading}
         defaultViewName="Activities"
         tableId={COURSE_DAY_ACTIVITIES_OVERVIEW_KEY}
         isFetchingNextPage={false}
@@ -86,7 +114,9 @@ const CourseDayActivitiesOverview = ({
         getRowId={(row) => row.id}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}
-        totalCount={activities.length}
+        totalCount={total}
+        onSortingChange={setSorting}
+        onFiltersChange={handleFiltersChange}
         columns={columns}
         initialColumnVisibility={courseDayActivityColumnVisibility}
         data={activities}

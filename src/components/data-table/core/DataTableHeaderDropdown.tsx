@@ -27,11 +27,13 @@ interface DataTableHeaderDropdownProps {
   onPrimarySort: (columnId: string, desc: boolean) => void;
   onAlsoSort: (columnId: string, desc: boolean) => void;
   onClearSort: (columnId: string) => void;
+  origin?: string;
   handleOpenFilterDrawer: (
     columnId: string,
     columnType: ColumnType | null,
     selectOptions?: string[],
     columnName?: string | null,
+    origin?: string,
   ) => void;
   selectOptions?: string[];
   canFilter?: boolean;
@@ -54,6 +56,7 @@ export function DataTableHeaderDropdown({
   selectOptions,
   canFilter = true,
   locked = false,
+  origin,
 }: DataTableHeaderDropdownProps) {
   const SortIcon = sortRule
     ? sortRule.desc

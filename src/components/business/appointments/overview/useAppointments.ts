@@ -15,15 +15,20 @@ const fetchAppointments = async (
 ): Promise<{ items: Appointment[]; total: number }> => {
   let query = supabase
     .from("appointment")
-    .select("*, profile:user_id (*), service:service_id (*)", {
-      count: "exact",
-    });
+    .select(
+      "*, profile!inner(id, full_name, email), service!inner(id, title, image_path, price, advance_price)",
+      {
+        count: "exact",
+      },
+    );
 
   query = applyFilters(query, filters);
 
   for (const sort of sorting) {
-    query = query.order(sort.id, { ascending: !sort.desc });
+    const sortCol = sort.origin ? `${sort.origin}(${sort.id})` : sort.id;
+    query = query.order(sortCol, { ascending: !sort.desc });
   }
+
   if (!sorting.length) {
     query = query.order("created_at", { ascending: false });
   }

@@ -12,15 +12,19 @@ export const QUERY_KEY = ["course_enrollments"];
 const fetchEnrollments = async (
   sorting: SortRule[],
   filters: FilterRule[],
+  courseId: string | undefined,
 ): Promise<{ items: Enrollment[]; total: number }> => {
   let query = supabase
     .from("course_enrollment")
-    .select("*, course(*), profile(*)", { count: "exact" });
+    .select("*, course!inner(*), profile!inner(*)", { count: "exact" });
+
+  if (courseId) query = query.eq("course_id", courseId); // ← only apply if present
 
   query = applyFilters(query, filters);
 
   for (const sort of sorting) {
-    query = query.order(sort.id, { ascending: !sort.desc });
+    const sortCol = sort.origin ? `${sort.origin}(${sort.id})` : sort.id;
+    query = query.order(sortCol, { ascending: !sort.desc });
   }
 
   if (!sorting.length) {
@@ -28,22 +32,18 @@ const fetchEnrollments = async (
   }
 
   const { data, count, error } = await query;
-
   if (error) throw new Error(error.message);
-
-  return {
-    items: data ?? [],
-    total: count ?? 0,
-  };
+  return { items: data ?? [], total: count ?? 0 };
 };
 
 export const useEnrollments = (
   sorting: SortRule[] = [],
   filters: FilterRule[] = [],
+  courseId?: string,
 ) => {
   return useQuery({
-    queryKey: [...QUERY_KEY, sorting, filters],
-    queryFn: () => fetchEnrollments(sorting, filters),
+    queryKey: [...QUERY_KEY, courseId, sorting, filters],
+    queryFn: () => fetchEnrollments(sorting, filters, courseId),
     staleTime: 1000 * 60 * 5,
   });
 };

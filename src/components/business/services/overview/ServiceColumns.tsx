@@ -54,14 +54,12 @@ export function createServiceColumns(
     },
     // ── Category ──
     {
-      id: "category",
-      accessorKey: "category.name",
+      id: "name",
+      accessorFn: (row) => row.category?.name,
       header: undefined,
-      meta: { columnName: "Category", columnType: "text" },
+      meta: { columnName: "Category", columnType: "text", origin: "category" },
       size: 150,
-
       enableColumnFilter: false,
-      enableSorting: false,
     },
     // ── Description ──
     {

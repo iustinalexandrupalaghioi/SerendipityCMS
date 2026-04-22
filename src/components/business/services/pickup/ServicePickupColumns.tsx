@@ -87,13 +87,12 @@ export function createPickupServiceColumns(
 
     // ── Category ──
     {
-      id: "category",
-      accessorKey: "category.name",
+      id: "name",
+      accessorFn: (row) => row.category?.name,
       header: undefined,
-      meta: { columnName: "Category", columnType: "text" },
-      size: 120,
+      meta: { columnName: "Category", columnType: "text", origin: "category" },
+      size: 150,
       enableColumnFilter: false,
-      enableSorting: false,
     },
 
     // ── Duration ──

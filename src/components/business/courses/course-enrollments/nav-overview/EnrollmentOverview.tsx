@@ -17,6 +17,7 @@ import {
   courseEnrollmentColumnVisibility,
   createCourseEnrollmentColumns,
 } from "../overview/CourseEnrollmentColumns";
+import { useEnrollments } from "../overview/useEnrollments";
 
 export const COURSE_ENROLLMENT_KEY = "course-enrollment";
 
@@ -27,10 +28,10 @@ interface EnrollmentOverviewProps {
 
 const EnrollmentOverview = ({ course, slotId }: EnrollmentOverviewProps) => {
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
-  const [_sorting, setSorting] = useState<SortRule[]>(() =>
+  const [sorting, setSorting] = useState<SortRule[]>(() =>
     initialSorting(COURSE_ENROLLMENT_KEY),
   );
-  const [_filters, setFilters] = useState<FilterRule[]>(() =>
+  const [filters, setFilters] = useState<FilterRule[]>(() =>
     initialFilters(COURSE_ENROLLMENT_KEY),
   );
 
@@ -43,8 +44,13 @@ const EnrollmentOverview = ({ course, slotId }: EnrollmentOverviewProps) => {
     useState<Enrollment | null>(null);
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const enrollments = course.course_enrollment ?? [];
-
+  const { data, error, isLoading } = useEnrollments(
+    sorting,
+    filters,
+    course.id,
+  );
+  const enrollments = data?.items ?? [];
+  const total = data?.total ?? 0;
   // ── Delete ────────────────────────────────────────────────────────────────
   const handleDeleteOpen = useCallback((rows: Row<Enrollment>[]) => {
     if (rows.length !== 1) return;
@@ -103,10 +109,10 @@ const EnrollmentOverview = ({ course, slotId }: EnrollmentOverviewProps) => {
         slotId={slotId}
         tableId={COURSE_ENROLLMENT_KEY}
         defaultViewName="Enrollments"
-        isLoading={false}
+        isLoading={isLoading}
         data={enrollments}
         columns={columns}
-        totalCount={enrollments.length}
+        totalCount={total}
         getRowId={(row) => row.id}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}

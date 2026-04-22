@@ -17,19 +17,19 @@ const fetchCourses = async (
   sorting: SortRule[],
   filters: FilterRule[],
 ): Promise<{ items: Course[]; total: number }> => {
-  let query = supabase
-    .from("course")
-    .select("*, course_day(*, course_day_activity(*)), course_enrollment(*)", {
-      count: "exact",
-    });
+  let query = supabase.from("course").select("*", {
+    count: "exact",
+  });
 
   // ── Filters ──
   query = applyFilters(query, filters);
 
   // ── Sorting ──
   for (const sort of sorting) {
-    query = query.order(sort.id, { ascending: !sort.desc });
+    const sortCol = sort.origin ? `${sort.origin}(${sort.id})` : sort.id;
+    query = query.order(sortCol, { ascending: !sort.desc });
   }
+
   if (!sorting.length) {
     query = query.order("created_at", { ascending: false });
   }
