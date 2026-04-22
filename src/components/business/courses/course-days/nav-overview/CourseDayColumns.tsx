@@ -87,6 +87,7 @@ export function createCourseDayColumns(
         />
       ),
       enableSorting: false,
+      enableColumnFilter: false,
       size: 220,
     },
     {

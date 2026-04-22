@@ -103,12 +103,14 @@ export function DataTableHeader<TData>() {
   };
 
   const handlePrimarySort = (columnId: string, desc: boolean) => {
-    setSorting([{ id: columnId, desc }]);
+    const origin = table.getColumn(columnId)?.columnDef.meta?.origin;
+    setSorting([{ id: columnId, desc, origin }]);
   };
 
   const handleAlsoSort = (columnId: string, desc: boolean) => {
+    const origin = table.getColumn(columnId)?.columnDef.meta?.origin;
     const existing = sorting.filter((s) => s.id !== columnId);
-    setSorting([...existing, { id: columnId, desc }]);
+    setSorting([...existing, { id: columnId, desc, origin }]);
   };
 
   const handleClearSort = (columnId: string) => {

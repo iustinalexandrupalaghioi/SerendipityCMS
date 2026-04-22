@@ -8,7 +8,9 @@ import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 import { format } from "date-fns";
 
 export const courseEnrollmentColumnVisibility: VisibilityState = {
-  customer: true,
+  id: true,
+  ttile: true,
+  full_name: true,
   email: true,
   status: true,
   enrollment_date: true,
@@ -35,25 +37,47 @@ export function createCourseEnrollmentColumns(
   return [
     createSelectionColumn<Enrollment>(),
     createActionsColumn<Enrollment>({ onOpen, onDelete }),
-
     {
-      id: "customer",
-      accessorFn: (row) =>
-        `${row.profile?.first_name ?? ""} ${row.profile?.last_name ?? ""}`.trim(),
+      id: "id",
+      accessorKey: "id",
       header: undefined,
-      meta: { columnName: "Customer", columnType: "text" },
+      meta: {
+        columnName: "Id",
+        columnType: "text",
+      },
+      size: 45,
+    },
+    {
+      id: "title",
+      accessorFn: (row) => row.course?.title,
+      header: undefined,
+      meta: {
+        columnName: "Course",
+        columnType: "text",
+        origin: "course",
+      },
+      size: 200,
       enableColumnFilter: false,
-      enableSorting: false,
+    },
+    {
+      id: "full_name",
+      accessorFn: (row) => row.profile?.full_name,
+      header: undefined,
+      meta: { columnName: "Customer", columnType: "text", origin: "profile" },
+      enableColumnFilter: false,
       size: 200,
     },
     {
       id: "email",
       accessorFn: (row) => row.profile?.email ?? "",
       header: undefined,
-      meta: { columnName: "Email address", columnType: "text" },
+      meta: {
+        columnName: "Email address",
+        columnType: "text",
+        origin: "profile",
+      },
       size: 200,
       enableColumnFilter: false,
-      enableSorting: false,
     },
     {
       id: "status",

@@ -13,15 +13,15 @@ import { createBufferColumn } from "@/components/data-table/core/createBufferCol
 
 export const appointmentColumnVisibility: VisibilityState = {
   status: true,
-  service: true,
+  title: true,
   date: true,
   start_time: true,
   end_time: true,
   name: true,
   email: true,
   price: true,
-  advance_payment: false,
-  advance_payment_paid: false,
+  advance_payment: true,
+  advance_payment_paid: true,
   notes: false,
 };
 
@@ -92,12 +92,12 @@ export function createAppointmentColumns(
     },
 
     {
-      id: "service",
-      accessorKey: "service.title",
+      id: "title",
+      accessorFn: (row) => row.service?.title,
       header: undefined,
-      meta: { columnName: "Service", columnType: "text" },
-      enableSorting: false,
+      meta: { columnName: "Service", columnType: "text", origin: "service" },
       enableColumnFilter: false,
+      size: 350,
     },
     {
       id: "date",
@@ -124,20 +124,18 @@ export function createAppointmentColumns(
     },
     {
       id: "name",
-      accessorFn: (row) =>
-        row.profile?.first_name + " " + row.profile?.last_name,
+      accessorKey: "name",
       header: undefined,
-      meta: { columnName: "Customer name", columnType: "text" },
-      enableColumnFilter: false,
-      enableSorting: false,
+      meta: {
+        columnName: "Customer name",
+        columnType: "text",
+      },
     },
     {
       id: "email",
       accessorKey: "email",
       header: undefined,
       meta: { columnName: "Customer email", columnType: "text" },
-      enableColumnFilter: false,
-      enableSorting: false,
     },
     {
       id: "price",
@@ -150,15 +148,15 @@ export function createAppointmentColumns(
       id: "advance_payment",
       accessorKey: "advance_payment",
       header: undefined,
-      meta: { columnName: "Advance payment (EUR)", columnType: "number" },
-      size: 130,
+      meta: { columnName: "Deposit (EUR)", columnType: "number" },
+      size: 110,
     },
     {
       id: "advance_payment_paid",
       accessorKey: "advance_payment_paid",
       header: undefined,
       meta: { columnName: "Deposit paid", columnType: "boolean" },
-      size: 90,
+      size: 100,
       cell: ({ row }) => (
         <BooleanDisplay value={row.original.advance_payment_paid} />
       ),

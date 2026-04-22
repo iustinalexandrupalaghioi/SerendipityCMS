@@ -30,8 +30,12 @@ declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends unknown, TValue> {
     className?: string;
     columnName?: string;
+    origin?: string;
     columnType?: ColumnType | null;
     selectOptions?: string[];
+  }
+  interface ColumnSort {
+    origin?: string;
   }
 }
 

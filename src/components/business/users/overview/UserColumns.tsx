@@ -11,9 +11,9 @@ import { format } from "date-fns";
 
 export const userColumnVisibility: VisibilityState = {
   id: true,
-  full_name: false,
-  first_name: true,
-  last_name: true,
+  full_name: true,
+  first_name: false,
+  last_name: false,
   email: true,
   date_of_birth: false,
   role: true,
@@ -72,7 +72,7 @@ export function createUserColumns(
       accessorKey: "full_name",
       header: undefined,
       meta: {
-        columnName: "Name",
+        columnName: "Full name",
         columnType: "text",
       },
       size: 180,
