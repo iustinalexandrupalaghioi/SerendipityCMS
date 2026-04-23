@@ -44,6 +44,7 @@ interface FilterPanelProps {
   selectOptions?: string[];
   onApply: (rule: FilterRule) => void;
   initialValue?: FilterRule | null;
+  origin?: string;
 }
 
 function getDefaultOperator(columnType: ColumnType): FilterOperator {
@@ -319,6 +320,7 @@ export function FilterPanel({
   columnName,
   selectOptions,
   onApply,
+  origin,
   initialValue,
 }: FilterPanelProps) {
   const [operator, setOperator] = useState<FilterOperator | "">("");
@@ -365,6 +367,7 @@ export function FilterPanel({
       columnName: columnName ?? columnId,
       columnType,
       operator,
+      origin,
       value: noValueNeeded ? null : value,
     });
     onOpenChange(false);

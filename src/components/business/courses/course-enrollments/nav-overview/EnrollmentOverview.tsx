@@ -24,9 +24,14 @@ export const COURSE_ENROLLMENT_KEY = "course-enrollment";
 interface EnrollmentOverviewProps {
   course: Course;
   slotId?: string;
+  isOpen?: boolean;
 }
 
-const EnrollmentOverview = ({ course, slotId }: EnrollmentOverviewProps) => {
+const EnrollmentOverview = ({
+  course,
+  slotId,
+  isOpen,
+}: EnrollmentOverviewProps) => {
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [sorting, setSorting] = useState<SortRule[]>(() =>
     initialSorting(COURSE_ENROLLMENT_KEY),
@@ -124,7 +129,7 @@ const EnrollmentOverview = ({ course, slotId }: EnrollmentOverviewProps) => {
         isFetchingNextPage={false}
         hasNextPage={false}
         fetchNextPage={() => {}}
-        height={265}
+        height={isOpen ? 400 : undefined}
       />
 
       {/* ── Dialogs ── */}

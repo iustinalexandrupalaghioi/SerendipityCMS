@@ -6,9 +6,10 @@ import EnrollmentOverview from "../course-enrollments/nav-overview/EnrollmentOve
 
 interface CourseTabsProps {
   course: Course;
+  isOpen?: boolean;
 }
 
-const CourseTabs = ({ course }: CourseTabsProps) => {
+const CourseTabs = ({ course, isOpen }: CourseTabsProps) => {
   return (
     <Tabs defaultValue="days" className="w-full gap-0 mt-2">
       <div className="overflow-x-auto">
@@ -23,12 +24,17 @@ const CourseTabs = ({ course }: CourseTabsProps) => {
       </div>
 
       <TabsContent className="mt-0 pt-3" value="days">
-        <CourseDayOverview slotId="course-days-toolbar-slot" course={course} />
+        <CourseDayOverview
+          slotId="course-days-toolbar-slot"
+          course={course}
+          isOpen={isOpen}
+        />
       </TabsContent>
       <TabsContent className="mt-0 pt-3" value="enrollments">
         <EnrollmentOverview
           slotId="course-enrollments-toolbar-slot"
           course={course}
+          isOpen={isOpen}
         />
       </TabsContent>
     </Tabs>

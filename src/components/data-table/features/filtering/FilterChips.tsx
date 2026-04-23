@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import {
-  OPERATOR_LABELS,
+  getOperatorDisplay,
   type FilterRule,
 } from "@/components/data-table/features/filtering/filters";
 import { X } from "lucide-react";
@@ -11,32 +11,38 @@ import { format } from "date-fns";
 // Helpers
 // ─────────────────────────────────────────────
 
-function formatFilterValue(rule: FilterRule): string {
-  const noValue =
-    rule.operator === "is_empty" ||
-    rule.operator === "is_not_empty" ||
-    rule.operator === "is_true" ||
-    rule.operator === "is_false";
+function formatChipValue(rule: FilterRule): string | null {
+  const { showValue, valueWrap, fixedValue } = getOperatorDisplay(
+    rule.operator,
+  );
 
-  if (noValue) return "";
+  if (showValue === false) return null;
+  if (fixedValue) return fixedValue;
 
-  // ✅ Handle date formatting
-  if (rule.columnType === "date") {
-    if (!rule.value) return "";
-
+  if (rule.columnType === "date" && rule.value) {
     try {
-      return format(new Date(rule.value as string), "dd-MM-yyyy");
+      const raw = Array.isArray(rule.value)
+        ? rule.value.map((v) => format(new Date(v), "dd-MM-yyyy")).join(", ")
+        : format(new Date(rule.value as string), "dd-MM-yyyy");
+      return valueWrap === "brackets" ? `[${raw}]` : raw;
     } catch {
-      return String(rule.value);
+      /* fall through to generic path */
     }
   }
 
-  if (Array.isArray(rule.value))
-    return rule.value.length > 0 ? rule.value.join(", ") : "";
+  const raw = Array.isArray(rule.value)
+    ? rule.value.join(", ")
+    : rule.value != null
+      ? String(rule.value)
+      : "";
 
-  if (rule.value === null || rule.value === undefined) return "";
+  if (!raw) return null;
 
-  return String(rule.value);
+  return valueWrap === "quotes"
+    ? `"${raw}"`
+    : valueWrap === "brackets"
+      ? `[${raw}]`
+      : raw;
 }
 
 // ─────────────────────────────────────────────
@@ -54,24 +60,19 @@ function FilterChip({
   onEdit: () => void;
   locked?: boolean;
 }) {
-  const formattedValue = formatFilterValue(rule);
-
-  const operatorLabel = OPERATOR_LABELS[rule.operator];
+  const { symbol } = getOperatorDisplay(rule.operator);
+  const value = formatChipValue(rule);
 
   return (
     <Badge
       variant="outline"
       className="flex h-8 cursor-pointer items-center gap-1 rounded-md px-2 py-0 text-sm font-normal"
-      title={`${rule.columnName} ${operatorLabel.toLowerCase()}${formattedValue ? ` ${formattedValue}` : ""}`}
+      title={[rule.columnName, symbol, value].filter(Boolean).join(" ")}
       onClick={!locked ? onEdit : undefined}
     >
       <span className="font-medium">{rule.columnName}</span>
-      <span className="text-muted-foreground">
-        {operatorLabel.toLowerCase()}
-      </span>
-      {formattedValue && (
-        <span className="max-w-30 truncate">{formattedValue}</span>
-      )}
+      <span className="text-muted-foreground">{symbol}</span>
+      {value && <span className="max-w-30 truncate">{value}</span>}
       {!locked && (
         <button
           onClick={(e) => {
@@ -96,6 +97,7 @@ function FilterChip({
 export function FilterChips() {
   const { views, preFilters } = useDataTableContext();
   const { filters, setFilters } = views;
+
   const isLocked = (filter: FilterRule) =>
     preFilters.some(
       (p) => p.columnId === filter.columnId && p.operator === filter.operator,
@@ -104,9 +106,6 @@ export function FilterChips() {
   if (filters.length === 0) return null;
 
   const handleEdit = (columnId: string) => {
-    // DataTableHeader owns the filter drawer state internally.
-    // We use a custom event so the header can open its drawer
-    // without lifting that state into context.
     window.dispatchEvent(
       new CustomEvent("datatable:open-filter", { detail: { columnId } }),
     );
@@ -114,10 +113,6 @@ export function FilterChips() {
 
   const handleRemove = (columnId: string) => {
     setFilters((prev) => prev.filter((f) => f.columnId !== columnId));
-  };
-
-  const handleClearAll = () => {
-    setFilters([]);
   };
 
   const removableCount = filters.filter((f) => !isLocked(f)).length;
@@ -135,7 +130,7 @@ export function FilterChips() {
       ))}
       {removableCount > 1 && (
         <button
-          onClick={handleClearAll}
+          onClick={() => setFilters([])}
           className="text-xs text-muted-foreground underline-offset-2 hover:underline"
         >
           Clear all

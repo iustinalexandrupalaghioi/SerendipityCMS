@@ -1,23 +1,22 @@
 import DataTable from "@/components/data-table/DataTable";
-import { Toolbar } from "@/components/toolbar/Toolbar";
-import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
-import type { CourseDay, CourseDayActivity } from "@/types/Course";
-import type { Row } from "@tanstack/react-table";
-import { useCallback, useMemo, useState } from "react";
-import {
-  courseDayActivityColumnVisibility,
-  createCourseDayActivityColumns,
-} from "./ActivityColumns";
-import AddCourseDayActivityDialog from "../form/AddCourseDayActivityDialog";
-import { UpdateCourseDayActivityDialog } from "../form/UpdateCourseDayActivityDialog";
-import { useIsMobile } from "@/hooks/useIsMobile";
-import { useCourseDayActivities } from "./useDayActivities";
-import type { SortRule } from "@/components/data-table/features/views/sort";
 import type { FilterRule } from "@/components/data-table/features/filtering/filters";
+import type { SortRule } from "@/components/data-table/features/views/sort";
 import {
   initialFilters,
   initialSorting,
 } from "@/components/data-table/hooks/useTableViews";
+import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
+import { Toolbar } from "@/components/toolbar/Toolbar";
+import type { CourseDay, CourseDayActivity } from "@/types/Course";
+import type { Row } from "@tanstack/react-table";
+import { useCallback, useMemo, useState } from "react";
+import AddCourseDayActivityDialog from "../form/AddCourseDayActivityDialog";
+import { UpdateCourseDayActivityDialog } from "../form/UpdateCourseDayActivityDialog";
+import {
+  courseDayActivityColumnVisibility,
+  createCourseDayActivityColumns,
+} from "./ActivityColumns";
+import { useCourseDayActivities } from "./useDayActivities";
 
 export const COURSE_DAY_ACTIVITIES_OVERVIEW_KEY =
   "course-day-activities-overview";
@@ -25,11 +24,13 @@ export const COURSE_DAY_ACTIVITIES_OVERVIEW_KEY =
 interface CourseDayActivitiesOverviewProps {
   courseDay: CourseDay;
   slotId?: string;
+  isOpen?: boolean;
 }
 
 const CourseDayActivitiesOverview = ({
   courseDay,
   slotId,
+  isOpen,
 }: CourseDayActivitiesOverviewProps) => {
   const [sorting, setSorting] = useState<SortRule[]>(() =>
     initialSorting(COURSE_DAY_ACTIVITIES_OVERVIEW_KEY),
@@ -46,7 +47,6 @@ const CourseDayActivitiesOverview = ({
   const activities = data?.items ?? [];
   const total = data?.total ?? 0;
 
-  const isMobile = useIsMobile();
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
   // ── Dialog state ──────────────────────────────────────────────────────────
@@ -120,7 +120,7 @@ const CourseDayActivitiesOverview = ({
         columns={columns}
         initialColumnVisibility={courseDayActivityColumnVisibility}
         data={activities}
-        height={isMobile ? 265 : undefined}
+        height={isOpen ? 400 : undefined}
       />
 
       {/* ── Dialogs ── */}

@@ -23,9 +23,14 @@ export const COURSE_DAYS_OVERVIEW_KEY = "course-days-overview";
 interface CourseDayOverviewProps {
   course: Course;
   slotId?: string;
+  isOpen?: boolean;
 }
 
-const CourseDayOverview = ({ course, slotId }: CourseDayOverviewProps) => {
+const CourseDayOverview = ({
+  course,
+  slotId,
+  isOpen,
+}: CourseDayOverviewProps) => {
   const navigate = useNavigate();
 
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
@@ -144,7 +149,7 @@ const CourseDayOverview = ({ course, slotId }: CourseDayOverviewProps) => {
         data={courseDays}
         onSortingChange={setSorting}
         onFiltersChange={handleFiltersChange}
-        height={265}
+        height={isOpen ? 400 : undefined}
       />
 
       {deletingCourseDay && (

@@ -2,13 +2,7 @@ import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { flexRender } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  memo,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  type ReactNode,
-} from "react";
+import { memo, useLayoutEffect, type ReactNode } from "react";
 import type { VirtualTableBodyProps } from "./types";
 
 // ─────────────────────────────────────────────
@@ -89,16 +83,13 @@ function VirtualTableBodyInner<TData>({
   onCellContextMenu,
   onRowClick,
   onRowDoubleClick,
-  rowSelection,
-  selectedCellValuesRef,
   onRowContextClick,
   isLoading,
+  rowSelection,
+  isCellSelected,
+  onCellClick,
 }: VirtualTableBodyProps<TData>) {
-  const selectedCellElRef = useRef<HTMLTableCellElement | null>(null);
-  const selectedCellIndexRef = useRef<{
-    rowIndex: number;
-    colIndex: number;
-  } | null>(null);
+  // ← removed: selectedCellElRef, selectedCellIndexRef, handleCellClick, selectedCellValuesRef
 
   const virtualizer = useVirtualizer({
     count: rows.length,
@@ -108,91 +99,8 @@ function VirtualTableBodyInner<TData>({
   });
 
   useLayoutEffect(() => {
-    if (rows.length > 0) {
-      virtualizer.measure();
-    }
+    if (rows.length > 0) virtualizer.measure();
   }, [rows.length]);
-
-  const handleCellClick = useCallback(
-    (
-      e: React.MouseEvent,
-      rowIndex: number,
-      cellEl: HTMLTableCellElement,
-      isContextMenu = false,
-    ) => {
-      const colIndex = Array.from(cellEl.parentElement?.children ?? []).indexOf(
-        cellEl,
-      );
-
-      const clearAll = () => {
-        document.querySelectorAll("[data-sel]").forEach((el) => el.remove());
-      };
-
-      if (e.shiftKey && selectedCellIndexRef.current !== null) {
-        e.stopPropagation();
-        clearAll();
-
-        const fromRow = Math.min(
-          selectedCellIndexRef.current.rowIndex,
-          rowIndex,
-        );
-        const toRow = Math.max(selectedCellIndexRef.current.rowIndex, rowIndex);
-        const fromCol = Math.min(
-          selectedCellIndexRef.current.colIndex,
-          colIndex,
-        );
-        const toCol = Math.max(selectedCellIndexRef.current.colIndex, colIndex);
-
-        const tbody = cellEl.closest("tbody");
-        if (!tbody) return;
-
-        const selectedValues: string[][] = [];
-
-        for (let r = fromRow; r <= toRow; r++) {
-          const tr = tbody.children[r] as HTMLTableRowElement;
-          if (!tr) continue;
-          const rowValues: string[] = [];
-
-          for (let c = fromCol; c <= toCol; c++) {
-            const td = tr.children[c] as HTMLTableCellElement;
-            if (!td) continue;
-            rowValues.push(td.title ?? "");
-          }
-
-          selectedValues.push(rowValues);
-        }
-
-        const tsv = selectedValues.map((row) => row.join("\t")).join("\n");
-        navigator.clipboard.writeText(tsv);
-        selectedCellValuesRef.current = () => tsv;
-        return;
-      }
-
-      if (isContextMenu && selectedCellElRef.current === cellEl) return;
-
-      clearAll();
-
-      if (!isContextMenu && selectedCellElRef.current === cellEl) {
-        selectedCellElRef.current = null;
-        selectedCellIndexRef.current = null;
-        selectedCellValuesRef.current = () => "";
-        return;
-      }
-
-      selectedCellElRef.current = cellEl;
-      selectedCellIndexRef.current = { rowIndex, colIndex };
-      selectedCellValuesRef.current = () => cellEl.title ?? "";
-
-      if (colIndex >= 2) {
-        const marker = document.createElement("span");
-        marker.dataset.sel = "";
-        marker.className =
-          "pointer-events-none absolute inset-0 z-10 border border-primary";
-        cellEl.appendChild(marker);
-      }
-    },
-    [],
-  );
 
   const virtualRows = virtualizer.getVirtualItems();
   const totalHeight = virtualizer.getTotalSize();
@@ -255,38 +163,27 @@ function VirtualTableBodyInner<TData>({
               const isLast = cell.column.id === lastColumnId;
               const isPinned = cell.column.getIsPinned();
 
+              // ← effectiveRows computed here, where rowSelection is in scope
+              const sel = rowSelection;
+              const isInMultiSelection =
+                Object.keys(sel).length > 1 && sel[row.id];
+              const isAlreadySingleSelected =
+                Object.keys(sel).length === 1 && sel[row.id];
+              const effectiveRows =
+                isInMultiSelection || isAlreadySingleSelected
+                  ? rows.filter((r) => sel[r.id])
+                  : [row];
+
               return (
                 <TableCell
                   key={cell.id}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleCellClick(e, virtualRow.index, e.currentTarget, true);
+                    onCellClick(e, cell);
                     onRowClick?.(e, row);
                   }}
-                  onMouseDown={(e) => {
-                    if (e.button === 2) e.stopPropagation();
-                  }}
                   onContextMenu={(e) => {
-                    const sel = rowSelection;
-                    const isInMultiSelection =
-                      Object.keys(sel).length > 1 && sel[row.id];
-                    const isAlreadySingleSelected =
-                      Object.keys(sel).length === 1 && sel[row.id];
-
-                    const effectiveRows =
-                      isInMultiSelection || isAlreadySingleSelected
-                        ? rows.filter((r) => sel[r.id])
-                        : [row];
-
-                    if (!isInMultiSelection && !isAlreadySingleSelected) {
-                      handleCellClick(
-                        e,
-                        virtualRow.index,
-                        e.currentTarget,
-                        true,
-                      );
-                    }
-
+                    onCellClick(e, cell);
                     onRowContextClick(row);
                     onCellContextMenu(e, cell, effectiveRows);
                   }}
@@ -310,6 +207,8 @@ function VirtualTableBodyInner<TData>({
                     "truncate overflow-hidden border-b whitespace-nowrap",
                     !isLast && "border-r",
                     isPinned && "bg-background",
+                    isCellSelected(row.id, cell.column.id) &&
+                      "outline -outline-offset-1 outline-primary bg-primary/5",
                     cell.column.columnDef.meta?.className,
                   )}
                 >
@@ -334,7 +233,6 @@ function VirtualTableBodyInner<TData>({
     </TableBody>
   );
 }
-
 export const VirtualTableBody = memo(VirtualTableBodyInner) as <TData>(
   props: VirtualTableBodyProps<TData>,
 ) => ReactNode;

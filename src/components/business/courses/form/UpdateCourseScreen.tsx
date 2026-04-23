@@ -220,7 +220,7 @@ const UpdateCourseScreen = () => {
           </CollapsibleContent>
         </Form>
 
-        <CourseDetailsTabs course={course} />
+        <CourseDetailsTabs course={course} isOpen={isOpen} />
       </DetailsScreen>
 
       {/* ── Dialogs ── */}

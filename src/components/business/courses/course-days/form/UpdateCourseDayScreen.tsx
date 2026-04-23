@@ -169,7 +169,7 @@ const UpdateCourseDayScreen = () => {
           </CollapsibleContent>
         </Form>
 
-        <CourseDayTabs courseDay={courseDay} />
+        <CourseDayTabs isOpen={isOpen} courseDay={courseDay} />
       </DetailsScreen>
 
       <DeleteDialog
