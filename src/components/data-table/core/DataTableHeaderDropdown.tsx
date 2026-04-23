@@ -136,6 +136,7 @@ export function DataTableHeaderDropdown({
                 columnType,
                 selectOptions,
                 columnName ?? columnId,
+                origin,
               )
             }
           >

@@ -127,64 +127,37 @@ export const applyFilters = <T>(query: T, filters: FilterRule[]): T => {
         const arr = (value as string[]).map((v) =>
           columnType === "number" ? Number(v) : v,
         );
-        query = (query as any).in(col, arr);
+        if (col.includes(".")) {
+          const [table, column] = col.split(".");
+          const orConditions = arr
+            .map((v) => `${column}.eq.${JSON.stringify(v)}`)
+            .join(",");
+          query = (query as any).or(orConditions, { foreignTable: table });
+        } else {
+          query = (query as any).in(col, arr);
+        }
         break;
     }
   }
   return query;
 };
-
-export function formatFilterLabel(rule: FilterRule): string {
-  const col = rule.columnName;
-  const val = Array.isArray(rule.value)
-    ? rule.value.join(", ")
-    : String(rule.value ?? "");
-
-  switch (rule.operator) {
-    case "equals":
-      return `${col}: ${val}`;
-    case "not_equals":
-      return `${col} ≠ ${val}`;
-    case "contains":
-      return `${col}: *${val}*`;
-    case "not_contains":
-      return `${col}: !*${val}*`;
-    case "gt":
-      return `${col} > ${val}`;
-    case "gte":
-      return `${col} ≥ ${val}`;
-    case "lt":
-      return `${col} < ${val}`;
-    case "lte":
-      return `${col} ≤ ${val}`;
-    case "is_empty":
-      return `${col}: empty`;
-    case "is_not_empty":
-      return `${col}: not empty`;
-    case "is_true":
-      return `${col}: Yes`;
-    case "is_false":
-      return `${col}: No`;
-    case "is_any_of":
-      return `${col}: ${val}`;
-    default:
-      return `${col}: ${val}`;
-  }
-}
-
-export function getOperatorDisplay(rule: FilterRule): {
+export type OperatorDisplay = {
   symbol: string;
-  wrapValue?: "italic" | "none";
-} {
-  switch (rule.operator) {
+  valueWrap?: "quotes" | "brackets";
+  showValue?: false;
+  fixedValue?: string;
+};
+
+export function getOperatorDisplay(operator: FilterOperator): OperatorDisplay {
+  switch (operator) {
     case "equals":
-      return { symbol: ":" };
+      return { symbol: "=" };
     case "not_equals":
       return { symbol: "≠" };
     case "contains":
-      return { symbol: ":", wrapValue: "italic" };
+      return { symbol: "~", valueWrap: "quotes" };
     case "not_contains":
-      return { symbol: "≠", wrapValue: "italic" };
+      return { symbol: "!~", valueWrap: "quotes" };
     case "gt":
       return { symbol: ">" };
     case "gte":
@@ -193,17 +166,37 @@ export function getOperatorDisplay(rule: FilterRule): {
       return { symbol: "<" };
     case "lte":
       return { symbol: "≤" };
-    case "is_empty":
-      return { symbol: ":" };
-    case "is_not_empty":
-      return { symbol: ":" };
-    case "is_true":
-      return { symbol: ":" };
-    case "is_false":
-      return { symbol: ":" };
     case "is_any_of":
-      return { symbol: "∈" };
-    default:
-      return { symbol: ":" };
+      return { symbol: "∈", valueWrap: "brackets" };
+    case "is_empty":
+      return { symbol: "=", fixedValue: "Empty" };
+    case "is_not_empty":
+      return { symbol: "≠", fixedValue: "Empty" };
+    case "is_true":
+      return { symbol: "=", fixedValue: "Yes" };
+    case "is_false":
+      return { symbol: "=", fixedValue: "No" };
   }
+}
+
+export function formatFilterLabel(rule: FilterRule): string {
+  const { symbol, valueWrap, showValue } = getOperatorDisplay(rule.operator);
+  const col = rule.columnName;
+
+  if (showValue === false) {
+    return `${col} ${symbol}`;
+  }
+
+  const raw = Array.isArray(rule.value)
+    ? rule.value.join(", ")
+    : String(rule.value ?? "");
+
+  const val =
+    valueWrap === "quotes"
+      ? `"${raw}"`
+      : valueWrap === "brackets"
+        ? `[${raw}]`
+        : raw;
+
+  return `${col} ${symbol} ${val}`;
 }

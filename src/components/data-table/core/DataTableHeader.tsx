@@ -31,6 +31,9 @@ export function DataTableHeader<TData>() {
   >(null);
   const [filterDrawerColumnType, setFilterDrawerColumnType] =
     useState<ColumnType | null>(null);
+  const [filterDrawerColumnOrigin, setFilterDrawerColumnOrigin] = useState<
+    string | undefined
+  >("");
   const [filterDrawerSelectOptions, setFilterDrawerSelectOptions] = useState<
     string[]
   >([]);
@@ -42,11 +45,13 @@ export function DataTableHeader<TData>() {
     columnType: ColumnType | null,
     selectOptions?: string[],
     columnName?: string | null,
+    origin?: string,
   ) => {
     setFilterDrawerColumnId(columnId);
     setFilterDrawerColumnType(columnType);
     setFilterDrawerColumnName(columnName ?? columnId);
     setFilterDrawerSelectOptions(selectOptions ?? []);
+    setFilterDrawerColumnOrigin(origin);
     setFilterDrawerOpen(true);
   };
 
@@ -65,6 +70,7 @@ export function DataTableHeader<TData>() {
         meta?.columnType ?? null,
         meta?.selectOptions,
         meta?.columnName ?? columnId,
+        meta?.origin,
       );
     };
 
@@ -139,6 +145,7 @@ export function DataTableHeader<TData>() {
               header.column.columnDef.meta?.columnName ?? header.column.id;
             const columnId = header.column.id;
             const columnType = header.column.columnDef.meta?.columnType ?? null;
+            const columnOrigin = header.column.columnDef.meta?.origin;
             const selectOptions =
               header.column.columnDef.meta?.selectOptions ?? [];
             const sortIndex = sorting.findIndex(
@@ -196,6 +203,7 @@ export function DataTableHeader<TData>() {
                       handleOpenFilterDrawer={handleOpenFilterDrawer}
                       locked={lockedColumnIds.has(columnId)}
                       canFilter={canFilter}
+                      origin={columnOrigin}
                     />
                   )}
                 </div>
@@ -227,6 +235,7 @@ export function DataTableHeader<TData>() {
           filters.find((f) => f.columnId === filterDrawerColumnId) ?? null
         }
         onApply={handleApplyFilter}
+        origin={filterDrawerColumnOrigin}
       />
     </TableHeader>
   );

@@ -9,12 +9,11 @@ import { format } from "date-fns";
 
 export const courseEnrollmentColumnVisibility: VisibilityState = {
   id: true,
-  ttile: true,
+  title: true,
   full_name: true,
   email: true,
   status: true,
   enrollment_date: true,
-  course: false,
   course_date: true,
   price: true,
   advance_price: true,
@@ -57,14 +56,12 @@ export function createCourseEnrollmentColumns(
         origin: "course",
       },
       size: 200,
-      enableColumnFilter: false,
     },
     {
       id: "full_name",
       accessorFn: (row) => row.profile?.full_name,
       header: undefined,
       meta: { columnName: "Customer", columnType: "text", origin: "profile" },
-      enableColumnFilter: false,
       size: 200,
     },
     {
@@ -77,7 +74,6 @@ export function createCourseEnrollmentColumns(
         origin: "profile",
       },
       size: 200,
-      enableColumnFilter: false,
     },
     {
       id: "status",
@@ -108,15 +104,6 @@ export function createCourseEnrollmentColumns(
           ? format(new Date(row.original.enrollment_date), "dd-MM-yyyy")
           : "—",
       size: 90,
-    },
-    {
-      id: "course",
-      accessorFn: (row) => row.course?.title ?? "",
-      header: undefined,
-      meta: { columnName: "Course", columnType: "text" },
-      cell: ({ row }) => (
-        <span className="font-medium">{row.original.course?.title ?? ""}</span>
-      ),
     },
     {
       id: "course_date",

@@ -5,8 +5,9 @@ import CourseDayActivitiesOverview from "../course-day-activities/nav-overview/A
 
 interface CourseDayTabsProps {
   courseDay: CourseDay;
+  isOpen?: boolean;
 }
-const CourseDayTabs = ({ courseDay }: CourseDayTabsProps) => {
+const CourseDayTabs = ({ courseDay, isOpen }: CourseDayTabsProps) => {
   return (
     <Tabs defaultValue="activities" className="w-full gap-0 mt-2">
       <TabsList className="w-full rounded-b-none justify-start bg-card">
@@ -22,6 +23,7 @@ const CourseDayTabs = ({ courseDay }: CourseDayTabsProps) => {
         <CourseDayActivitiesOverview
           slotId="course-day-activities-toolbar-slot"
           courseDay={courseDay}
+          isOpen={isOpen}
         />
       </TabsContent>
     </Tabs>

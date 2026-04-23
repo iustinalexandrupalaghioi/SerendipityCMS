@@ -44,14 +44,12 @@ function buildFilterRule(
   state: ContextMenuState<unknown>,
   operator: "equals" | "not_equals",
 ): FilterRule | null {
-  const { columnId, columnType, columnName, copyValue } = state;
+  const { columnId, columnType, columnName, copyValue, origin } = state;
 
   if (!columnType) return null;
-
   if (copyValue === null || copyValue === undefined || copyValue === "")
     return null;
 
-  // Boolean columns use is_true / is_false — no value needed
   if (columnType === "boolean") {
     const boolOperator =
       copyValue === true || copyValue === "true"
@@ -68,6 +66,7 @@ function buildFilterRule(
       columnName,
       operator: boolOperator,
       value: null,
+      origin,
     };
   }
 
@@ -77,9 +76,9 @@ function buildFilterRule(
     columnName,
     operator,
     value: String(copyValue),
+    origin,
   };
 }
-
 // ─────────────────────────────────────────────
 // CellContextMenu
 // ─────────────────────────────────────────────
@@ -116,15 +115,20 @@ function CellContextMenuInner<TData>({
   } = state;
 
   const handleCopyValue = () => {
+    // Cell selection always wins — covers both single and multi-cell TSV
+    const tsv = selectedCellValuesRef.current?.();
+    if (tsv) {
+      navigator.clipboard.writeText(tsv);
+      return;
+    }
+
+    // Fall back to row IDs when multiple rows are selected but no cells
     if (isMulti) {
       navigator.clipboard.writeText(allSelectedIds.join("\n"));
       return;
     }
-    const selectedValues = selectedCellValuesRef.current?.();
-    if (selectedValues) {
-      navigator.clipboard.writeText(selectedValues);
-      return;
-    }
+
+    // Single cell fallback from context menu state
     if (copyValue == null) return;
     const text =
       typeof copyValue === "boolean"

@@ -1,16 +1,16 @@
-import type { Cell, Row } from "@tanstack/react-table"
-import type { ColumnType } from "@/components/data-table/features/filtering/filters"
-import type { ReactNode, RefObject } from "react"
+import type { Cell, Row } from "@tanstack/react-table";
+import type { ColumnType } from "@/components/data-table/features/filtering/filters";
+import type { ReactNode, RefObject } from "react";
 
 // ─────────────────────────────────────────────
 // Public action type (used in column meta)
 // ─────────────────────────────────────────────
 
 export interface RowAction<TData> {
-  label: ReactNode
-  isEligible?: (row: Row<TData>) => boolean
-  onSelect: (eligibleRows: Row<TData>[]) => void
-  destructive?: boolean
+  label: ReactNode;
+  isEligible?: (row: Row<TData>) => boolean;
+  onSelect: (eligibleRows: Row<TData>[]) => void;
+  destructive?: boolean;
 }
 
 // ─────────────────────────────────────────────
@@ -18,10 +18,10 @@ export interface RowAction<TData> {
 // ─────────────────────────────────────────────
 
 export interface ResolvedAction {
-  label: ReactNode
-  onSelect: () => void
-  destructive?: boolean
-  disabled?: boolean
+  label: ReactNode;
+  onSelect: () => void;
+  destructive?: boolean;
+  disabled?: boolean;
 }
 
 // ─────────────────────────────────────────────
@@ -29,20 +29,21 @@ export interface ResolvedAction {
 // ─────────────────────────────────────────────
 
 export interface ContextMenuState<TData> {
-  x: number
-  y: number
-  copyValue: unknown
-  copyUrl: string | null
-  effectiveRows: Row<TData>[]
-  isMulti: boolean
-  onOpen?: (rows: Row<TData>[]) => void
-  deleteAction: ResolvedAction | null
-  actions: ResolvedAction[]
+  x: number;
+  y: number;
+  copyValue: unknown;
+  copyUrl: string | null;
+  effectiveRows: Row<TData>[];
+  isMulti: boolean;
+  onOpen?: (rows: Row<TData>[]) => void;
+  deleteAction: ResolvedAction | null;
+  actions: ResolvedAction[];
   // Column info — used to build filter rules from the context menu
-  columnId: string
-  columnType: ColumnType | null
-  columnName: string
-  selectOptions?: string[]
+  columnId: string;
+  columnType: ColumnType | null;
+  columnName: string;
+  selectOptions?: string[];
+  origin?: string;
 }
 
 // ─────────────────────────────────────────────
@@ -50,20 +51,22 @@ export interface ContextMenuState<TData> {
 // ─────────────────────────────────────────────
 
 export interface VirtualTableBodyProps<TData> {
-  rows: Row<TData>[]
-  lastColumnId: string | undefined
-  columnsLength: number
-  scrollContainerRef: React.RefObject<HTMLDivElement | null>
-  isResizing: boolean
+  rows: Row<TData>[];
+  lastColumnId: string | undefined;
+  columnsLength: number;
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+  isResizing: boolean;
   onCellContextMenu: (
     e: React.MouseEvent,
     cell: Cell<TData, unknown>,
-    effectiveRows: Row<TData>[]
-  ) => void
-  rowSelection: Record<string, boolean>
-  onRowClick?: (e: React.MouseEvent, row: Row<TData>) => void
-  onRowDoubleClick?: (row: Row<TData>) => void
-  selectedCellValuesRef: RefObject<() => string>
-  onRowContextClick: (row: Row<TData>) => void
-  isLoading: boolean
+    effectiveRows: Row<TData>[],
+  ) => void;
+  rowSelection: Record<string, boolean>;
+  onRowClick?: (e: React.MouseEvent, row: Row<TData>) => void;
+  onRowDoubleClick?: (row: Row<TData>) => void;
+  selectedCellValuesRef: RefObject<() => string>;
+  onRowContextClick: (row: Row<TData>) => void;
+  isLoading: boolean;
+  isCellSelected: (rowId: string, columnId: string) => boolean;
+  onCellClick: (e: React.MouseEvent, cell: Cell<TData, unknown>) => void;
 }

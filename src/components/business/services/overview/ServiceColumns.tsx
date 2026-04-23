@@ -59,7 +59,6 @@ export function createServiceColumns(
       header: undefined,
       meta: { columnName: "Category", columnType: "text", origin: "category" },
       size: 150,
-      enableColumnFilter: false,
     },
     // ── Description ──
     {

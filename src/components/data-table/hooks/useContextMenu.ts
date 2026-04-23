@@ -106,6 +106,7 @@ export function useContextMenu<TData>(table: Table<TData>) {
         columnType: cellMeta?.columnType ?? null,
         columnName: cellMeta?.columnName ?? cell.column.id,
         selectOptions: cellMeta?.selectOptions,
+        origin: cellMeta?.origin,
       });
     },
     [],

@@ -96,7 +96,6 @@ export function createAppointmentColumns(
       accessorFn: (row) => row.service?.title,
       header: undefined,
       meta: { columnName: "Service", columnType: "text", origin: "service" },
-      enableColumnFilter: false,
       size: 350,
     },
     {
