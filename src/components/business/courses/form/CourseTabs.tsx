@@ -1,8 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Course } from "@/types/Course";
-import { BookCheckIcon, CalendarDaysIcon } from "lucide-react";
+import {
+  BookCheckIcon,
+  CalendarClockIcon,
+  CalendarDaysIcon,
+} from "lucide-react";
 import CourseDayOverview from "../course-days/nav-overview/CourseDayOverview";
 import EnrollmentOverview from "../course-enrollments/nav-overview/EnrollmentOverview";
+import CourseSessionOverview from "../course-sessions/nav-overview/CourseSessionOverview";
 
 interface CourseTabsProps {
   course: Course;
@@ -17,6 +22,9 @@ const CourseTabs = ({ course, isOpen }: CourseTabsProps) => {
           <TabsTrigger title="Course days tab" value="days">
             <CalendarDaysIcon className="size-4" /> Course days
           </TabsTrigger>
+          <TabsTrigger title="Course sessions tab" value="sessions">
+            <CalendarClockIcon className="size-4" /> Course sessions
+          </TabsTrigger>
           <TabsTrigger title="Course enrollments tab" value="enrollments">
             <BookCheckIcon className="size-4" /> Course enrollments
           </TabsTrigger>
@@ -26,6 +34,13 @@ const CourseTabs = ({ course, isOpen }: CourseTabsProps) => {
       <TabsContent className="mt-0 pt-3" value="days">
         <CourseDayOverview
           slotId="course-days-toolbar-slot"
+          course={course}
+          isOpen={isOpen}
+        />
+      </TabsContent>
+      <TabsContent className="mt-0 pt-3" value="sessions">
+        <CourseSessionOverview
+          slotId="course-sessions-toolbar-slot"
           course={course}
           isOpen={isOpen}
         />
