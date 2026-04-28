@@ -79,6 +79,7 @@ export const FormCalendar: React.FC<FormCalendarProps> = ({
             selected={selectedDate}
             startMonth={effectiveStartMonth}
             endMonth={toDate}
+            defaultMonth={selectedDate}
             disabled={{ before: effectiveStartMonth }}
             captionLayout="dropdown"
             onSelect={handleSelect}

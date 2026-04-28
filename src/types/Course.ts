@@ -64,3 +64,16 @@ export type Enrollment = {
   created_at: string;
   course?: Course;
 };
+
+export type CourseSession = {
+  id: string;
+  course_id: string;
+  start_date: string;
+  available_spots: number;
+  remaining_spots: number;
+  is_open: boolean;
+  price: number;
+  advance_price: number;
+  created_at: string;
+  course?: Course;
+};
