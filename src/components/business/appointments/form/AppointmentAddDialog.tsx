@@ -61,8 +61,8 @@ export function AppointmentAddDialog({
 
       const endTime = endDate.toTimeString().slice(0, 5); // "HH:MM"
 
-      const { error } = await supabase.from("appointment").insert([
-        {
+      const { error } = await supabase.functions.invoke("create-appointment", {
+        body: {
           service_id: values.service.id,
           user_id: values.user?.id || null,
           name: values.name,
@@ -73,8 +73,10 @@ export function AppointmentAddDialog({
           price: values.price,
           advance_payment: values.advance_payment,
           end_time: endTime,
+          action_type: "create_appointment",
+          author: "admin",
         },
-      ]);
+      });
 
       if (error) throw error;
     },
@@ -88,7 +90,21 @@ export function AppointmentAddDialog({
 
       setOpen(false);
     },
-    onError: (error: any) => {
+    onError: async (error: any) => {
+      const status = error?.context?.status;
+      const body = await error?.context?.json().catch(() => null);
+      const message = body?.error;
+
+      if (status === 409) {
+        toast.error(message ?? "An active appointment already exists.");
+        return;
+      }
+
+      if (status === 400) {
+        toast.error(message ?? "Invalid booking details.");
+        return;
+      }
+
       toast.error(error.message || "Failed to book appointment.");
     },
   });

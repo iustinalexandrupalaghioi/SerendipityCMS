@@ -120,15 +120,21 @@ const AppointmentOverview = () => {
     return [{ path: "/", label: "Home" }, ...crumbs];
   }, [location.pathname]);
 
-  // ── Actions ───────────────────────────────────────────────────────────────
   const handleApprove = useCallback(
     async (id: string) => {
       try {
-        const { error } = await supabase
-          .from("appointment")
-          .update({ status: "approved" })
-          .eq("id", id);
-        if (error) throw error;
+        const { error } = await supabase.functions.invoke(
+          "approve-appointment",
+          {
+            body: { id, action_type: "approve_appointment" },
+          },
+        );
+
+        if (error) {
+          const body = await error?.context?.json().catch(() => null);
+          throw new Error(body?.error ?? "Failed to approve appointment.");
+        }
+
         toast.success("Appointment successfully approved.");
         queryClient.invalidateQueries({ queryKey: ["appointments"] });
       } catch (error: any) {

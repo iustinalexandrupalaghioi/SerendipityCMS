@@ -18,6 +18,7 @@ import {
   createCourseSessionColumns,
 } from "./CourseSessionColumns";
 import { useCourseSessions, QUERY_KEY } from "./useCourseSessions";
+import { format } from "date-fns/format";
 
 export const COURSE_SESSIONS_OVERVIEW_KEY = "course-sessions-overview";
 
@@ -162,7 +163,7 @@ const CourseSessionOverview = ({
             <>
               You're about to delete the session starting on{" "}
               <span className="font-semibold">
-                {new Date(deletingSession.start_date).toLocaleDateString()}
+                {format(new Date(deletingSession.start_date), "dd-MM-yyyy")}
               </span>
               .<br />
               Once deleted, the data cannot be recovered.

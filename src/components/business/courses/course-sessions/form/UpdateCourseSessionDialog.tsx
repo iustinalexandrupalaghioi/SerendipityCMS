@@ -103,7 +103,10 @@ export const UpdateCourseSessionDialog = ({
       open={open}
       setOpen={setOpen}
       title="Session"
-      description="Update session details"
+      description={
+        session.is_open ? "View session details" : "Update session details"
+      }
+      disableUpdate={session.is_open}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="flex flex-col min-h-0">
