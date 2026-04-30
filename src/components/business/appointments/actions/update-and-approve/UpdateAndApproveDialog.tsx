@@ -63,22 +63,22 @@ const UpdateAndApproveDialog = ({
         hours,
         minutes + values.duration,
       );
+      const endTime = endDate.toTimeString().slice(0, 5);
 
-      const endTime = endDate.toTimeString().slice(0, 5); // "HH:MM"
-      const { error } = await supabase
-        .from("appointment")
-        .update({
+      const { error } = await supabase.functions.invoke("approve-appointment", {
+        body: {
+          id: values.id,
           email: values.email,
           end_time: endTime,
           duration: values.duration,
           advance_payment: values.advance_payment,
           price: values.price,
-          status: "approved",
           notes: values.notes,
-        })
-        .eq("id", values.id);
+          action_type: "approve_appointment_with_updates",
+        },
+      });
 
-      if (error) throw new Error(error.message);
+      if (error) throw error;
     },
     onSuccess: async () => {
       toast.success("Appointment successfully approved!");
@@ -86,8 +86,17 @@ const UpdateAndApproveDialog = ({
       form.reset();
       setOpen(false);
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to approve appointment.");
+    onError: async (error: any) => {
+      const status = error?.context?.status;
+      const body = await error?.context?.json().catch(() => null);
+      const message = body?.error;
+
+      if (status === 409) {
+        toast.error(message ?? "Appointment has already been approved.");
+        return;
+      }
+
+      toast.error(message ?? "Failed to approve appointment.");
     },
   });
 
