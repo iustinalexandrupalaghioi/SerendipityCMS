@@ -68,8 +68,12 @@ export function AppointmentTimePicker({
           </div>
         </PopoverTrigger>
 
-        <PopoverContent className="w-auto p-0" align="start">
-          <div className="flex max-h-72 w-56 flex-col gap-4 overflow-y-auto p-6 md:w-72 lg:w-96">
+        <PopoverContent className="w-auto p-0 overflow-hidden" align="start">
+          <div
+            className="flex max-h-72 w-56 flex-col gap-4 overflow-y-auto p-6 md:w-72 lg:w-96"
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+          >
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
               {isLoading ? (
                 Array.from({ length: 6 }).map((_, i) => (
