@@ -73,11 +73,11 @@ export function createAppointmentColumns(
         columnType: "select",
         selectOptions: [
           "pending",
-          "approved",
+          "accepted",
           "confirmed",
           "completed",
-          "rejected",
-          "canceled",
+          "declined",
+          "cancelled",
         ],
       },
       cell: ({ row }) => (
