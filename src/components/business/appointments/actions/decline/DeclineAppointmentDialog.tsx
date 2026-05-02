@@ -53,13 +53,13 @@ const DeclineAppointmentDialog = ({
 
   const updateAppointmentMutation = useMutation({
     mutationFn: async (values: AppointmentFormValues) => {
-      const { error } = await supabase
-        .from("appointment")
-        .update({
-          status: "declined",
+      const { error } = await supabase.functions.invoke("decline-appointment", {
+        body: {
+          id: values.id,
           notes: values.notes,
-        })
-        .eq("id", values.id);
+          action_type: "decline_appointment",
+        },
+      });
 
       if (error) throw new Error(error.message);
     },
