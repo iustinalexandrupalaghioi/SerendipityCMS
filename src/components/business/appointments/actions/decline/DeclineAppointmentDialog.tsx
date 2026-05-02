@@ -11,20 +11,20 @@ import { supabase } from "@/lib/supabaseClient";
 
 import type { Appointment } from "@/types/Appointment";
 import { DialogClose } from "@radix-ui/react-dialog";
+import DeclineAppointmentForm from "./DeclineAppointmentForm";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
-import UpdateAndApproveForm from "./UpdateAndApproveForm";
 
-interface UpdateAndApproveDialogProps {
+interface DeclineAppointmentDialogProps {
   appointment: Appointment;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const UpdateAndApproveDialog = ({
+const DeclineAppointmentDialog = ({
   appointment,
   open,
   setOpen,
-}: UpdateAndApproveDialogProps) => {
+}: DeclineAppointmentDialogProps) => {
   const queryClient = useQueryClient();
 
   const form = useForm<AppointmentFormValues>({
@@ -53,50 +53,24 @@ const UpdateAndApproveDialog = ({
 
   const updateAppointmentMutation = useMutation({
     mutationFn: async (values: AppointmentFormValues) => {
-      const [hours, minutes] = appointment.start_time.split(":").map(Number);
-      const [year, month, day] = appointment.date.split("-").map(Number);
-
-      const endDate = new Date(
-        year,
-        month - 1,
-        day,
-        hours,
-        minutes + values.duration,
-      );
-      const endTime = endDate.toTimeString().slice(0, 5);
-
-      const { error } = await supabase.functions.invoke("approve-appointment", {
-        body: {
-          id: values.id,
-          email: values.email,
-          end_time: endTime,
-          duration: values.duration,
-          advance_payment: values.advance_payment,
-          price: values.price,
+      const { error } = await supabase
+        .from("appointment")
+        .update({
+          status: "declined",
           notes: values.notes,
-          action_type: "approve_appointment_with_updates",
-        },
-      });
+        })
+        .eq("id", values.id);
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
     },
     onSuccess: async () => {
-      toast.success("Appointment successfully approved!");
+      toast.success("Appointment successfully declined!");
       await queryClient.refetchQueries({ queryKey: ["appointments"] });
       form.reset();
       setOpen(false);
     },
-    onError: async (error: any) => {
-      const status = error?.context?.status;
-      const body = await error?.context?.json().catch(() => null);
-      const message = body?.error;
-
-      if (status === 409) {
-        toast.error(message ?? "Appointment has already been approved.");
-        return;
-      }
-
-      toast.error(message ?? "Failed to approve appointment.");
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to decline appointment.");
     },
   });
 
@@ -113,24 +87,22 @@ const UpdateAndApproveDialog = ({
     <UpdateDialog
       open={open}
       setOpen={setOpen}
-      title="Update and approve appointment"
-      description="Update appointment details and approve."
+      title="Decline appointment"
+      description="Decline this appointment request. The customer will receive a notification about the decline."
       className="md:max-w-lg"
       disableUpdate
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="flex flex-col min-h-0">
           <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary px-1">
-            <UpdateAndApproveForm
-              setValue={form.setValue}
-              watch={form.watch}
+            <DeclineAppointmentForm
               control={form.control}
               errors={form.formState.errors}
             />
           </div>
           <div className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
             <Button type="submit" className="flex-1">
-              Approve
+              Decline
             </Button>
 
             <DialogClose asChild className="flex-1">
@@ -145,4 +117,4 @@ const UpdateAndApproveDialog = ({
   );
 };
 
-export default UpdateAndApproveDialog;
+export default DeclineAppointmentDialog;
