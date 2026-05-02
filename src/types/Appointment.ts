@@ -3,22 +3,22 @@ import type { Profile } from "./User";
 
 export const APPOINTMENT_STATUSES = [
   "pending",
-  "approved",
+  "accepted",
   "confirmed",
-  "rejected",
+  "declined",
   "completed",
-  "canceled",
+  "cancelled",
 ] as const;
 
 export type AppointmentStatus = (typeof APPOINTMENT_STATUSES)[number];
 
 export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
   pending: "Pending",
-  approved: "Approved",
+  accepted: "Accepted",
   confirmed: "Confirmed",
-  rejected: "Rejected",
+  declined: "Declined",
   completed: "Completed",
-  canceled: "Canceled",
+  cancelled: "Cancelled",
 };
 
 export const APPOINTMENT_STATUS_OPTIONS = APPOINTMENT_STATUSES.map(

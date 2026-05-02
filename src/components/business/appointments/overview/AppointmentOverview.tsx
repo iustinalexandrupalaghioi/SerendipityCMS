@@ -16,8 +16,8 @@ import type { Row } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { Navigate, useParams } from "react-router";
 import { toast } from "sonner";
-import RejectAppointmentDialog from "../actions/reject/RejectAppointmentDialog";
-import UpdateAndApproveDialog from "../actions/update-and-approve/UpdateAndApproveDialog";
+import DeclineAppointmentDialog from "../actions/decline/DeclineAppointmentDialog";
+import UpdateAndAcceptDialog from "../actions/update-and-accept/UpdateAndAcceptDialog";
 import { AppointmentAddDialog } from "../form/AppointmentAddDialog";
 import AppointmentUpdateDialog from "../form/AppointmentUpdateDialog";
 import {
@@ -38,7 +38,9 @@ const LABEL_MAP: Record<string, string> = {
   appointments: "Appointments",
   confirmed: "Today",
   pending: "Pending",
-  approved: "Approved",
+  accepted: "Accepted",
+  declined: "Declined",
+  cancelled: "Cancelled",
 };
 
 const AppointmentOverview = () => {
@@ -90,9 +92,9 @@ const AppointmentOverview = () => {
     useState<Appointment | null>(null);
   const [deletingAppointment, setDeletingAppointment] =
     useState<Appointment | null>(null);
-  const [updateAndApproveAppointment, setUpdateAndApproveAppointment] =
+  const [updateAndAcceptAppointment, setUpdateAndAcceptAppointment] =
     useState<Appointment | null>(null);
-  const [rejectingAppointment, setRejectingAppointment] =
+  const [decliningAppointment, setDecliningAppointment] =
     useState<Appointment | null>(null);
 
   // ── Data ──────────────────────────────────────────────────────────────────
@@ -120,25 +122,25 @@ const AppointmentOverview = () => {
     return [{ path: "/", label: "Home" }, ...crumbs];
   }, [location.pathname]);
 
-  const handleApprove = useCallback(
+  const handleAccept = useCallback(
     async (id: string) => {
       try {
         const { error } = await supabase.functions.invoke(
-          "approve-appointment",
+          "accept-appointment",
           {
-            body: { id, action_type: "approve_appointment" },
+            body: { id, action_type: "accept_appointment" },
           },
         );
 
         if (error) {
           const body = await error?.context?.json().catch(() => null);
-          throw new Error(body?.error ?? "Failed to approve appointment.");
+          throw new Error(body?.error ?? "Failed to accept appointment.");
         }
 
-        toast.success("Appointment successfully approved.");
+        toast.success("Appointment successfully accepted.");
         queryClient.invalidateQueries({ queryKey: ["appointments"] });
       } catch (error: any) {
-        toast.error(error.message || "Failed to approve appointment.");
+        toast.error(error.message || "Failed to accept appointment.");
       }
     },
     [queryClient],
@@ -163,9 +165,9 @@ const AppointmentOverview = () => {
 
   const actions = useAppointmentActions({
     setEditingAppointment,
-    setUpdateAndApproveAppointment,
-    setRejectingAppointment,
-    onApprove: handleApprove,
+    setUpdateAndAcceptAppointment,
+    setDecliningAppointment,
+    onAccept: handleAccept,
     onComplete: handleComplete,
   });
 
@@ -263,19 +265,19 @@ const AppointmentOverview = () => {
         />
       )}
 
-      {updateAndApproveAppointment && (
-        <UpdateAndApproveDialog
-          open={!!updateAndApproveAppointment}
-          setOpen={(o) => !o && setUpdateAndApproveAppointment(null)}
-          appointment={updateAndApproveAppointment}
+      {updateAndAcceptAppointment && (
+        <UpdateAndAcceptDialog
+          open={!!updateAndAcceptAppointment}
+          setOpen={(o) => !o && setUpdateAndAcceptAppointment(null)}
+          appointment={updateAndAcceptAppointment}
         />
       )}
 
-      {rejectingAppointment && (
-        <RejectAppointmentDialog
-          open={!!rejectingAppointment}
-          setOpen={(o) => !o && setRejectingAppointment(null)}
-          appointment={rejectingAppointment}
+      {decliningAppointment && (
+        <DeclineAppointmentDialog
+          open={!!decliningAppointment}
+          setOpen={(o) => !o && setDecliningAppointment(null)}
+          appointment={decliningAppointment}
         />
       )}
 

@@ -34,10 +34,10 @@ const statusVariantMap: Record<
   "default" | "secondary" | "destructive" | "outline"
 > = {
   confirmed: "secondary",
-  approved: "secondary",
+  accepted: "secondary",
   pending: "outline",
-  canceled: "destructive",
-  rejected: "destructive",
+  cancelled: "destructive",
+  declined: "destructive",
   completed: "default",
 };
 

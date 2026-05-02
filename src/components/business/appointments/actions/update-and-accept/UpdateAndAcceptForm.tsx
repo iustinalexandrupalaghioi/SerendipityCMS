@@ -8,27 +8,48 @@ import {
 
 import { Input } from "@/components/ui/input";
 
+import type {
+  Control,
+  FieldErrors,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
+import type { AppointmentFormValues } from "./form-schema";
 import PickupFormInput from "@/components/partials/PickupFormInput";
-import SectionCard from "@/components/partials/SectionCard";
-import { Textarea } from "@/components/ui/textarea";
-import type { Control, FieldErrors } from "react-hook-form";
 import { AppointmentDatePicker } from "../../form/AppointmentDatePicker";
 import { AppointmentTimePicker } from "../../form/AppointmentTimePicker";
-import type { AppointmentFormValues } from "./form-schema";
+import { useEffect } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import SectionCard from "@/components/partials/SectionCard";
 
-interface RejectAppointmentFormProps {
+interface UpdateAndAcceptFormProps {
   control: Control<AppointmentFormValues>;
   errors: FieldErrors<AppointmentFormValues>;
+  setValue: UseFormSetValue<AppointmentFormValues>;
+  watch: UseFormWatch<AppointmentFormValues>;
 }
 
-const RejectAppointmentForm = ({
+const UpdateAndAcceptForm = ({
   control,
   errors,
-}: RejectAppointmentFormProps) => {
-  return (
-    <div className="w-full max-w-5xl mx-auto py-2 space-y-4">
-      {/* ── Appointment details ── */}
+  setValue,
+  watch,
+}: UpdateAndAcceptFormProps) => {
+  const duration = watch("duration");
+  const startTime = watch("start_time");
+  /* Sync end time into form */
+  useEffect(() => {
+    if (!duration || !startTime) return;
 
+    const [hours, minutes] = startTime.split(":").map(Number);
+    const endDate = new Date(0, 0, 0, hours, minutes + duration);
+    const endTime = endDate.toTimeString().slice(0, 5); // "HH:MM"
+
+    setValue("end_time", endTime, { shouldDirty: true });
+  }, [duration, setValue]);
+
+  return (
+    <div className="w-full max-w-full mx-auto py-2 space-y-4">
       <SectionCard title="Customer">
         <div className="grid grid-cols-1 gap-6">
           <FormField
@@ -80,7 +101,6 @@ const RejectAppointmentForm = ({
           />
 
           <FormField
-            control={control}
             name="date"
             render={({ field }) => (
               <AppointmentDatePicker
@@ -92,7 +112,6 @@ const RejectAppointmentForm = ({
           />
 
           <FormField
-            control={control}
             name="start_time"
             render={({ field }) => (
               <AppointmentTimePicker
@@ -105,14 +124,12 @@ const RejectAppointmentForm = ({
           />
 
           <FormField
-            control={control}
             name="duration"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Duration (minutes)</FormLabel>
                 <FormControl>
                   <Input
-                    disabled
                     type="number"
                     value={field.value ?? ""}
                     onChange={(e) => field.onChange(Number(e.target.value))}
@@ -124,7 +141,6 @@ const RejectAppointmentForm = ({
           />
 
           <FormField
-            control={control}
             name="end_time"
             render={({ field }) => (
               <AppointmentTimePicker
@@ -138,11 +154,9 @@ const RejectAppointmentForm = ({
         </div>
       </SectionCard>
 
-      {/* ── Pricing ── */}
       <SectionCard title="Pricing">
         <div className="grid grid-cols-1 gap-6">
           <FormField
-            control={control}
             name="price"
             render={({ field }) => (
               <FormItem>
@@ -150,7 +164,6 @@ const RejectAppointmentForm = ({
                 <FormControl>
                   <div className="relative">
                     <Input
-                      disabled
                       type="number"
                       className="pr-12"
                       value={field.value ?? ""}
@@ -167,7 +180,6 @@ const RejectAppointmentForm = ({
           />
 
           <FormField
-            control={control}
             name="advance_payment"
             render={({ field }) => (
               <FormItem>
@@ -175,7 +187,6 @@ const RejectAppointmentForm = ({
                 <FormControl>
                   <div className="relative">
                     <Input
-                      disabled
                       type="number"
                       className="pr-12"
                       value={field.value ?? ""}
@@ -196,7 +207,6 @@ const RejectAppointmentForm = ({
       {/* ── Customer notes ── */}
       <SectionCard title="Customer notes">
         <FormField
-          control={control}
           name="notes"
           render={({ field }) => (
             <FormItem>
@@ -217,4 +227,4 @@ const RejectAppointmentForm = ({
   );
 };
 
-export default RejectAppointmentForm;
+export default UpdateAndAcceptForm;

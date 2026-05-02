@@ -12,19 +12,19 @@ import { supabase } from "@/lib/supabaseClient";
 import type { Appointment } from "@/types/Appointment";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
-import RejectAppointmentForm from "./RejectAppointmentForm";
+import UpdateAndApproveForm from "./UpdateAndAcceptForm";
 
-interface RejectAppointmentDialogProps {
+interface UpdateAndApproveDialogProps {
   appointment: Appointment;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RejectAppointmentDialog = ({
+const UpdateAndAcceptDialog = ({
   appointment,
   open,
   setOpen,
-}: RejectAppointmentDialogProps) => {
+}: UpdateAndApproveDialogProps) => {
   const queryClient = useQueryClient();
 
   const form = useForm<AppointmentFormValues>({
@@ -53,24 +53,50 @@ const RejectAppointmentDialog = ({
 
   const updateAppointmentMutation = useMutation({
     mutationFn: async (values: AppointmentFormValues) => {
-      const { error } = await supabase
-        .from("appointment")
-        .update({
-          status: "rejected",
-          notes: values.notes,
-        })
-        .eq("id", values.id);
+      const [hours, minutes] = appointment.start_time.split(":").map(Number);
+      const [year, month, day] = appointment.date.split("-").map(Number);
 
-      if (error) throw new Error(error.message);
+      const endDate = new Date(
+        year,
+        month - 1,
+        day,
+        hours,
+        minutes + values.duration,
+      );
+      const endTime = endDate.toTimeString().slice(0, 5);
+
+      const { error } = await supabase.functions.invoke("accept-appointment", {
+        body: {
+          id: values.id,
+          email: values.email,
+          end_time: endTime,
+          duration: values.duration,
+          advance_payment: values.advance_payment,
+          price: values.price,
+          notes: values.notes,
+          action_type: "accept_appointment_with_updates",
+        },
+      });
+
+      if (error) throw error;
     },
     onSuccess: async () => {
-      toast.success("Appointment successfully rejected!");
+      toast.success("Appointment successfully accepted!");
       await queryClient.refetchQueries({ queryKey: ["appointments"] });
       form.reset();
       setOpen(false);
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to reject appointment.");
+    onError: async (error: any) => {
+      const status = error?.context?.status;
+      const body = await error?.context?.json().catch(() => null);
+      const message = body?.error;
+
+      if (status === 409) {
+        toast.error(message ?? "Appointment has already been accepted.");
+        return;
+      }
+
+      toast.error(message ?? "Failed to accept appointment.");
     },
   });
 
@@ -87,22 +113,24 @@ const RejectAppointmentDialog = ({
     <UpdateDialog
       open={open}
       setOpen={setOpen}
-      title="Reject appointment"
-      description="Reject this appointment request. The customer will receive a notification about the rejection."
+      title="Edit and Accept appointment"
+      description="Edit appointment details and Accept."
       className="md:max-w-lg"
       disableUpdate
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="flex flex-col min-h-0">
           <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary px-1">
-            <RejectAppointmentForm
+            <UpdateAndApproveForm
+              setValue={form.setValue}
+              watch={form.watch}
               control={form.control}
               errors={form.formState.errors}
             />
           </div>
           <div className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
             <Button type="submit" className="flex-1">
-              Reject
+              Accept
             </Button>
 
             <DialogClose asChild className="flex-1">
@@ -117,4 +145,4 @@ const RejectAppointmentDialog = ({
   );
 };
 
-export default RejectAppointmentDialog;
+export default UpdateAndAcceptDialog;

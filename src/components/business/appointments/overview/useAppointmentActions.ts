@@ -5,46 +5,46 @@ import { useMemo, type Dispatch, type SetStateAction } from "react";
 
 interface UseAppointmentActionsProps {
   setEditingAppointment: Dispatch<SetStateAction<Appointment | null>>;
-  setUpdateAndApproveAppointment: Dispatch<SetStateAction<Appointment | null>>;
-  setRejectingAppointment: Dispatch<SetStateAction<Appointment | null>>;
-  onApprove: (id: string) => void;
+  setUpdateAndAcceptAppointment: Dispatch<SetStateAction<Appointment | null>>;
+  setDecliningAppointment: Dispatch<SetStateAction<Appointment | null>>;
+  onAccept: (id: string) => void;
   onComplete: (id: string) => void;
 }
 
 export function useAppointmentActions({
   setEditingAppointment,
-  setUpdateAndApproveAppointment,
-  setRejectingAppointment,
-  onApprove,
+  setUpdateAndAcceptAppointment,
+  setDecliningAppointment,
+  onAccept,
   onComplete,
 }: UseAppointmentActionsProps): RowAction<Appointment>[] {
   return useMemo(
     () => [
       {
-        label: "Approve",
+        label: "Accept",
         isEligible: (row: Row<Appointment>) =>
           row.original.status === "pending",
         onSelect: (rows: Row<Appointment>[]) => {
           if (rows.length !== 1) return;
-          onApprove(rows[0].original.id);
+          onAccept(rows[0].original.id);
         },
       },
       {
-        label: "Update & Approve",
+        label: "Edit & Accept",
         isEligible: (row: Row<Appointment>) =>
           row.original.status === "pending",
         onSelect: (rows: Row<Appointment>[]) => {
           if (rows.length !== 1) return;
-          setUpdateAndApproveAppointment(rows[0].original);
+          setUpdateAndAcceptAppointment(rows[0].original);
         },
       },
       {
-        label: "Reject",
+        label: "Decline",
         isEligible: (row: Row<Appointment>) =>
           row.original.status === "pending",
         onSelect: (rows: Row<Appointment>[]) => {
           if (rows.length !== 1) return;
-          setRejectingAppointment(rows[0].original);
+          setDecliningAppointment(rows[0].original);
         },
       },
       {
@@ -59,9 +59,9 @@ export function useAppointmentActions({
     ],
     [
       setEditingAppointment,
-      setUpdateAndApproveAppointment,
-      setRejectingAppointment,
-      onApprove,
+      setUpdateAndAcceptAppointment,
+      setDecliningAppointment,
+      onAccept,
       onComplete,
     ],
   );
