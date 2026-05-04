@@ -129,7 +129,6 @@ export function createCourseEnrollmentColumns(
       meta: {
         columnName: "Price (EUR)",
         columnType: "number",
-        origin: "course_session",
       },
       size: 90,
     },
@@ -140,7 +139,6 @@ export function createCourseEnrollmentColumns(
       meta: {
         columnName: "Deposit (EUR)",
         columnType: "number",
-        origin: "course_session",
       },
       size: 130,
     },
