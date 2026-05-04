@@ -43,12 +43,12 @@ export function createCourseDayColumns(
 
     // ── Data columns ──
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
       meta: {
         columnName: "Id",
-        columnType: "text",
+        columnType: "number",
       },
       size: 45,
     },

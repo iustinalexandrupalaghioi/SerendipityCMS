@@ -45,7 +45,7 @@ export const AppointmentDatePicker: React.FC<AppointmentDatePickerProps> = ({
   // Selected date from form value
   const selectedDate = value ? parseISO(value) : undefined;
 
-  // 🔑 Normalize unavailable dates ONCE
+  // Normalize unavailable dates ONCE
   const unavailableDateObjects = React.useMemo(() => {
     return unavailableDates
       .map((d) => {
@@ -65,7 +65,7 @@ export const AppointmentDatePicker: React.FC<AppointmentDatePickerProps> = ({
   };
 
   return (
-    <FormItem className="flex flex-col">
+    <FormItem className="flex flex-col w-full">
       <FormLabel>{label}</FormLabel>
 
       <Popover open={open} onOpenChange={setOpen}>
@@ -79,8 +79,8 @@ export const AppointmentDatePicker: React.FC<AppointmentDatePickerProps> = ({
             >
               {selectedDate && isValid(selectedDate)
                 ? format(selectedDate, "dd-MM-yyyy")
-                : "Select date"}
-              <ChevronDownIcon className="ml-2 h-4 w-4" />
+                : "dd-MM-yyyy"}
+              <ChevronDownIcon className="-ml-1 h-4 w-4" />
             </Button>
           </FormControl>
         </PopoverTrigger>

@@ -34,16 +34,16 @@ const UpdateCourseDayScreen = () => {
     { path: "/courses", label: "Courses" },
     {
       path: `/courses/update/${courseDay?.course?.id}`,
-      label: courseDay?.course?.title || "Course",
+      label: `Course ${courseDay?.course?.display_id ?? "Course"}`,
     },
-    { label: "Course days" },
-    { label: courseDay?.title ?? "Update course day" },
+    { label: `Day ${courseDay?.day_number ?? "Update course day"}` },
   ];
 
   const form = useForm<CourseDayFormValues>({
     resolver: zodResolver(CourseDaySchema),
     defaultValues: {
       id: "",
+      display_id: 0,
       title: "",
       day_number: 0,
       image: undefined,
@@ -155,9 +155,6 @@ const UpdateCourseDayScreen = () => {
         isOpen={isOpen}
         setOpen={setOpen}
       >
-        <p className="text-muted-foreground text-sm mb-4">
-          Update the course day details below.
-        </p>
         <Form {...form}>
           <CollapsibleContent>
             <CourseDayForm

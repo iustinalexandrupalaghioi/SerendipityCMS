@@ -8,16 +8,15 @@ import { Loader2Icon } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
+import { QUERY_KEY as COURSE_QUERY_KEY } from "../../overview/useCourses";
 import type { CourseSession } from "@/types/Course";
+import { format } from "date-fns/format";
 import { QUERY_KEY } from "../nav-overview/useCourseSessions";
 import CourseSessionForm from "./CourseSessionForm";
 import {
   CourseSessionSchema,
   type CourseSessionFormValues,
 } from "./form-schema";
-import { format } from "date-fns/format";
-import { DialogClose } from "@/components/ui/dialog";
 
 interface UpdateCourseSessionDialogProps {
   session: CourseSession;
@@ -83,9 +82,15 @@ export const UpdateCourseSessionDialog = ({
 
     onSuccess: () => {
       toast.success("Course session updated successfully!");
-      queryClient.refetchQueries({
-        queryKey: [...QUERY_KEY, session.course_id],
-      });
+      [
+        [...QUERY_KEY, session.course_id],
+        [COURSE_QUERY_KEY],
+        ["course", session.course_id],
+      ].forEach((key) =>
+        queryClient.refetchQueries({
+          queryKey: key,
+        }),
+      );
       setOpen(false);
     },
 
@@ -106,7 +111,6 @@ export const UpdateCourseSessionDialog = ({
       description={
         session.is_open ? "View session details" : "Update session details"
       }
-      disableUpdate={session.is_open}
     >
       <Form {...form}>
         <form onSubmit={onSubmit} className="flex flex-col min-h-0">
@@ -117,46 +121,43 @@ export const UpdateCourseSessionDialog = ({
               errors={formState.errors}
               initialDate={format(new Date(session.start_date), "yyyy-MM-dd")}
               setValue={form.setValue}
-              disabled={session.is_open}
               watch={form.watch}
+              defaultValues={{
+                id: session.id,
+                course: session.course!,
+                start_date: session.start_date,
+                price: session.price,
+                advance_price: session.advance_price,
+                available_spots: session.available_spots,
+                remaining_spots: session.remaining_spots,
+                is_open: session.is_open,
+              }}
             />
           </div>
 
           <div className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
-            {session.is_open ? (
-              <DialogClose asChild className="flex-1">
-                <Button type="button" className="w-full">
-                  Ok
-                </Button>
-              </DialogClose>
-            ) : (
-              <>
-                <Button
-                  type="submit"
-                  className="flex-1"
-                  disabled={
-                    !formState.isDirty || updateSessionMutation.isPending
-                  }
-                >
-                  {updateSessionMutation.isPending ? (
-                    <>
-                      <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
-                      Saving...
-                    </>
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setOpen(false)}
-                >
-                  Cancel
-                </Button>{" "}
-              </>
-            )}
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={!formState.isDirty || updateSessionMutation.isPending}
+            >
+              {updateSessionMutation.isPending ? (
+                <>
+                  <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>{" "}
           </div>
         </form>
       </Form>

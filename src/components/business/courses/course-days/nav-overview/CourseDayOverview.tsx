@@ -135,7 +135,7 @@ const CourseDayOverview = ({
       <DataTable
         slotId={slotId}
         isLoading={isLoading}
-        defaultViewName="Course days"
+        defaultViewName="Days"
         tableId={COURSE_DAYS_OVERVIEW_KEY}
         isFetchingNextPage={false}
         hasNextPage={false}

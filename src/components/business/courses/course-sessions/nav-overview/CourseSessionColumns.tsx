@@ -47,12 +47,12 @@ export function createCourseSessionColumns(
 
     // ── Data columns ──
     {
-      id: "id",
+      id: "display_id",
       header: undefined,
-      accessorKey: "id",
+      accessorKey: "display_id",
       meta: {
         columnName: "Id",
-        columnType: "text",
+        columnType: "number",
       },
       size: 45,
     },

@@ -1,6 +1,5 @@
 import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { DataTableColumnvisibilityToggle } from "@/components/data-table/core/DataTableColumnVisibilityToggle";
-import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { ImagePreview } from "@/components/partials/ImagePreview";
 import { Button } from "@/components/ui/button";
 import type { Course } from "@/types/Course";
@@ -13,12 +12,8 @@ export const pickupCourseColumnVisibility: VisibilityState = {
   image_url: true,
   level: true,
   description: true,
-  location: true,
-  start_date: false,
-  available_spots: false,
-  remaining_spots: false,
+  location: false,
   duration_days: true,
-  is_open: false,
   price: false,
   advance_price: false,
   created_at: false,
@@ -47,12 +42,12 @@ export function createPickupCourseColumns(
       meta: { className: "p-0" },
     },
     {
-      id: "id",
+      id: "display_id",
       header: undefined,
-      accessorKey: "id",
+      accessorKey: "display_id",
       meta: {
         columnName: "Id",
-        columnType: "text",
+        columnType: "number",
       },
       size: 45,
     },
@@ -98,6 +93,16 @@ export function createPickupCourseColumns(
       size: 95,
     },
     {
+      id: "duration_days",
+      header: undefined,
+      accessorKey: "duration_days",
+      meta: {
+        columnName: "Duration (days)",
+        columnType: "number",
+      },
+      size: 105,
+    },
+    {
       id: "description",
       header: undefined,
       accessorKey: "description",
@@ -116,57 +121,6 @@ export function createPickupCourseColumns(
         columnType: "text",
       },
       size: 175,
-    },
-    {
-      id: "start_date",
-      header: undefined,
-      accessorKey: "start_date",
-      meta: {
-        columnName: "Start date",
-        columnType: "date",
-      },
-      size: 95,
-    },
-    {
-      id: "available_spots",
-      header: undefined,
-      accessorKey: "available_spots",
-      meta: {
-        columnName: "Available spots",
-        columnType: "number",
-      },
-      size: 105,
-    },
-    {
-      id: "remaining_spots",
-      header: undefined,
-      accessorKey: "remaining_spots",
-      meta: {
-        columnName: "Remaining spots",
-        columnType: "number",
-      },
-      size: 110,
-    },
-    {
-      id: "duration_days",
-      header: undefined,
-      accessorKey: "duration_days",
-      meta: {
-        columnName: "Duration (days)",
-        columnType: "number",
-      },
-      size: 105,
-    },
-    {
-      id: "is_open",
-      accessorKey: "is_open",
-      header: undefined,
-      meta: {
-        columnName: "Open",
-        columnType: "boolean",
-      },
-      size: 55,
-      cell: ({ row }) => <BooleanDisplay value={row.original.is_open} />,
     },
     {
       id: "price",

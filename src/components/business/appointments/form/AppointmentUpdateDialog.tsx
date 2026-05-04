@@ -1,13 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import UpdateDialog from "@/components/partials/dialog/UpdateDialog";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { supabase } from "@/lib/supabaseClient";
 
 import type { Appointment } from "@/types/Appointment";
 import { DialogClose } from "@radix-ui/react-dialog";
@@ -25,8 +22,6 @@ const AppointmentUpdateDialog = ({
   open,
   setOpen,
 }: AppointmentUpdateDialogProps) => {
-  const queryClient = useQueryClient();
-
   const form = useForm<AppointmentFormValues>({
     resolver: zodResolver(AppointmentSchema),
     defaultValues: {
@@ -52,53 +47,6 @@ const AppointmentUpdateDialog = ({
     }
   }, [open]);
 
-  const updateAppointmentMutation = useMutation({
-    mutationFn: async (values: AppointmentFormValues) => {
-      const [hours, minutes] = values.start_time.split(":").map(Number);
-      const [year, month, day] = values.date.split("-").map(Number);
-
-      const endDate = new Date(
-        year,
-        month - 1,
-        day,
-        hours,
-        minutes + values.duration,
-      );
-
-      const endTime = endDate.toTimeString().slice(0, 5); // "HH:MM"
-      const { error } = await supabase
-        .from("appointment")
-        .update({
-          service_id: values.service.id,
-          user_id: values.user?.id || null,
-          name: values.name,
-          email: values.email,
-          date: values.date,
-          start_time: values.start_time,
-          end_time: endTime,
-          duration: values.duration,
-          price: values.price,
-          advance_payment: values.advance_payment,
-        })
-        .eq("id", values.id);
-
-      if (error) throw new Error(error.message);
-    },
-    onSuccess: async () => {
-      toast.success("Appointment updated successfully!");
-      await queryClient.refetchQueries({ queryKey: ["appointments"] });
-      form.reset();
-      setOpen(false);
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to update appointment.");
-    },
-  });
-
-  const onSubmit = form.handleSubmit((values) => {
-    updateAppointmentMutation.mutate(values);
-  });
-
   return (
     <UpdateDialog
       open={open}
@@ -109,7 +57,7 @@ const AppointmentUpdateDialog = ({
       disableUpdate
     >
       <Form {...form}>
-        <form onSubmit={onSubmit} className="flex flex-col min-h-0">
+        <form className="flex flex-col min-h-0">
           <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary px-1">
             <AppointmentForm
               setValue={form.setValue}

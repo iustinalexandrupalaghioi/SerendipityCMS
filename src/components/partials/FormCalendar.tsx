@@ -17,13 +17,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
 
 interface FormCalendarProps {
   label: string;
-  value?: string; // ISO: yyyy-MM-dd
+  value?: string;
   onChange: (value: string) => void;
   disabled?: boolean;
   startMonth?: Date;
+  className?: string;
 }
 
 export const FormCalendar: React.FC<FormCalendarProps> = ({
@@ -32,6 +34,7 @@ export const FormCalendar: React.FC<FormCalendarProps> = ({
   onChange,
   disabled = false,
   startMonth,
+  className,
 }) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -63,12 +66,12 @@ export const FormCalendar: React.FC<FormCalendarProps> = ({
               type="button"
               variant="outline"
               disabled={disabled}
-              className="justify-between font-normal"
+              className={cn("justify-between font-normal", className)}
             >
               {selectedDate && isValid(selectedDate)
-                ? format(selectedDate, "dd-MM-yyyy") // 👀 DISPLAY ONLY
+                ? format(selectedDate, "dd-MM-yyyy")
                 : "Select date"}
-              <ChevronDownIcon className="ml-2 h-4 w-4" />
+              <ChevronDownIcon className="-ml-1 h-4 w-4" />
             </Button>
           </FormControl>
         </PopoverTrigger>

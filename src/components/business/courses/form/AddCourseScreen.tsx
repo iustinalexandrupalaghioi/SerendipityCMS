@@ -2,12 +2,10 @@ import Breadcrumb from "@/components/partials/Breadcrumb";
 import DetailsScreen from "@/components/partials/DetailsScreen";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { Button } from "@/components/ui/button";
-import { CollapsibleContent } from "@/components/ui/collapsible";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { ChevronLeftIcon, Loader2Icon, SaveIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -36,13 +34,9 @@ const AddCourseScreen = () => {
       display_order: 0,
       level: "beginner",
       advance_price: 0,
-      available_spots: 0,
-      remaining_spots: 0,
       location: "",
       image: undefined,
       duration_days: 0,
-      start_date: format(new Date(), "yyyy-MM-dd"),
-      is_open: true,
     },
   });
 
@@ -73,12 +67,8 @@ const AddCourseScreen = () => {
           display_order: values.display_order,
           advance_price: values.advance_price,
           duration_days: values.duration_days,
-          start_date: values.start_date,
           level: values.level,
           location: values.location,
-          available_spots: values.available_spots,
-          remaining_spots: values.remaining_spots,
-          is_open: values.is_open ?? true,
           image_path: filePath,
         })
         .select()
@@ -137,19 +127,26 @@ const AddCourseScreen = () => {
         title="Add Course"
         isOpen={open}
         setOpen={setOpen}
+        collapsible={false}
       >
-        <p className="text-muted-foreground text-sm mb-4">
-          Fill in the course details below.
-        </p>
         <Form {...form}>
-          <CollapsibleContent>
-            <CourseForm
-              mode="Add"
-              control={control}
-              errors={formState.errors}
-              setValue={setValue}
-            />
-          </CollapsibleContent>
+          <CourseForm
+            defaultValues={{
+              title: "",
+              description: "",
+              price: 0,
+              display_order: 0,
+              level: "beginner",
+              advance_price: 0,
+              location: "",
+              image: undefined,
+              duration_days: 0,
+            }}
+            mode="Add"
+            control={control}
+            errors={formState.errors}
+            setValue={setValue}
+          />
         </Form>
       </DetailsScreen>
     </div>

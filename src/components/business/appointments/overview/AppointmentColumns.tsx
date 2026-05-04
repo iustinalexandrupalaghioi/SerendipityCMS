@@ -6,12 +6,14 @@ import type { RowAction } from "@/components/data-table/core/types";
 import type { Appointment } from "@/types/Appointment";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
+import { format } from "date-fns";
 
 // ─────────────────────────────────────────────
 // Column visibility defaults
 // ─────────────────────────────────────────────
 
 export const appointmentColumnVisibility: VisibilityState = {
+  display_id: true,
   status: true,
   title: true,
   date: true,
@@ -58,8 +60,8 @@ export function createAppointmentColumns(
       actions: () => actions,
     }),
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
       meta: { columnName: "Id", columnType: "text" },
       size: 45,
@@ -103,6 +105,10 @@ export function createAppointmentColumns(
       accessorKey: "date",
       header: undefined,
       meta: { columnName: "Date", columnType: "date" },
+      cell: ({ row }) =>
+        row.original.date
+          ? format(new Date(row.original.date), "dd-MM-yyyy")
+          : "—",
       size: 100,
     },
     {

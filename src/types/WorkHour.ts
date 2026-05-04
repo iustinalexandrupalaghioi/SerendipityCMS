@@ -1,5 +1,6 @@
 export type WorkHour = {
   id: string;
+  display_id: number;
   time: string;
   created_at: string;
 };

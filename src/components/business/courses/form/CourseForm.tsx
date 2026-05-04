@@ -1,5 +1,5 @@
 import FileUpload from "@/components/partials/FileUpload";
-import { FormCalendar } from "@/components/partials/FormCalendar";
+import { ImagePreview } from "@/components/partials/ImagePreview";
 import SectionCard from "@/components/partials/SectionCard";
 import {
   FormControl,
@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -17,75 +18,48 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { YesNoSwitch } from "@/components/ui/yes-no-switch";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { useEffect, useState } from "react";
 import {
-  useWatch,
   type Control,
   type FieldErrors,
   type UseFormSetValue,
 } from "react-hook-form";
 import type { CourseFormValues } from "./form-schema";
+import { YesNoSwitch } from "@/components/ui/yes-no-switch";
 
 interface CourseFormProps {
   control: Control<CourseFormValues>;
   errors: FieldErrors<CourseFormValues>;
   mode: "Add" | "Update" | "Details";
   setValue: UseFormSetValue<CourseFormValues>;
+  defaultValues: CourseFormValues;
   fileInputKey?: number;
   existingImageUrl?: string;
+  existingImagePath?: string;
   initialDate?: string;
   disabled?: boolean;
+  courseStats?: CourseStats;
+}
+
+export interface CourseStats {
+  available_spots: number;
+  remaining_spots: number;
+  is_open: boolean;
 }
 
 const CourseForm = ({
   control,
   errors,
-  mode,
   existingImageUrl,
-  setValue,
   fileInputKey,
-  initialDate,
   disabled = false,
+  defaultValues,
+  courseStats,
 }: CourseFormProps) => {
-  const isAdd = mode === "Add";
-  const isUpdate = mode === "Update";
-  const isDetails = mode === "Details";
-
-  const disableEdit = disabled || isDetails;
-  const disableOnUpdate = disabled || isUpdate || isDetails;
-
-  const [date, setDate] = useState<string>(
-    initialDate
-      ? format(new Date(initialDate), "yyyy-MM-dd")
-      : format(new Date(), "yyyy-MM-dd"),
-  );
-
-  useEffect(() => {
-    if (initialDate) setDate(format(new Date(initialDate), "yyyy-MM-dd"));
-  }, [initialDate]);
-
-  useEffect(() => {
-    setValue("start_date", date, { shouldDirty: true, shouldValidate: true });
-  }, [date, setValue]);
-
-  const availableSpots = useWatch({ control, name: "available_spots" });
-
-  useEffect(() => {
-    if (isAdd && typeof availableSpots === "number") {
-      setValue("remaining_spots", availableSpots, {
-        shouldDirty: false,
-        shouldValidate: true,
-      });
-    }
-  }, [availableSpots, isAdd, setValue]);
-
   return (
-    <div className="w-full  grid grid-cols-1 md:grid-cols-2 gap-4 space-y-4">
-      {/* ── General ── */}
-      <SectionCard title="General">
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* ── Course details ── */}
+      <SectionCard title="Course details">
         <div className="grid grid-cols-1 gap-6">
           <FormField
             control={control}
@@ -96,7 +70,7 @@ const CourseForm = ({
                 <FormControl>
                   <Input
                     placeholder="Course name"
-                    disabled={disableEdit}
+                    disabled={disabled}
                     {...field}
                     value={field.value ?? ""}
                   />
@@ -111,12 +85,12 @@ const CourseForm = ({
             name="level"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Course Level</FormLabel>
+                <FormLabel>Course level</FormLabel>
                 <Select
                   key={field.value}
                   value={field.value}
                   onValueChange={field.onChange}
-                  disabled={disableEdit}
+                  disabled={disabled}
                 >
                   <FormControl>
                     <SelectTrigger
@@ -143,25 +117,6 @@ const CourseForm = ({
 
           <FormField
             control={control}
-            name="location"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Location</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Course location"
-                    disabled={disableOnUpdate}
-                    {...field}
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-                <FormMessage>{errors.location?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
             name="description"
             render={({ field }) => (
               <FormItem>
@@ -169,7 +124,7 @@ const CourseForm = ({
                 <FormControl>
                   <Textarea
                     placeholder="Detailed description of the course"
-                    disabled={disableEdit}
+                    disabled={disabled}
                     {...field}
                     value={field.value ?? ""}
                   />
@@ -178,128 +133,11 @@ const CourseForm = ({
               </FormItem>
             )}
           />
-
-          <FormField
-            control={control}
-            name="display_order"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Display order</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 1"
-                    disabled={disableEdit}
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage>{errors.display_order?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
         </div>
       </SectionCard>
 
-      {/* ── Schedule & Capacity ── */}
-      <SectionCard title="Schedule & Capacity">
-        <div className="grid grid-cols-1 gap-6">
-          <FormCalendar
-            disabled={disableOnUpdate}
-            value={date}
-            label="Start date"
-            onChange={setDate}
-          />
-
-          {(isUpdate || isDetails) && (
-            <FormField
-              control={control}
-              name="duration_days"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Duration (days)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Duration in days"
-                      disabled={disableOnUpdate}
-                      {...field}
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.duration_days?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-          )}
-
-          <FormField
-            control={control}
-            name="available_spots"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Available spots</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Number of available spots"
-                    disabled={disableOnUpdate}
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage>{errors.available_spots?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
-          {(isUpdate || isDetails) && (
-            <FormField
-              control={control}
-              name="remaining_spots"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Remaining spots</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Remaining spots"
-                      disabled
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.remaining_spots?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-          )}
-
-          <FormField
-            control={control}
-            name="is_open"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Open for enrollments</FormLabel>
-                <FormControl>
-                  <YesNoSwitch
-                    disabled={disableOnUpdate}
-                    checked={!!field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage>{errors.is_open?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-        </div>
-      </SectionCard>
-
-      {/* ── Pricing ── */}
-      <SectionCard title="Pricing">
+      {/* ── Pricing & Logistics ── */}
+      <SectionCard title="Pricing & Logistics">
         <div className="grid grid-cols-1 gap-6">
           <FormField
             control={control}
@@ -311,7 +149,7 @@ const CourseForm = ({
                   <Input
                     type="number"
                     placeholder="Full price"
-                    disabled={disableOnUpdate}
+                    disabled={disabled}
                     aria-invalid={!!errors.price}
                     {...field}
                     value={field.value ?? ""}
@@ -328,12 +166,12 @@ const CourseForm = ({
             name="advance_price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Advance payment (EUR)</FormLabel>
+                <FormLabel>Deposit (EUR)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Advance payment amount"
-                    disabled={disableOnUpdate}
+                    placeholder="Deposit amount"
+                    disabled={disabled}
                     aria-invalid={!!errors.advance_price}
                     {...field}
                     value={field.value ?? ""}
@@ -344,22 +182,91 @@ const CourseForm = ({
               </FormItem>
             )}
           />
+
+          <FormField
+            control={control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Location</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Course location"
+                    disabled={disabled}
+                    {...field}
+                    value={field.value ?? ""}
+                  />
+                </FormControl>
+                <FormMessage>{errors.location?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="duration_days"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Duration (days)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="Duration in days"
+                    disabled
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
+                </FormControl>
+                <FormMessage>{errors.duration_days?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+
+          {courseStats && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <FormItem>
+                <FormLabel>Available spots</FormLabel>
+                <Input value={courseStats?.available_spots ?? "—"} disabled />
+              </FormItem>
+
+              <FormItem>
+                <FormLabel>Remaining spots</FormLabel>
+                <Input value={courseStats?.remaining_spots ?? "—"} disabled />
+              </FormItem>
+
+              <FormItem>
+                <FormLabel>Open</FormLabel>
+                <YesNoSwitch checked={courseStats?.is_open ?? false} disabled />
+              </FormItem>
+            </div>
+          )}
         </div>
       </SectionCard>
 
-      {/* ── Course image ── */}
-      <SectionCard title="Course image">
+      {/* ── Media & display ── */}
+      <SectionCard title="Media & display">
         <div className="grid grid-cols-1 gap-6">
+          {existingImageUrl && (
+            <div className="flex flex-col gap-2">
+              <Label>Current image</Label>
+              <ImagePreview
+                src={existingImageUrl}
+                alt="Current course image"
+                filename={defaultValues.image_path?.split("/").pop() ?? "image"}
+              />
+            </div>
+          )}
+
           <FormField
             control={control}
             name="image"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Upload image</FormLabel>
                 <FormControl>
                   <FileUpload
                     key={fileInputKey}
-                    disabled={disableEdit}
+                    disabled={disabled}
                     label="Upload a course image"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -372,16 +279,26 @@ const CourseForm = ({
             )}
           />
 
-          {existingImageUrl && (
-            <div className="flex flex-col gap-2">
-              <img
-                src={existingImageUrl}
-                alt="Current course"
-                className="h-36 w-auto rounded-md border object-cover shadow-sm"
-              />
-              <p className="text-sm text-muted-foreground">Current image</p>
-            </div>
-          )}
+          <FormField
+            control={control}
+            name="display_order"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Display order</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="e.g. 1"
+                    disabled={disabled}
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
+                </FormControl>
+                <FormMessage>{errors.display_order?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
         </div>
       </SectionCard>
     </div>

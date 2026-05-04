@@ -23,6 +23,7 @@ interface AppointmentTimePickerProps {
   data?: string[];
   formError?: string;
   onOpen?: () => void;
+  className?: string;
 }
 
 export function AppointmentTimePicker({
@@ -36,12 +37,13 @@ export function AppointmentTimePicker({
   formError,
   onChange,
   onOpen,
+  className,
 }: AppointmentTimePickerProps) {
   const [open, setOpen] = useState(false);
   const times = data ?? [];
 
   return (
-    <div className="grid gap-2">
+    <div className={cn("grid gap-2 w-full", className)}>
       <Label className={cn(formError && "text-destructive")}>{label}</Label>
 
       <Popover
@@ -58,7 +60,7 @@ export function AppointmentTimePicker({
 
             <Input
               disabled={disabled}
-              value={value || "Select a time"}
+              value={value || "HH:mm"}
               readOnly
               aria-invalid={!!formError}
               className="pl-8 pr-8 cursor-pointer"

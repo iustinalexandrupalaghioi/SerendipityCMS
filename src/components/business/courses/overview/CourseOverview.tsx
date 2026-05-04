@@ -5,18 +5,15 @@ import {
   initialFilters,
   initialSorting,
 } from "@/components/data-table/hooks/useTableViews";
-import { Toolbar } from "@/components/toolbar/Toolbar";
 import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
-import type { Course } from "@/types/Course";
+import { Toolbar } from "@/components/toolbar/Toolbar";
 import { supabase } from "@/lib/supabaseClient";
+import type { Course } from "@/types/Course";
 import type { Row } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { courseColumnVisibility, createCourseColumns } from "./CourseColumns";
-import { useCourses, QUERY_KEY } from "./useCourses";
-import { useCourseActions } from "./useCourseActions";
-import OpenCourseEnrollmentDialog from "../actions/OpenCourseEnrollmentDialog";
-import CloseCourseEnrollmentDialog from "../actions/CloseCourseEnrollmentsDialog";
+import { QUERY_KEY, useCourses } from "./useCourses";
 
 export const COURSES_OVERVIEW_KEY = "courses-overview";
 
@@ -32,22 +29,12 @@ const CoursesOverview = () => {
   );
 
   // ── Dialog state ──────────────────────────────────────────────────────────
-  const [openEnrollmentCourse, setOpenEnrollmentCourse] =
-    useState<Course | null>(null);
-  const [closeEnrollmentCourse, setCloseEnrollmentCourse] =
-    useState<Course | null>(null);
   const [deletingCourse, setDeletingCourse] = useState<Course | null>(null);
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const { data, isLoading, isError } = useCourses(sorting, filters);
   const courses = data?.items ?? [];
   const total = data?.total ?? 0;
-
-  // ── Actions ───────────────────────────────────────────────────────────────
-  const actions = useCourseActions({
-    setOpenEnrollmentCourse,
-    setCloseEnrollmentCourse,
-  });
 
   // ── Delete ────────────────────────────────────────────────────────────────
   const handleDeleteOpen = useCallback((rows: Row<Course>[]) => {
@@ -101,8 +88,8 @@ const CoursesOverview = () => {
 
   // ── Columns ───────────────────────────────────────────────────────────────
   const columns = useMemo(
-    () => createCourseColumns(handleOpen, handleDeleteOpen, actions),
-    [handleOpen, handleDeleteOpen, actions],
+    () => createCourseColumns(handleOpen, handleDeleteOpen),
+    [handleOpen, handleDeleteOpen],
   );
 
   // ── Selection ─────────────────────────────────────────────────────────────
@@ -123,13 +110,6 @@ const CoursesOverview = () => {
       <Toolbar
         selectedRows={selectedRows}
         selectedCount={Object.keys(rowSelection).length}
-        actions={actions.map((a) => ({
-          label: a.label,
-          isEligible: (row: Course) =>
-            a.isEligible?.({ original: row } as Row<Course>) ?? true,
-          onSelect: (rows: Course[]) =>
-            a.onSelect(rows.map((r) => ({ original: r }) as Row<Course>)),
-        }))}
         onDelete={(rows) =>
           handleDeleteOpen(rows.map((r) => ({ original: r }) as Row<Course>))
         }
@@ -155,24 +135,6 @@ const CoursesOverview = () => {
         onSortingChange={setSorting}
         onFiltersChange={handleFiltersChange}
       />
-
-      {/* ── Dialogs ── */}
-      {openEnrollmentCourse && (
-        <OpenCourseEnrollmentDialog
-          open={!!openEnrollmentCourse}
-          setOpen={(open) => !open && setOpenEnrollmentCourse(null)}
-          course={openEnrollmentCourse}
-        />
-      )}
-
-      {closeEnrollmentCourse && (
-        <CloseCourseEnrollmentDialog
-          open={!!closeEnrollmentCourse}
-          setOpen={(open) => !open && setCloseEnrollmentCourse(null)}
-          courseId={closeEnrollmentCourse.id}
-          courseTitle={closeEnrollmentCourse.title}
-        />
-      )}
 
       {deletingCourse && (
         <DeleteDialog

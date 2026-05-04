@@ -102,7 +102,7 @@ const EnrollmentOverview = ({
         slotId={slotId}
         selectedRows={selectedRows}
         selectedCount={Object.keys(rowSelection).length}
-        onAdd={course.is_open ? () => setAddOpen(true) : undefined}
+        onAdd={() => setAddOpen(true)}
         onDelete={(rows) =>
           handleDeleteOpen(
             rows.map((r) => ({ original: r }) as Row<Enrollment>),
@@ -133,13 +133,12 @@ const EnrollmentOverview = ({
       />
 
       {/* ── Dialogs ── */}
-      {course.is_open && (
-        <AddCourseEnrollmentDialog
-          course={course}
-          open={isAddOpen}
-          setOpen={setAddOpen}
-        />
-      )}
+
+      <AddCourseEnrollmentDialog
+        course={course}
+        open={isAddOpen}
+        setOpen={setAddOpen}
+      />
 
       {editingEnrollment && (
         <UpdateCourseEnrollmentDialog

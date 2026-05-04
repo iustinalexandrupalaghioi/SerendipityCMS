@@ -14,19 +14,19 @@ import { Loader2Icon } from "lucide-react";
 import { type Dispatch, type SetStateAction } from "react";
 import { toast } from "sonner";
 
-interface CloseCourseEnrollmentDialogProps {
+interface CloseEnrollmentDialogDialogProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   courseId: string | number;
   courseTitle: string;
 }
 
-const CloseCourseEnrollmentDialog = ({
+const CloseEnrollmentDialog = ({
   open,
   setOpen,
   courseId,
   courseTitle,
-}: CloseCourseEnrollmentDialogProps) => {
+}: CloseEnrollmentDialogDialogProps) => {
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -111,4 +111,4 @@ const CloseCourseEnrollmentDialog = ({
   );
 };
 
-export default CloseCourseEnrollmentDialog;
+export default CloseEnrollmentDialog;

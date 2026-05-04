@@ -8,15 +8,16 @@ import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 import { format } from "date-fns";
 
 export const courseEnrollmentColumnVisibility: VisibilityState = {
-  id: true,
+  display_id: true,
   title: true,
   full_name: true,
   email: true,
   status: true,
   enrollment_date: true,
-  course_date: true,
+  start_date: true,
   price: true,
   advance_price: true,
+  payment_type: true,
   advance_payment_paid: true,
 };
 
@@ -37,24 +38,25 @@ export function createCourseEnrollmentColumns(
     createSelectionColumn<Enrollment>(),
     createActionsColumn<Enrollment>({ onOpen, onDelete }),
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
       meta: {
         columnName: "Id",
-        columnType: "text",
+        columnType: "number",
       },
       size: 45,
     },
     {
       id: "title",
-      accessorFn: (row) => row.course?.title,
+      accessorFn: (row) => row.course_session?.course?.title,
       header: undefined,
       meta: {
         columnName: "Course",
         columnType: "text",
-        origin: "course",
+        origin: "course_session.course",
       },
+      enableSorting: false,
       size: 200,
     },
     {
@@ -106,28 +108,40 @@ export function createCourseEnrollmentColumns(
       size: 90,
     },
     {
-      id: "course_date",
-      accessorKey: "course_date",
+      id: "payment_type",
+      accessorKey: "payment_type",
       header: undefined,
-      meta: { columnName: "Course date", columnType: "date" },
-      cell: ({ row }) =>
-        row.original.course_date
-          ? format(new Date(row.original.course_date), "dd-MM-yyyy")
-          : "—",
-      size: 90,
+      meta: {
+        columnName: "Payment type",
+        columnType: "select",
+        selectOptions: ["deposit", "full"],
+      },
+      cell: ({ row }) => (
+        <span className="capitalize">{row.original.payment_type}</span>
+      ),
+      size: 110,
     },
+
     {
       id: "price",
-      accessorKey: "price",
+      accessorFn: (row) => row.price,
       header: undefined,
-      meta: { columnName: "Price (EUR)", columnType: "number" },
+      meta: {
+        columnName: "Price (EUR)",
+        columnType: "number",
+        origin: "course_session",
+      },
       size: 90,
     },
     {
       id: "advance_price",
-      accessorKey: "advance_price",
+      accessorFn: (row) => row.advance_price,
       header: undefined,
-      meta: { columnName: "Advance price (EUR)", columnType: "number" },
+      meta: {
+        columnName: "Deposit (EUR)",
+        columnType: "number",
+        origin: "course_session",
+      },
       size: 130,
     },
     {

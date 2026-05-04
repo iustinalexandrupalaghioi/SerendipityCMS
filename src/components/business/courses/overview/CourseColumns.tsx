@@ -1,7 +1,6 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
 import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
-import type { RowAction } from "@/components/data-table/core/types";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { ImagePreview } from "@/components/partials/ImagePreview";
 import type { Course } from "@/types/Course";
@@ -12,20 +11,19 @@ import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 // ─────────────────────────────────────────────
 
 export const courseColumnVisibility: VisibilityState = {
-  id: true,
+  display_id: true,
   title: true,
   image_url: true,
   display_order: true,
   level: true,
   description: true,
-  location: true,
-  start_date: false,
+  location: false,
+  duration_days: true,
+  price: true,
+  advance_price: true,
+  is_open: true,
   available_spots: false,
   remaining_spots: false,
-  duration_days: true,
-  is_open: false,
-  price: false,
-  advance_price: false,
   created_at: false,
 };
 
@@ -36,7 +34,6 @@ export const courseColumnVisibility: VisibilityState = {
 export function createCourseColumns(
   onOpen: (rows: Row<Course>[]) => void,
   onDelete: (rows: Row<Course>[]) => void,
-  actions: RowAction<Course>[] = [],
 ): ColumnDef<Course>[] {
   return [
     // ── [0] Selection ──
@@ -48,29 +45,18 @@ export function createCourseColumns(
       onDelete,
       getRowUrl: (row) =>
         `${import.meta.env.VITE_ROOT_URL}/courses/update/${row.original.id}`,
-      actions: () => actions,
     }),
 
     // ── Data columns ──
     {
-      id: "id",
+      id: "display_id",
       header: undefined,
-      accessorKey: "id",
+      accessorKey: "display_id",
       meta: {
         columnName: "Id",
-        columnType: "text",
+        columnType: "number",
       },
       size: 45,
-    },
-    {
-      id: "title",
-      header: undefined,
-      accessorKey: "title",
-      meta: {
-        columnName: "Title",
-        columnType: "text",
-      },
-      size: 250,
     },
     {
       id: "display_order",
@@ -83,6 +69,16 @@ export function createCourseColumns(
       },
 
       size: 65,
+    },
+    {
+      id: "title",
+      header: undefined,
+      accessorKey: "title",
+      meta: {
+        columnName: "Title",
+        columnType: "text",
+      },
+      size: 250,
     },
     {
       id: "image_url",
@@ -136,36 +132,6 @@ export function createCourseColumns(
       size: 175,
     },
     {
-      id: "start_date",
-      header: undefined,
-      accessorKey: "start_date",
-      meta: {
-        columnName: "Start date",
-        columnType: "date",
-      },
-      size: 95,
-    },
-    {
-      id: "available_spots",
-      header: undefined,
-      accessorKey: "available_spots",
-      meta: {
-        columnName: "Available spots",
-        columnType: "number",
-      },
-      size: 105,
-    },
-    {
-      id: "remaining_spots",
-      header: undefined,
-      accessorKey: "remaining_spots",
-      meta: {
-        columnName: "Remaining spots",
-        columnType: "number",
-      },
-      size: 110,
-    },
-    {
       id: "duration_days",
       header: undefined,
       accessorKey: "duration_days",
@@ -174,17 +140,6 @@ export function createCourseColumns(
         columnType: "number",
       },
       size: 105,
-    },
-    {
-      id: "is_open",
-      accessorKey: "is_open",
-      header: undefined,
-      meta: {
-        columnName: "Open",
-        columnType: "boolean",
-      },
-      size: 55,
-      cell: ({ row }) => <BooleanDisplay value={row.original.is_open} />,
     },
     {
       id: "price",
@@ -201,9 +156,40 @@ export function createCourseColumns(
       accessorKey: "advance_price",
       header: undefined,
       meta: {
-        columnName: "Advance price (EUR)",
+        columnName: "Deposit (EUR)",
         columnType: "number",
       },
+      size: 130,
+    },
+    {
+      id: "available_spots",
+      accessorKey: "available_spots",
+      header: undefined,
+      meta: {
+        columnName: "Available spots",
+        columnType: "number",
+      },
+      size: 130,
+    },
+    {
+      id: "remaining_spots",
+      accessorKey: "remaining_spots",
+      header: undefined,
+      meta: {
+        columnName: "Remaining spots",
+        columnType: "number",
+      },
+      size: 130,
+    },
+    {
+      id: "is_open",
+      accessorKey: "is_open",
+      header: undefined,
+      meta: {
+        columnName: "Open",
+        columnType: "number",
+      },
+      cell: ({ row }) => <BooleanDisplay value={row.original.is_open} />,
       size: 130,
     },
     {

@@ -2,6 +2,7 @@ import type { Category } from "./Category";
 
 export type Service = {
   id: string;
+  display_id: number;
   category: Category;
   category_id: string;
   title: string;

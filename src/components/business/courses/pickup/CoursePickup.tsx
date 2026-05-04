@@ -22,15 +22,15 @@ import {
 
 export const PICKUP_COURSE_KEY = "pickup-course";
 
-const OPEN_COURSE_FILTER: FilterRule[] = [
-  {
-    columnId: "is_open",
-    columnType: "boolean",
-    columnName: "Open",
-    operator: "is_true",
-    value: null,
-  },
-];
+// const OPEN_COURSE_FILTER: FilterRule[] = [
+//   {
+//     columnId: "is_open",
+//     columnType: "boolean",
+//     columnName: "Open",
+//     operator: "is_true",
+//     value: null,
+//   },
+// ];
 
 interface CoursePickupProps {
   open: boolean;
@@ -43,10 +43,13 @@ const CoursePickup = ({ open, setOpen, onSelect }: CoursePickupProps) => {
   const [sorting, setSorting] = useState<SortRule[]>(() =>
     initialSorting(PICKUP_COURSE_KEY),
   );
+  // const [filters, setFilters] = useState<FilterRule[]>(() => {
+  //   const saved = initialFilters(PICKUP_COURSE_KEY);
+  //   const hasOpenFilter = saved.some((f) => f.columnId === "is_open");
+  //   return hasOpenFilter ? saved : [...OPEN_COURSE_FILTER, ...saved];
+  // });
   const [filters, setFilters] = useState<FilterRule[]>(() => {
-    const saved = initialFilters(PICKUP_COURSE_KEY);
-    const hasOpenFilter = saved.some((f) => f.columnId === "is_open");
-    return hasOpenFilter ? saved : [...OPEN_COURSE_FILTER, ...saved];
+    return initialFilters(PICKUP_COURSE_KEY);
   });
 
   const { data, isLoading, isError } = useCourses(sorting, filters);
@@ -70,9 +73,7 @@ const CoursePickup = ({ open, setOpen, onSelect }: CoursePickupProps) => {
   const handleFiltersChange = useCallback((newFilters: FilterRule[]) => {
     // Always keep the is_open pre-filter
     const hasOpenFilter = newFilters.some((f) => f.columnId === "is_open");
-    setFilters(
-      hasOpenFilter ? newFilters : [...OPEN_COURSE_FILTER, ...newFilters],
-    );
+    setFilters(hasOpenFilter ? newFilters : [...newFilters]);
     setRowSelection({});
   }, []);
 

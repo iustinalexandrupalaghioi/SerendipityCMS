@@ -2,7 +2,6 @@ import Breadcrumb from "@/components/partials/Breadcrumb";
 import DetailsScreen from "@/components/partials/DetailsScreen";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { Button } from "@/components/ui/button";
-import { CollapsibleContent } from "@/components/ui/collapsible";
 import { Form } from "@/components/ui/form";
 import { useCourse } from "@/hooks/useCourses";
 import { supabase } from "@/lib/supabaseClient";
@@ -26,8 +25,10 @@ const AddCourseDayScreen = () => {
   const breadcrumbItems = [
     { path: "/", label: "Home" },
     { path: "/courses", label: "Courses" },
-    { path: `/courses/update/${courseId}`, label: course?.title || "Course" },
-    { label: "Course days" },
+    {
+      path: `/courses/update/${course?.id}`,
+      label: `Course ${course?.display_id ?? "Course"}`,
+    },
     { label: "Add course day" },
   ];
 
@@ -125,18 +126,14 @@ const AddCourseDayScreen = () => {
         title="Add Course Day"
         isOpen={open}
         setOpen={setOpen}
+        collapsible={false}
       >
-        <p className="text-muted-foreground text-sm mb-4">
-          Create a new day for an existing course.
-        </p>
         <Form {...form}>
-          <CollapsibleContent>
-            <CourseDayForm
-              mode="Add"
-              control={control}
-              errors={formState.errors}
-            />
-          </CollapsibleContent>
+          <CourseDayForm
+            mode="Add"
+            control={control}
+            errors={formState.errors}
+          />
         </Form>
       </DetailsScreen>
     </div>

@@ -30,6 +30,7 @@ export const APPOINTMENT_STATUS_OPTIONS = APPOINTMENT_STATUSES.map(
 
 export type Appointment = {
   id: string;
+  display_id: number;
   user_id: string;
   name: string;
   email: string;

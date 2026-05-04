@@ -4,19 +4,30 @@ import useUserStore from "@/stores/UserStore";
 
 import UserPickup from "@/components/business/users/pickup/UserPickup";
 import { Combobox } from "@/components/partials/Combobox";
+import { FormCalendar } from "@/components/partials/FormCalendar";
 import PickupFormInput from "@/components/partials/PickupFormInput";
-import { FormItem, FormLabel } from "@/components/ui/form";
+import SectionCard from "@/components/partials/SectionCard";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { YesNoSwitch } from "@/components/ui/yes-no-switch";
+import useCourseSessionStore from "@/stores/CourseSessionStore";
 import useCourseStore from "@/stores/CourseStore";
 import type { Enrollment } from "@/types/Course";
-import { useEffect, useState } from "react";
+import { format } from "date-fns/format";
+import { useEffect, useMemo, useState } from "react";
 import type {
   Control,
   FieldErrors,
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
+import CourseSessionPickup from "../../course-sessions/pickup/CourseSessionPickup";
 import CoursePickup from "../../pickup/CoursePickup";
 import type { EnrollmentFormValues } from "./form-schema";
 
@@ -29,164 +40,302 @@ interface CourseEnrollmentFormProps {
   enrollment?: Enrollment;
 }
 
+const statusEnum = [
+  { label: "Submitted", value: "submitted" },
+  { label: "Confirmed", value: "confirmed" },
+  { label: "Completed", value: "completed" },
+  { label: "Cancelled", value: "cancelled" },
+];
+
+const paymentTypeEnum = [
+  { label: "Deposit", value: "deposit" },
+  { label: "Full Payment", value: "full" },
+];
+
 const CourseEnrollmentForm = ({
   control,
   errors,
   mode,
   setValue,
+  watch,
   enrollment,
 }: CourseEnrollmentFormProps) => {
   const disabled = mode === "Update";
+  const course = watch("course");
+  const courseSession = watch("courseSession");
+  const user = watch("user");
 
   const { selectedCourse, setselectedCourse } = useCourseStore();
+  const { selectedCourseSession, setselectedCourseSession } =
+    useCourseSessionStore();
   const { selectedUser, setSelectedUser } = useUserStore();
 
   const [isCoursePickupOpen, setCoursePickupOpen] = useState(false);
+  const [isCourseSessionPickupOpen, setCourseSessionPickupOpen] =
+    useState(false);
   const [isUserPickupOpen, setUserPickupOpen] = useState(false);
 
-  /* Sync picked service into form */
   useEffect(() => {
     if (!selectedCourse) return;
-
     setValue("course", selectedCourse, { shouldDirty: true });
-
     setselectedCourse(null);
   }, [selectedCourse, setValue]);
 
   useEffect(() => {
-    if (!selectedUser) return;
+    if (!courseSession) return;
+    setValue("course", courseSession.course!, { shouldDirty: true });
+    setValue("price", courseSession.price!, { shouldDirty: true });
+    setValue("advance_price", courseSession.advance_price!, {
+      shouldDirty: true,
+    });
+  }, [courseSession]);
 
+  useEffect(() => {
+    if (!selectedCourseSession) return;
+    setValue("courseSession", selectedCourseSession, { shouldDirty: true });
+    setValue("course", selectedCourseSession.course!, { shouldDirty: true });
+    setValue("price", selectedCourseSession.price!, { shouldDirty: true });
+    setValue("advance_price", selectedCourseSession.advance_price!, {
+      shouldDirty: true,
+    });
+    setselectedCourseSession(null);
+  }, [selectedCourseSession, setValue]);
+
+  useEffect(() => {
+    if (!selectedUser) return;
     setValue("user", selectedUser, { shouldDirty: true });
+    setValue("date_of_birth", selectedUser.date_of_birth, {
+      shouldDirty: true,
+    });
     setSelectedUser(null);
   }, [selectedUser, setValue]);
 
-  const statusEnum = [
-    {
-      label: "Submitted",
-      value: "submitted",
-    },
-    {
-      label: "Confirmed",
-      value: "confirmed",
-    },
-    {
-      label: "Canceled",
-      value: "canceled",
-    },
-  ];
+  const hundredYearsAgo = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return new Date(currentYear - 100, 0, 1);
+  }, []);
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 w-full py-2">
-      <div className="flex-1 flex flex-col gap-6">
+    <div className="flex flex-col gap-8 w-full py-2">
+      {/* ── Enrollment info (Update only) ── */}
+
+      <SectionCard title="Enrollment">
         {mode === "Update" && (
-          <>
-            <FormItem className="w-full">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <FormItem>
               <FormLabel>Enrollment date</FormLabel>
               <Input
-                type="text"
-                placeholder="Enrollment date"
                 disabled
-                value={enrollment?.enrollment_date}
+                value={
+                  enrollment && format(enrollment.enrollment_date, "dd-MM-yyyy")
+                }
               />
             </FormItem>
-            <div className="flex gap-4">
-              <FormItem className="w-full capitalize">
-                <FormLabel>Status</FormLabel>
-                <Combobox
-                  items={statusEnum}
-                  value={enrollment?.status ?? "submitted"}
-                  placeholder="Enrollment status"
-                  disabled
-                  className="w-full"
-                />
-              </FormItem>
-
-              <FormItem className="w-full capitalize">
-                <FormLabel>Deposit paid</FormLabel>
-                <YesNoSwitch
-                  checked={enrollment?.advance_payment_paid ?? false}
-                  disabled
-                />
-              </FormItem>
-            </div>
-          </>
+            <FormItem className="col-span-2">
+              <FormLabel>Status</FormLabel>
+              <Combobox
+                items={statusEnum}
+                value={enrollment?.status ?? "submitted"}
+                placeholder="Enrollment status"
+                disabled
+                className="w-full capitalize"
+              />
+            </FormItem>
+            <FormItem>
+              <FormLabel>Deposit paid</FormLabel>
+              <YesNoSwitch
+                checked={enrollment?.advance_payment_paid ?? false}
+                disabled
+              />
+            </FormItem>
+          </div>
         )}
-
-        <PickupFormInput
-          disabled={disabled}
-          displayKey="full_name"
-          control={control}
-          name="user"
-          label="Customer"
-          placeholder="Select a customer"
-          error={errors.user?.message}
-          setOpen={setUserPickupOpen}
-        />
-
-        {isUserPickupOpen && (
-          <UserPickup
-            onSelect={setSelectedUser}
-            open={isUserPickupOpen}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          <PickupFormInput
+            disabled={disabled}
+            displayKey="display_id"
+            control={control}
+            name="user"
+            label="Customer"
+            error={errors.user?.message}
             setOpen={setUserPickupOpen}
           />
-        )}
-
-        {/* Course  */}
-        <PickupFormInput
-          disabled={disabled}
-          displayKey="title"
-          control={control}
-          name="course"
-          label="Course"
-          placeholder="Select a course"
-          error={errors.course?.message}
-          setOpen={setCoursePickupOpen}
-        />
-
-        {isCoursePickupOpen && (
-          <CoursePickup
-            onSelect={setselectedCourse}
-            open={isCoursePickupOpen}
-            setOpen={setCoursePickupOpen}
+          <FormItem className="col-span-3">
+            <FormLabel>Full name</FormLabel>
+            <Input
+              disabled
+              placeholder="e.g. John Doe"
+              value={user?.full_name ?? ""}
+            />
+          </FormItem>
+          <FormField
+            control={control}
+            name="date_of_birth"
+            render={({ field }) => (
+              <FormCalendar
+                startMonth={hundredYearsAgo}
+                label="Date of birth"
+                value={field.value ? field.value : (user?.date_of_birth ?? "")}
+                disabled={mode === "Update"}
+                onChange={field.onChange}
+                className="w-full"
+              />
+            )}
           />
-        )}
+        </div>
+      </SectionCard>
 
-        {mode === "Update" && (
-          <>
-            <FormItem className="w-full">
-              <FormLabel>Course date</FormLabel>
+      {/* ── Course ── */}
+      <section className="flex flex-col gap-4">
+        <SectionCard title="Course and session">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <PickupFormInput
+              disabled={disabled}
+              displayKey="display_id"
+              control={control}
+              name="course"
+              label="Course"
+              error={errors.course?.message}
+              setOpen={setCoursePickupOpen}
+            />
+            <FormItem className="col-span-3">
+              <FormLabel>Course name</FormLabel>
               <Input
-                type="text"
-                placeholder="Course date"
                 disabled
-                value={enrollment?.course_date}
+                placeholder="e.g. Private session"
+                value={course?.title ?? ""}
               />
             </FormItem>
+            <PickupFormInput
+              disabled={disabled}
+              displayKey="display_id"
+              control={control}
+              name="courseSession"
+              label="Course session"
+              error={errors.courseSession?.message}
+              setOpen={setCourseSessionPickupOpen}
+            />
+            <FormItem className="col-span-3">
+              <FormLabel>Session start date</FormLabel>
+              <Input
+                disabled
+                placeholder="dd-MM-yyyy"
+                value={
+                  courseSession
+                    ? format(courseSession.start_date, "dd-MM-yyyy")
+                    : ""
+                }
+              />
+            </FormItem>
+          </div>
+        </SectionCard>
+      </section>
 
-            <div className="flex gap-4">
-              <FormItem className="w-full capitalize">
-                <FormLabel>Price (EUR)</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Price (EUR)"
-                  disabled
-                  value={enrollment?.course?.price}
+      {/* ── Pricing (Update only) ── */}
+      <SectionCard title="Pricing">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <FormField
+            control={control}
+            name="payment_type"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Payment type</FormLabel>
+                <Combobox
+                  items={paymentTypeEnum}
+                  placeholder="Payment type"
+                  disabled={mode === "Update"}
+                  className="w-full capitalize"
+                  {...field}
+                  value={field.value}
                 />
+                <FormMessage>{errors.payment_type?.message}</FormMessage>
               </FormItem>
+            )}
+          />
 
-              <FormItem className="w-full capitalize">
-                <FormLabel>Advance price (EUR)</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Advance price (EUR)"
-                  disabled
-                  value={enrollment?.course?.advance_price}
-                />
+          <FormField
+            control={control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      className="pr-12"
+                      placeholder="e.g. 950"
+                      aria-invalid={!!errors.price}
+                      disabled={disabled}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      EUR
+                    </span>
+                  </div>
+                </FormControl>
+                <FormMessage>{errors.price?.message}</FormMessage>
               </FormItem>
-            </div>
-          </>
-        )}
-      </div>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="advance_price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Deposit price</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      className="pr-12"
+                      placeholder="e.g. 200"
+                      aria-invalid={!!errors.advance_price}
+                      value={field.value ?? ""}
+                      disabled={disabled}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === "" ? null : Number(e.target.value),
+                        )
+                      }
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      EUR
+                    </span>
+                  </div>
+                </FormControl>
+                <FormMessage>{errors.advance_price?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+        </div>
+      </SectionCard>
+
+      {/* ── Dialogs ── */}
+      {isUserPickupOpen && (
+        <UserPickup
+          onSelect={setSelectedUser}
+          open={isUserPickupOpen}
+          setOpen={setUserPickupOpen}
+        />
+      )}
+      {isCoursePickupOpen && (
+        <CoursePickup
+          onSelect={setselectedCourse}
+          open={isCoursePickupOpen}
+          setOpen={setCoursePickupOpen}
+        />
+      )}
+      {isCourseSessionPickupOpen && (
+        <CourseSessionPickup
+          onSelect={setselectedCourseSession}
+          course={course}
+          open={isCourseSessionPickupOpen}
+          setOpen={setCourseSessionPickupOpen}
+        />
+      )}
     </div>
   );
 };

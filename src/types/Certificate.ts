@@ -1,5 +1,6 @@
 export type Certificate = {
   id: string;
+  display_id: number;
   title: string;
   issuing_authority: string;
   is_featured: boolean;
