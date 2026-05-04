@@ -124,7 +124,7 @@ export function createCourseEnrollmentColumns(
 
     {
       id: "price",
-      accessorFn: (row) => row.price,
+      accessorKey: "price",
       header: undefined,
       meta: {
         columnName: "Price (EUR)",
@@ -134,7 +134,7 @@ export function createCourseEnrollmentColumns(
     },
     {
       id: "advance_price",
-      accessorFn: (row) => row.advance_price,
+      accessorKey: "advance_price",
       header: undefined,
       meta: {
         columnName: "Deposit (EUR)",
