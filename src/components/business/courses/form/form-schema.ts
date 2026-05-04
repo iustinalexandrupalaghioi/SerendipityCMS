@@ -18,26 +18,18 @@ export const CourseSchema = z.object({
     .string()
     .min(15, "Description must be at least 15 characters")
     .max(500, "Description can be at most 500 characters"),
-  price: z
-    .number({ message: "Price must be a number" })
-    .min(1, "Price must be a number greater than 0"),
   display_order: z
     .number({ message: "Display order must be a number" })
     .min(1, "Display order must be a number greater than 0"),
   location: z.string().min(3, "Location must be at least 3 characters"),
   level: z.custom<CourseLevel>(),
   duration_days: z.number({ message: "Duration must be a number" }).optional(),
-  start_date: z.string().min(5, "Start date is a mandatory field"),
+  price: z
+    .number({ message: "Price must be a number" })
+    .min(1, "Price must be a number greater than 0"),
   advance_price: z
     .number({ message: "Advance price must be a number" })
     .min(1, "Advance price must be a number greater than 0"),
-  remaining_spots: z
-    .number({ message: "Remaining spots must be a number" })
-    .min(0, "Remaining spots must be a number greater than 0"),
-  available_spots: z
-    .number({ message: "Available spots must be a number" })
-    .min(0, "Available spots must be a number greater than 0"),
-  is_open: z.boolean().optional(),
   image: imageFile,
   image_path: z.string().optional(),
 });

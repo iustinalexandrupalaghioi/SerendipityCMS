@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export const CourseDayActivitySchema = z.object({
   id: z.string().optional(),
+  display_id: z.number().optional(),
   activity: z.string().min(3, "Activity must be at least 3 characters"),
   course_day: z
     .custom<CourseDay>()

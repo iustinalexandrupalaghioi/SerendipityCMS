@@ -64,7 +64,7 @@ export function ImagePreview({ src, alt, filename }: ImagePreviewProps) {
     return (
       <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-        <PopoverContent side="right" className="w-fit p-1">
+        <PopoverContent side="bottom" className="w-fit p-1">
           {preview}
         </PopoverContent>
       </Popover>
@@ -75,7 +75,7 @@ export function ImagePreview({ src, alt, filename }: ImagePreviewProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-        <TooltipContent side="right" className="p-1">
+        <TooltipContent side="bottom" className="p-1">
           {preview}
         </TooltipContent>
       </Tooltip>

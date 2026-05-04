@@ -29,7 +29,11 @@ const AddCourseEnrollmentDialog = ({
     resolver: zodResolver(EnrollmentSchema),
     defaultValues: {
       course: course ?? undefined,
+      courseSession: course?.course_session?.[0] ?? undefined,
       user: undefined,
+      price: course?.course_session?.[0].price ?? 0,
+      advance_price: course?.course_session?.[0].advance_price ?? 0,
+      date_of_birth: "",
     },
   });
 
@@ -41,17 +45,23 @@ const AddCourseEnrollmentDialog = ({
 
   const addEnrollmentMutation = useMutation({
     mutationFn: async (values: EnrollmentFormValues) => {
-      const { error, data } = await supabase.from("course_enrollment").insert([
+      const { error, data } = await supabase.functions.invoke(
+        "create-enrollment",
         {
-          course_id: values.course.id,
-          user_id: values.user.id,
-          course_date: values.course.start_date,
-          price: Number(values.course.price),
-          advance_price: Number(values.course.advance_price),
+          body: {
+            session_id: values.courseSession.id,
+            user_id: values.user.id,
+            action_type: "create_enrollment",
+            payment_type: values.payment_type,
+            dob: values.date_of_birth,
+            author: "admin",
+            price: values.courseSession.price,
+            advance_price: values.courseSession.advance_price,
+          },
         },
-      ]);
+      );
 
-      if (error) throw new Error(error.message);
+      if (error) throw error;
 
       return data;
     },
@@ -63,8 +73,12 @@ const AddCourseEnrollmentDialog = ({
       setOpen(false);
     },
 
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to add course enrollment.");
+    onError: async (error: any) => {
+      const body = await error?.context?.json().catch(() => null);
+      const message = body?.error;
+      console.log(body);
+
+      toast.error(message ?? "Something went wrong while enrolling.");
     },
   });
 

@@ -27,6 +27,7 @@ interface CourseSessionFormProps {
   initialDate?: string;
   mode: "Add" | "Update";
   disabled?: boolean;
+  defaultValues: CourseSessionFormValues;
 }
 
 const CourseSessionForm = ({
@@ -36,6 +37,7 @@ const CourseSessionForm = ({
   setValue,
   watch,
   disabled = false,
+  defaultValues,
 }: CourseSessionFormProps) => {
   const [date, setDate] = useState<string>(
     initialDate
@@ -44,7 +46,7 @@ const CourseSessionForm = ({
   );
 
   const availableSpots = watch("available_spots");
-  const remainingSpots = watch("remaining_spots");
+  const isOpen = watch("is_open");
 
   // ── Sync date into form ───────────────────────────────────────────────────
   useEffect(() => {
@@ -56,17 +58,19 @@ const CourseSessionForm = ({
   }, [date, setValue]);
 
   useEffect(() => {
-    setValue("remaining_spots", availableSpots, { shouldValidate: true });
+    const newRemaining = Math.max(0, (availableSpots ?? 0) - booked);
+    setValue("remaining_spots", newRemaining, { shouldValidate: true });
   }, [availableSpots]);
 
-  const booked = (availableSpots ?? 0) - (remainingSpots ?? 0);
+  const booked =
+    (defaultValues.available_spots ?? 0) - (defaultValues.remaining_spots ?? 0);
 
   return (
     <div className="w-full py-2 space-y-4">
       {/* ── Schedule ── */}
       <SectionCard title="Schedule">
         <FormCalendar
-          disabled={disabled}
+          disabled={disabled || isOpen}
           value={date}
           label="Start date"
           onChange={setDate}
@@ -89,7 +93,7 @@ const CourseSessionForm = ({
                       className="pr-12"
                       placeholder="e.g. 950"
                       aria-invalid={!!errors.price}
-                      disabled={disabled}
+                      disabled
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
@@ -117,7 +121,7 @@ const CourseSessionForm = ({
                       placeholder="e.g. 200"
                       aria-invalid={!!errors.advance_price}
                       value={field.value ?? ""}
-                      disabled={disabled}
+                      disabled
                       onChange={(e) =>
                         field.onChange(
                           e.target.value === "" ? null : Number(e.target.value),

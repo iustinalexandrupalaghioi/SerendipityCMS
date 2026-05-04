@@ -10,6 +10,7 @@ interface DetailsScreenProps {
   mode: "Add" | "Update";
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  collapsible?: boolean;
 }
 
 const DetailsScreen = ({
@@ -19,14 +20,27 @@ const DetailsScreen = ({
   isOpen,
   setOpen,
   children,
+  collapsible = true,
 }: DetailsScreenProps) => {
+  if (!collapsible) {
+    return (
+      <div className={cn("min-h-screen flex flex-col mt-4", className)}>
+        <div className="flex items-center mb-2 gap-2">
+          <span className="text-primary">{title}</span>
+          {mode === "Add" && <span className="text-accent">(new item)</span>}
+        </div>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <Collapsible
       defaultOpen={true}
       className={cn("min-h-screen flex flex-col mt-4", className)}
     >
       <CollapsibleTrigger
-        className="flex items-center mb-2 gap-2 cursor-pointer"
+        className="flex items-center mb-4 gap-2 cursor-pointer"
         onClick={() => setOpen(!isOpen)}
       >
         <span className="text-primary text-start">{title}</span>
@@ -36,7 +50,7 @@ const DetailsScreen = ({
             isOpen ? "rotate-180" : ""
           }`}
         />
-      </CollapsibleTrigger>{" "}
+      </CollapsibleTrigger>
       {children}
     </Collapsible>
   );

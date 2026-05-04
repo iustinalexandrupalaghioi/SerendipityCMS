@@ -4,16 +4,7 @@ import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  BookAlertIcon,
-  BookOpenIcon,
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  Loader2Icon,
-  SaveIcon,
-  Settings,
-  Trash2,
-} from "lucide-react";
+import { ChevronLeftIcon, Loader2Icon, SaveIcon, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, Navigate, useNavigate, useParams } from "react-router";
@@ -23,16 +14,8 @@ import Breadcrumb from "@/components/partials/Breadcrumb";
 import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { CollapsibleContent } from "@/components/ui/collapsible";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Loader from "@/components/ui/loader";
 import { useCourse } from "@/hooks/useCourses";
-import CloseCourseEnrollmentDialog from "../actions/CloseCourseEnrollmentsDialog";
-import OpenCourseEnrollmentDialog from "../actions/OpenCourseEnrollmentDialog";
 import CourseForm from "./CourseForm";
 import CourseDetailsTabs from "./CourseTabs";
 import { CourseSchema, type CourseFormValues } from "./form-schema";
@@ -43,10 +26,6 @@ const UpdateCourseScreen = () => {
   const { id } = useParams();
   const [existingImageUrl, setExistingImageUrl] = useState<string>("");
   const [isDeleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [isOpenEnrollmentsOpen, setOpenEnrollmentsOpen] =
-    useState<boolean>(false);
-  const [isCloseEnrollmentsOpen, setCloseEnrollmentsOpen] =
-    useState<boolean>(false);
 
   const { data: course, error, isLoading } = useCourse(id);
   const [fileInputKey, setFileInputKey] = useState(0);
@@ -55,7 +34,7 @@ const UpdateCourseScreen = () => {
   const breadcrumbItems = [
     { path: "/", label: "Home" },
     { path: "/courses", label: "Courses" },
-    { label: course?.title || "Course" },
+    { label: `Course ${course?.display_id ?? "Course"}` },
   ];
 
   const form = useForm<CourseFormValues>({
@@ -67,13 +46,9 @@ const UpdateCourseScreen = () => {
       description: "",
       display_order: 0,
       level: "beginner",
-      start_date: "",
-      available_spots: 0,
-      remaining_spots: 0,
       duration_days: 0,
       price: 0,
       advance_price: 0,
-      is_open: false,
       image: undefined,
       image_path: "",
     },
@@ -159,31 +134,6 @@ const UpdateCourseScreen = () => {
             )}
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="lg" variant="ghost">
-                <Settings /> <ChevronDownIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-fit" align="start">
-              <DropdownMenuItem
-                disabled={!course.is_open}
-                onSelect={() => setCloseEnrollmentsOpen(true)}
-              >
-                <BookAlertIcon />
-                Close enrollments
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                disabled={course.is_open}
-                onSelect={() => setOpenEnrollmentsOpen(true)}
-              >
-                <BookOpenIcon />
-                Open enrollments
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           <Button
             type="button"
             size="icon"
@@ -203,19 +153,18 @@ const UpdateCourseScreen = () => {
         isOpen={isOpen}
         setOpen={setOpen}
       >
-        <p className="text-muted-foreground text-sm mb-4">
-          Update the course details below.
-        </p>
         <Form {...form}>
           <CollapsibleContent>
             <CourseForm
+              defaultValues={course}
               fileInputKey={fileInputKey}
               mode="Update"
               control={form.control}
               errors={form.formState.errors}
               setValue={form.setValue}
-              initialDate={course.start_date}
               existingImageUrl={existingImageUrl}
+              existingImagePath={course.image_path}
+              courseStats={{ ...course }}
             />
           </CollapsibleContent>
         </Form>
@@ -239,19 +188,6 @@ const UpdateCourseScreen = () => {
         setOpen={setDeleteOpen}
         onSuccess={() => navigate("/courses")}
         target="course"
-      />
-
-      <OpenCourseEnrollmentDialog
-        course={course}
-        open={isOpenEnrollmentsOpen}
-        setOpen={setOpenEnrollmentsOpen}
-      />
-
-      <CloseCourseEnrollmentDialog
-        open={isCloseEnrollmentsOpen}
-        setOpen={setCloseEnrollmentsOpen}
-        courseId={course.id}
-        courseTitle={course.title}
       />
     </div>
   );

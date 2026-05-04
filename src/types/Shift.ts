@@ -2,6 +2,7 @@ import type { WorkHour } from "./WorkHour";
 
 export type Shift = {
   id: string;
+  display_id: number;
   day_start_time: string;
   day_end_time: string;
   interval: number;

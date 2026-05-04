@@ -12,7 +12,13 @@ export const AppointmentSchema = z.object({
         val !== null && typeof val === "object" && Object.keys(val).length > 0,
       { message: "Service is a mandatory field" },
     ),
-  user: z.custom<Profile>().optional(),
+  user: z
+    .custom<Profile>()
+    .refine(
+      (val) =>
+        val !== null && typeof val === "object" && Object.keys(val).length > 0,
+      { message: "Customer is a mandatory field" },
+    ),
   date: z.string().min(5, "Date is a mandatory field"),
   start_time: z
     .string()

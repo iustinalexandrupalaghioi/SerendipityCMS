@@ -51,7 +51,7 @@ const fetchCourse = async (id: string): Promise<Course> => {
   const { data, error } = await supabase
     .from("course")
     .select(
-      "*, course_day(*, course_day_activity(*)), course_enrollment(*, profile(*), course(*))",
+      "*, course_day(*, course_day_activity(*)), course_session(*, course_enrollment(*, profile(*)), course(*))",
     )
     .eq("id", id)
     .single();

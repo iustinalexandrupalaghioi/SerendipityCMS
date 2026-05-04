@@ -13,6 +13,7 @@ const imageFile = z
 
 export const CourseDaySchema = z.object({
   id: z.string().optional(),
+  display_id: z.number().optional(),
   title: z.string().min(3, "Title must be at least 3 characters"),
   course: z
     .custom<Course>()

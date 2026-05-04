@@ -8,7 +8,7 @@ import { Loader2Icon } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
+import { QUERY_KEY as COURSE_QUERY_KEY } from "../../overview/useCourses";
 import type { Course } from "@/types/Course";
 import CourseSessionForm from "./CourseSessionForm";
 import {
@@ -70,7 +70,12 @@ export const AddCourseSessionDialog = ({
 
     onSuccess: () => {
       toast.success("Course session added successfully!");
-      queryClient.refetchQueries({ queryKey: [...QUERY_KEY, course.id] });
+      [[...QUERY_KEY], [COURSE_QUERY_KEY], ["course", course.id]].forEach(
+        (key) =>
+          queryClient.refetchQueries({
+            queryKey: key,
+          }),
+      );
       reset();
       setOpen(false);
     },
@@ -100,6 +105,15 @@ export const AddCourseSessionDialog = ({
               initialDate={format(new Date(), "yyyy-MM-dd")}
               setValue={form.setValue}
               watch={form.watch}
+              defaultValues={{
+                start_date: "",
+                course: course,
+                price: course.price ?? 0,
+                advance_price: course.advance_price ?? null,
+                available_spots: course.available_spots ?? 1,
+                remaining_spots: course.available_spots ?? 1,
+                is_open: true,
+              }}
             />
           </div>
 

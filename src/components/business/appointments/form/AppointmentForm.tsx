@@ -8,10 +8,18 @@ import {
 import PickupFormInput from "@/components/partials/PickupFormInput";
 import SectionCard from "@/components/partials/SectionCard";
 import { Input } from "@/components/ui/input";
+import { Combobox } from "@/components/partials/Combobox";
+import { YesNoSwitch } from "@/components/ui/yes-no-switch";
+import { APPOINTMENT_STATUS_OPTIONS } from "@/types/Appointment";
 import { useAvailableHours } from "@/hooks/useAvailableHours";
 import { useFullyBookedDates } from "@/hooks/useBookedDates";
-import type { Service } from "@/types/Service";
-import type { Profile } from "@/types/User";
+import useUserStore from "@/stores/UserStore";
+import useServiceStore from "@/stores/ServiceStore";
+import UserPickup from "../../users/pickup/UserPickup";
+import ServicePickup from "../../services/pickup/ServicePickup";
+import { AppointmentDatePicker } from "./AppointmentDatePicker";
+import { AppointmentTimePicker } from "./AppointmentTimePicker";
+import type { AppointmentFormValues } from "./form-schema";
 import { format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import type {
@@ -20,14 +28,7 @@ import type {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-import ServicePickup from "../../services/pickup/ServicePickup";
-import UserPickup from "../../users/pickup/UserPickup";
-import { AppointmentDatePicker } from "./AppointmentDatePicker";
-import { AppointmentTimePicker } from "./AppointmentTimePicker";
-import type { AppointmentFormValues } from "./form-schema";
-import { Combobox } from "@/components/partials/Combobox";
-import { YesNoSwitch } from "@/components/ui/yes-no-switch";
-import { APPOINTMENT_STATUS_OPTIONS } from "@/types/Appointment";
+import { ImagePreview } from "@/components/partials/ImagePreview";
 
 interface AppointmentFormProps {
   control: Control<AppointmentFormValues>;
@@ -37,6 +38,8 @@ interface AppointmentFormProps {
   mode: "Add" | "Update" | "Reject" | "Approve";
   existingImageUrl?: string;
 }
+
+const GRID = "grid grid-cols-1 md:grid-cols-4 gap-4 items-start";
 
 const AppointmentForm = ({
   control,
@@ -52,13 +55,39 @@ const AppointmentForm = ({
   const appointmentId = watch("id");
   const date = watch("date");
   const user = watch("user");
+  const service = watch("service");
   const advance_payment_paid = watch("advance_payment_paid");
 
-  const [disabledNameEmail, setDisabledNameEmail] =
-    useState<boolean>(!!appointmentId);
-  const [isServicePickupOpen, setServicePickupOpen] = useState(false);
-  const [isUserPickupOpen, setUserPickupOpen] = useState(false);
+  const { selectedUser, setSelectedUser } = useUserStore();
+  const { selectedService, setSelectedService } = useServiceStore();
 
+  const [isUserPickupOpen, setUserPickupOpen] = useState(false);
+  const [isServicePickupOpen, setServicePickupOpen] = useState(false);
+
+  // ── Sync picked user ──────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!selectedUser) return;
+    setValue("user", selectedUser, { shouldDirty: true });
+    setValue("name", selectedUser.full_name, { shouldDirty: true });
+    setValue("email", selectedUser.email, { shouldDirty: true });
+    setSelectedUser(null);
+  }, [selectedUser, setValue]);
+
+  // ── Sync picked service ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (!selectedService) return;
+    setValue("service", selectedService, { shouldDirty: true });
+    setValue("price", Number(selectedService.price), { shouldDirty: true });
+    setValue("advance_payment", Number(selectedService.advance_price), {
+      shouldDirty: true,
+    });
+    setValue("duration", Number(selectedService.duration), {
+      shouldDirty: true,
+    });
+    setSelectedService(null);
+  }, [selectedService, setValue]);
+
+  // ── Auto-advance date if today is fully booked ────────────────────────────
   const { data: bookedDates } = useFullyBookedDates({
     serviceDuration: duration,
     enabled: !!date && !!duration,
@@ -71,126 +100,72 @@ const AppointmentForm = ({
     error,
   } = useAvailableHours({
     date: format(date ? parseISO(date) : new Date(), "yyyy-MM-dd"),
-    duration: duration,
+    duration,
     enabled: false,
     appointmentId,
   });
 
-  // ── Auto-advance date if today is fully booked ────────────────────────────
   useEffect(() => {
-    if (!bookedDates || bookedDates.length === 0) return;
-
+    if (!bookedDates?.length) return;
     const today = new Date();
-    const isTodayBooked = bookedDates.some(
-      (d) => format(new Date(d), "yyyy-MM-dd") === format(today, "yyyy-MM-dd"),
-    );
-
-    if (isTodayBooked && (!date || date === format(today, "yyyy-MM-dd"))) {
-      let nextDate = new Date(today);
-      while (
-        bookedDates.some(
-          (d) =>
-            format(new Date(d), "yyyy-MM-dd") ===
-            format(nextDate, "yyyy-MM-dd"),
-        )
-      ) {
-        nextDate.setDate(nextDate.getDate() + 1);
-      }
-      setValue("date", format(nextDate, "yyyy-MM-dd"));
+    const fmt = (d: Date) => format(d, "yyyy-MM-dd");
+    const isBooked = (d: Date) =>
+      bookedDates.some((b) => fmt(new Date(b)) === fmt(d));
+    if (isBooked(today) && (!date || date === fmt(today))) {
+      let next = new Date(today);
+      while (isBooked(next)) next.setDate(next.getDate() + 1);
+      setValue("date", fmt(next));
     }
   }, [bookedDates, date, setValue]);
-
-  // ── Pickup handlers ───────────────────────────────────────────────────────
-  const handleServiceSelect = (service: Service) => {
-    setValue("service", service, { shouldDirty: true });
-    setValue("price", Number(service.price), { shouldDirty: true });
-    setValue("advance_payment", Number(service.advance_price), {
-      shouldDirty: true,
-    });
-    setValue("duration", Number(service.duration), { shouldDirty: true });
-  };
-
-  const handleUserSelect = (user: Profile) => {
-    setValue("user", user, { shouldDirty: true });
-    setValue("name", user.full_name, {
-      shouldDirty: true,
-    });
-    setValue("email", user.email, { shouldDirty: true });
-    setDisabledNameEmail(true);
-  };
 
   return (
     <div className="w-full py-2 space-y-4">
       {/* ── Customer ── */}
       <SectionCard title="Customer">
-        <div className="grid grid-cols-1 gap-6">
+        <div className={GRID}>
           <PickupFormInput
             disabled={disabled || mode === "Approve"}
-            displayKey="full_name"
+            displayKey="display_id"
             control={control}
             name="user"
             label="Customer"
-            placeholder="Select a customer"
+            error={errors.user?.message}
+            setOpen={setUserPickupOpen}
             onClear={() => {
               setValue("name", "", { shouldDirty: true });
               setValue("email", "", { shouldDirty: true });
-              setDisabledNameEmail(false);
             }}
-            error={errors.user?.message}
-            setOpen={setUserPickupOpen}
           />
 
-          {!user && (
-            <FormField
-              control={control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full name</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="e.g. John Doe"
-                      disabled={disabled || disabledNameEmail}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.name?.message}</FormMessage>
-                </FormItem>
-              )}
+          <FormItem className="md:col-span-3 w-full">
+            <FormLabel>Full name</FormLabel>
+            <Input
+              disabled
+              placeholder="e.g. John Doe"
+              value={user?.full_name ?? ""}
             />
-          )}
-          <FormField
-            control={control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="e.g. john@example.com"
-                    disabled={disabled || disabledNameEmail}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage>{errors.email?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
+          </FormItem>
+          <FormItem className="md:col-span-4 w-full">
+            <FormLabel>Email</FormLabel>
+            <Input
+              disabled
+              type="email"
+              placeholder="e.g. john@example.com"
+              value={user?.email ?? ""}
+            />
+          </FormItem>
         </div>
       </SectionCard>
 
       {/* ── Appointment details ── */}
       <SectionCard title="Appointment details">
-        <div className="grid grid-cols-1 gap-6">
+        <div className={GRID}>
           <PickupFormInput
             disabled={disabled}
-            displayKey="title"
+            displayKey="display_id"
             control={control}
             name="service"
             label="Service"
-            placeholder="Select a service"
             error={errors.service?.message}
             setOpen={setServicePickupOpen}
             onClear={() => {
@@ -198,13 +173,32 @@ const AppointmentForm = ({
               setValue("price", 0, { shouldDirty: true });
             }}
           />
+          <FormItem className="md:col-span-3 w-full">
+            <FormLabel>Service name</FormLabel>
+            <Input
+              disabled
+              placeholder="e.g. Manicure"
+              value={service?.title ?? ""}
+            />
+          </FormItem>
+
+          {existingImageUrl && (
+            <FormItem className="md:col-span-4">
+              <FormLabel>Service image</FormLabel>
+              <ImagePreview
+                src={existingImageUrl}
+                alt="Current service"
+                filename={service.image_path.split("/").slice(-1)[0]}
+              />
+            </FormItem>
+          )}
 
           <FormField
             control={control}
             name="duration"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Duration (minutes)</FormLabel>
+              <FormItem className="w-full">
+                <FormLabel>Duration (min)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -217,7 +211,6 @@ const AppointmentForm = ({
               </FormItem>
             )}
           />
-
           <FormField
             control={control}
             name="date"
@@ -231,7 +224,6 @@ const AppointmentForm = ({
               />
             )}
           />
-
           <FormField
             control={control}
             name="start_time"
@@ -255,7 +247,7 @@ const AppointmentForm = ({
 
       {/* ── Pricing ── */}
       <SectionCard title="Pricing">
-        <div className="grid grid-cols-1 gap-6">
+        <div className={GRID}>
           <FormField
             control={control}
             name="price"
@@ -269,7 +261,6 @@ const AppointmentForm = ({
                       className="pr-12"
                       placeholder="e.g. 49.99"
                       disabled={disabled}
-                      aria-invalid={!!errors.price}
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
@@ -282,7 +273,6 @@ const AppointmentForm = ({
               </FormItem>
             )}
           />
-
           <FormField
             control={control}
             name="advance_payment"
@@ -296,7 +286,6 @@ const AppointmentForm = ({
                       className="pr-12"
                       placeholder="e.g. 49.99"
                       disabled={disabled}
-                      aria-invalid={!!errors.advance_payment}
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
@@ -310,55 +299,39 @@ const AppointmentForm = ({
             )}
           />
           {mode === "Update" && (
-            <div className="flex flex-col md:flex-row gap-4">
-              <FormItem className="w-full capitalize">
+            <>
+              <FormItem>
                 <FormLabel>Status</FormLabel>
                 <Combobox
                   items={APPOINTMENT_STATUS_OPTIONS}
                   value={watch("status") ?? "pending"}
                   placeholder="Appointment status"
                   disabled
-                  className="w-full"
+                  className="w-full capitalize"
                 />
               </FormItem>
-
-              <FormItem className="w-full">
-                <FormLabel>Advance paid</FormLabel>
-                <YesNoSwitch
-                  checked={advance_payment_paid ? true : false}
-                  disabled
-                />
+              <FormItem>
+                <FormLabel>Deposit paid</FormLabel>
+                <YesNoSwitch checked={!!advance_payment_paid} disabled />
               </FormItem>
-            </div>
+            </>
           )}
         </div>
       </SectionCard>
 
-      {/* ── Service image ── */}
-      {existingImageUrl && (
-        <SectionCard title="Service image">
-          <img
-            src={existingImageUrl}
-            alt="Current service"
-            className="h-36 w-auto rounded-md border object-cover"
-          />
-        </SectionCard>
-      )}
-
-      {/* ── Pickup dialogs ── */}
+      {/* ── Dialogs ── */}
       {isUserPickupOpen && (
         <UserPickup
           open={isUserPickupOpen}
           setOpen={setUserPickupOpen}
-          onSelect={handleUserSelect}
+          onSelect={setSelectedUser}
         />
       )}
-
       {isServicePickupOpen && (
         <ServicePickup
           open={isServicePickupOpen}
           setOpen={setServicePickupOpen}
-          onSelect={handleServiceSelect}
+          onSelect={setSelectedService}
         />
       )}
     </div>

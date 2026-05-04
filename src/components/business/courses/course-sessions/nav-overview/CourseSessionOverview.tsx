@@ -50,6 +50,8 @@ const CourseSessionOverview = ({
     null,
   );
 
+  // ── Actions ───────────────────────────────────────────────────────────────
+
   // ── Data ──────────────────────────────────────────────────────────────────
   const { data, isLoading, isError } = useCourseSessions(
     course.id,
@@ -104,8 +106,14 @@ const CourseSessionOverview = ({
       <Toolbar
         slotId={slotId}
         selectedRows={selectedRows}
+        // actions={actions.map((a) => ({
+        //   label: a.label,
+        //   isEligible: (row: Course) =>
+        //     a.isEligible?.({ original: row } as Row<Course>) ?? true,
+        //   onSelect: (rows: Course[]) =>
+        //     a.onSelect(rows.map((r) => ({ original: r }) as Row<Course>)),
+        // }))}
         selectedCount={Object.keys(rowSelection).length}
-        actions={[]}
         onAdd={() => setAddOpen(true)}
         onDelete={(rows) =>
           handleDeleteOpen(
@@ -119,7 +127,7 @@ const CourseSessionOverview = ({
       <DataTable
         slotId={slotId}
         isLoading={isLoading}
-        defaultViewName="Course sessions"
+        defaultViewName="Sessions"
         tableId={COURSE_SESSIONS_OVERVIEW_KEY}
         isFetchingNextPage={false}
         hasNextPage={false}
@@ -150,6 +158,24 @@ const CourseSessionOverview = ({
           session={editingSession}
         />
       )}
+
+      {/* ── Dialogs ── */}
+      {/* {openEnrollmentCourse && (
+        <OpenCourseEnrollmentDialog
+          open={!!openEnrollmentCourse}
+          setOpen={(open) => !open && setOpenEnrollmentCourse(null)}
+          course={openEnrollmentCourse}
+        />
+      )}
+
+      {closeEnrollmentCourse && (
+        <CloseCourseEnrollmentDialog
+          open={!!closeEnrollmentCourse}
+          setOpen={(open) => !open && setCloseEnrollmentCourse(null)}
+          courseId={closeEnrollmentCourse.id}
+          courseTitle={closeEnrollmentCourse.title}
+        />
+      )} */}
 
       {deletingSession && (
         <DeleteDialog

@@ -2,14 +2,11 @@ import type { Profile } from "./User";
 
 export type Course = {
   id: string;
+  display_id: number;
   title: string;
   description: string;
   display_order: number;
   location: string;
-  start_date: string;
-  available_spots: number;
-  remaining_spots: number;
-  is_open: boolean;
   level: CourseLevel;
   price: number;
   advance_price: number;
@@ -17,12 +14,16 @@ export type Course = {
   image_url: string;
   image_path: string;
   created_at: string;
+  available_spots: number;
+  remaining_spots: number;
+  is_open: boolean;
   course_day?: CourseDay[];
-  course_enrollment?: Enrollment[];
+  course_session?: CourseSession[];
 };
 
 export type CourseDay = {
   id: string;
+  display_id: number;
   course_id: string;
   day_number: number;
   title: string;
@@ -35,6 +36,7 @@ export type CourseDay = {
 
 export type CourseDayActivity = {
   id: string;
+  display_id: number;
   course_day_id: string;
   course_day?: CourseDay;
   activity: string;
@@ -46,12 +48,13 @@ export type CourseLevel = "beginner" | "intermediate" | "advanced";
 export type EnrollmentStatus =
   | "submitted"
   | "confirmed"
-  | "canceled"
+  | "cancelled"
   | "completed";
 
 export type Enrollment = {
   id: string;
-  course_id: string;
+  display_id: number;
+  session_id: string;
   user_id: string;
   profile?: Profile;
   status: EnrollmentStatus;
@@ -62,11 +65,12 @@ export type Enrollment = {
   advance_price: number;
   advance_payment_paid: boolean;
   created_at: string;
-  course?: Course;
+  course_session?: CourseSession;
 };
 
 export type CourseSession = {
   id: string;
+  display_id: number;
   course_id: string;
   start_date: string;
   available_spots: number;

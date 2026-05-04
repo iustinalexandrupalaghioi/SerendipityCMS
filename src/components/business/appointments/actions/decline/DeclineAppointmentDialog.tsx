@@ -13,6 +13,7 @@ import type { Appointment } from "@/types/Appointment";
 import { DialogClose } from "@radix-ui/react-dialog";
 import DeclineAppointmentForm from "./DeclineAppointmentForm";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
+import { Loader2Icon } from "lucide-react";
 
 interface DeclineAppointmentDialogProps {
   appointment: Appointment;
@@ -101,8 +102,19 @@ const DeclineAppointmentDialog = ({
             />
           </div>
           <div className="flex shrink-0 border-t flex-col md:flex-row-reverse gap-2 pt-4 mt-4">
-            <Button type="submit" className="flex-1">
-              Decline
+            <Button
+              disabled={updateAppointmentMutation.isPending}
+              type="submit"
+              className="flex-1"
+            >
+              {updateAppointmentMutation.isPending ? (
+                <>
+                  <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
+                  Declining...
+                </>
+              ) : (
+                "Decline"
+              )}
             </Button>
 
             <DialogClose asChild className="flex-1">

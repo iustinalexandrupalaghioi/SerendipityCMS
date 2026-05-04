@@ -16,9 +16,11 @@ const fetchEnrollments = async (
 ): Promise<{ items: Enrollment[]; total: number }> => {
   let query = supabase
     .from("course_enrollment")
-    .select("*, course!inner(*), profile!inner(*)", { count: "exact" });
+    .select("*, course_session!inner(*, course!inner(*)), profile!inner(*)", {
+      count: "exact",
+    });
 
-  if (courseId) query = query.eq("course_id", courseId); // ← only apply if present
+  if (courseId) query = query.eq("course_session.course_id", courseId);
 
   query = applyFilters(query, filters);
 

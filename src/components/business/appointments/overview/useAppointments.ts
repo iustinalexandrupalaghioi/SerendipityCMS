@@ -16,7 +16,7 @@ const fetchAppointments = async (
   let query = supabase
     .from("appointment")
     .select(
-      "*, profile!inner(id, full_name, email), service!inner(id, title, image_path, price, advance_price)",
+      "*, profile!inner(id, full_name, email, display_id), service!inner(id, title, image_path, price, advance_price, display_id)",
       {
         count: "exact",
       },

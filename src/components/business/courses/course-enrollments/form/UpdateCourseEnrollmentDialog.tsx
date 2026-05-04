@@ -1,12 +1,9 @@
 import UpdateDialog from "@/components/partials/dialog/UpdateDialog";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { DialogClose } from "@/components/ui/dialog";
 import type { Enrollment } from "@/types/Course";
@@ -24,57 +21,34 @@ export function UpdateCourseEnrollmentDialog({
   open,
   setOpen,
 }: UpdateCourseEnrollmentDialogProps) {
-  const queryClient = useQueryClient();
-
   const form = useForm<EnrollmentFormValues>({
     resolver: zodResolver(EnrollmentSchema),
     defaultValues: {
-      course: enrollment.course,
+      course: enrollment.course_session?.course,
+      courseSession: enrollment.course_session,
       user: enrollment.profile,
+      payment_type: enrollment.payment_type,
+      date_of_birth: enrollment.profile?.date_of_birth ?? undefined,
+      price: enrollment.price,
+      advance_price: enrollment.advance_price,
     },
   });
 
-  const { control, formState, handleSubmit, reset, watch, setValue } = form;
+  const { control, formState, reset, watch, setValue } = form;
 
   useEffect(() => {
     if (open) {
       reset({
-        course: enrollment.course,
+        course: enrollment.course_session?.course,
+        courseSession: enrollment.course_session,
         user: enrollment.profile,
+        payment_type: enrollment.payment_type,
+        date_of_birth: enrollment.profile?.date_of_birth ?? undefined,
+        price: enrollment.price,
+        advance_price: enrollment.advance_price,
       });
     }
   }, [open, enrollment, reset]);
-
-  const updateEnrollmentMutation = useMutation({
-    mutationFn: async (values: EnrollmentFormValues) => {
-      const { data, error } = await supabase
-        .from("course_enrollment")
-        .update({
-          course_date: values.course.start_date,
-          price: Number(values.course.price),
-          advance_price: Number(values.course.advance_price),
-        })
-        .eq("id", enrollment.id)
-        .single();
-
-      if (error) throw new Error(error.message);
-      return data;
-    },
-
-    onSuccess: () => {
-      toast.success("Course enrollment updated successfully!");
-      queryClient.refetchQueries({ queryKey: ["course_enrollments"] });
-      setOpen(false);
-    },
-
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to update course enrollment.");
-    },
-  });
-
-  const onSubmit = handleSubmit((values) =>
-    updateEnrollmentMutation.mutate(values),
-  );
 
   return (
     <UpdateDialog
@@ -85,7 +59,7 @@ export function UpdateCourseEnrollmentDialog({
       disableUpdate
     >
       <Form {...form}>
-        <form onSubmit={onSubmit} className="flex flex-col min-h-0">
+        <form className="flex flex-col min-h-0">
           <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin dark:scrollbar-track-[#09090b] scrollbar-thumb-rounded scrollbar-thumb-primary px-1">
             <CourseEnrollmentForm
               enrollment={enrollment}
