@@ -20,7 +20,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { memo, useEffect, useState, type RefObject } from "react";
-import type { ContextMenuState } from "./types";
+import type { ContextMenuState, ResolvedAction } from "./types";
 import { createPortal } from "react-dom";
 
 interface CellContextMenuProps<TData> {
@@ -151,6 +151,12 @@ function CellContextMenuInner<TData>({
   const hasActions = actions.length > 0;
   const hasMidSection = hasActions || !!deleteAction;
 
+  const countEligibleActions = (actions: ResolvedAction[]) => {
+    return actions.reduce((count, action) => {
+      return action.disabled ? count : count + 1;
+    }, 0);
+  };
+
   return createPortal(
     <DropdownMenu open={open} onOpenChange={handleOpenChange} modal={false}>
       <DropdownMenuTrigger asChild>
@@ -190,24 +196,33 @@ function CellContextMenuInner<TData>({
         {/* ── Actions submenu ── */}
         {hasActions && (
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger
+              className={cn(
+                countEligibleActions(actions) === 0 && "text-muted-foreground",
+              )}
+              disabled={countEligibleActions(actions) === 0}
+            >
               <Settings className="h-4 w-4" />
               Actions
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              {actions.map((action, i) => (
-                <DropdownMenuItem
-                  key={i}
-                  disabled={action.disabled}
-                  onSelect={action.onSelect}
-                  className={cn(
-                    action.destructive &&
-                      "text-destructive focus:text-destructive",
-                  )}
-                >
-                  {action.label}
-                </DropdownMenuItem>
-              ))}
+              {actions.map((action, i) => {
+                const isEligible = !action.disabled;
+                if (isEligible)
+                  return (
+                    <DropdownMenuItem
+                      key={i}
+                      disabled={action.disabled}
+                      onSelect={action.onSelect}
+                      className={cn(
+                        action.destructive &&
+                          "text-destructive focus:text-destructive",
+                      )}
+                    >
+                      {action.label}
+                    </DropdownMenuItem>
+                  );
+              })}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         )}

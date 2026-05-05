@@ -57,6 +57,8 @@ export function createAppointmentColumns(
     createActionsColumn<Appointment>({
       onOpen,
       onDelete,
+      isDeleteEligible: (row) =>
+        ["completed", "cancelled", "declined"].includes(row.original.status),
       actions: () => actions,
     }),
     {

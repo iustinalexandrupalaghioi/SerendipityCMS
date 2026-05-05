@@ -121,7 +121,7 @@ const CourseEnrollmentForm = ({
 
       <SectionCard title="Enrollment">
         {mode === "Update" && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 space-y-4 items-start">
             <FormItem>
               <FormLabel>Enrollment date</FormLabel>
               <Input
@@ -150,7 +150,8 @@ const CourseEnrollmentForm = ({
             </FormItem>
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-4 space-y-4 mt-4 items-start">
           <PickupFormInput
             disabled={disabled}
             displayKey="display_id"
@@ -186,59 +187,58 @@ const CourseEnrollmentForm = ({
       </SectionCard>
 
       {/* ── Course ── */}
-      <section className="flex flex-col gap-4">
-        <SectionCard title="Course and session">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <PickupFormInput
-              disabled={disabled}
-              displayKey="display_id"
-              control={control}
-              name="course"
-              label="Course"
-              error={errors.course?.message}
-              setOpen={setCoursePickupOpen}
+
+      <SectionCard title="Course and session">
+        <div className="grid grid-cols-1 md:grid-cols-4 space-y-4 items-start">
+          <PickupFormInput
+            disabled={disabled}
+            displayKey="display_id"
+            control={control}
+            name="course"
+            label="Course"
+            error={errors.course?.message}
+            setOpen={setCoursePickupOpen}
+          />
+          <FormItem className="col-span-3">
+            <FormLabel>Course name</FormLabel>
+            <Input
+              disabled
+              placeholder="e.g. Private session"
+              value={course?.title ?? ""}
             />
-            <FormItem className="col-span-3">
-              <FormLabel>Course name</FormLabel>
-              <Input
-                disabled
-                placeholder="e.g. Private session"
-                value={course?.title ?? ""}
-              />
-            </FormItem>
-            <PickupFormInput
-              disabled={disabled}
-              displayKey="display_id"
-              control={control}
-              name="courseSession"
-              label="Course session"
-              error={errors.courseSession?.message}
-              setOpen={setCourseSessionPickupOpen}
+          </FormItem>
+          <PickupFormInput
+            disabled={disabled}
+            displayKey="display_id"
+            control={control}
+            name="courseSession"
+            label="Course session"
+            error={errors.courseSession?.message}
+            setOpen={setCourseSessionPickupOpen}
+          />
+          <FormItem className="col-span-3">
+            <FormLabel>Session start date</FormLabel>
+            <Input
+              disabled
+              placeholder="dd-MM-yyyy"
+              value={
+                courseSession
+                  ? format(courseSession.start_date, "dd-MM-yyyy")
+                  : ""
+              }
             />
-            <FormItem className="col-span-3">
-              <FormLabel>Session start date</FormLabel>
-              <Input
-                disabled
-                placeholder="dd-MM-yyyy"
-                value={
-                  courseSession
-                    ? format(courseSession.start_date, "dd-MM-yyyy")
-                    : ""
-                }
-              />
-            </FormItem>
-          </div>
-        </SectionCard>
-      </section>
+          </FormItem>
+        </div>
+      </SectionCard>
 
       {/* ── Pricing (Update only) ── */}
       <SectionCard title="Pricing">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-start gap-4">
           <FormField
             control={control}
             name="payment_type"
             render={({ field }) => (
-              <FormItem className="col-span-2">
+              <FormItem className="sm:col-span-2">
                 <FormLabel>Payment type</FormLabel>
                 <Combobox
                   items={paymentTypeEnum}
@@ -257,7 +257,7 @@ const CourseEnrollmentForm = ({
             control={control}
             name="price"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel>Price</FormLabel>
                 <FormControl>
                   <div className="relative">
@@ -284,7 +284,7 @@ const CourseEnrollmentForm = ({
             control={control}
             name="advance_price"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel>Deposit price</FormLabel>
                 <FormControl>
                   <div className="relative">
