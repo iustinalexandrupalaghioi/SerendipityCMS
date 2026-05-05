@@ -7,11 +7,12 @@ import { supabase } from "@/lib/supabaseClient";
 import type { CourseDay } from "@/types/Course";
 import { useQuery } from "@tanstack/react-query";
 
-export const QUERY_KEY = ["course-days"];
-
-// ─────────────────────────────────────────────
-// Fetch
-// ─────────────────────────────────────────────
+export const courseDayKeys = {
+  all: ["course-days"] as const,
+  list: (courseId: string, sorting: SortRule[], filters: FilterRule[]) =>
+    [...courseDayKeys.all, courseId, sorting, filters] as const,
+  detail: (id: string) => ["course-day", id] as const,
+};
 
 const fetchCourseDays = async (
   courseId: string,
@@ -41,17 +42,13 @@ const fetchCourseDays = async (
   return { items: data ?? [], total: count ?? 0 };
 };
 
-// ─────────────────────────────────────────────
-// Hook
-// ─────────────────────────────────────────────
-
 export const useCourseDays = (
   courseId: string,
   sorting: SortRule[] = [],
   filters: FilterRule[] = [],
 ) => {
   return useQuery({
-    queryKey: [...QUERY_KEY, courseId, sorting, filters],
+    queryKey: courseDayKeys.list(courseId, sorting, filters),
     queryFn: () => fetchCourseDays(courseId, sorting, filters),
     enabled: !!courseId,
     staleTime: 1000 * 60 * 5,
@@ -64,5 +61,49 @@ export const useCourseDays = (
         return { ...day, image_url: data.publicUrl };
       }),
     }),
+  });
+};
+
+const fetchCourseDay = async (id: string): Promise<CourseDay> => {
+  const { data, error } = await supabase
+    .from("course_day")
+    .select(
+      `
+      *,
+      course (*),
+      course_day_activity (*)
+    `,
+    )
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching course day data:", error);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const useCourseDay = (id?: string) => {
+  return useQuery({
+    queryKey: courseDayKeys.detail(id!),
+    queryFn: () => fetchCourseDay(id!),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+    select: (courseDay: CourseDay) => {
+      if (!courseDay.image_path) {
+        return { ...courseDay, image_url: "" };
+      }
+
+      const { data } = supabase.storage
+        .from("courses")
+        .getPublicUrl(courseDay.image_path);
+
+      return {
+        ...courseDay,
+        image_url: data.publicUrl,
+      };
+    },
   });
 };

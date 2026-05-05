@@ -13,7 +13,7 @@ import type { Row } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { courseColumnVisibility, createCourseColumns } from "./CourseColumns";
-import { QUERY_KEY, useCourses } from "./useCourses";
+import { courseKeys, useCourses } from "./useCourses";
 
 export const COURSES_OVERVIEW_KEY = "courses-overview";
 
@@ -32,9 +32,15 @@ const CoursesOverview = () => {
   const [deletingCourse, setDeletingCourse] = useState<Course | null>(null);
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data, isLoading, isError } = useCourses(sorting, filters);
-  const courses = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: courses,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useCourses(sorting, filters);
 
   // ── Delete ────────────────────────────────────────────────────────────────
   const handleDeleteOpen = useCallback((rows: Row<Course>[]) => {
@@ -45,36 +51,14 @@ const CoursesOverview = () => {
   const deleteCourse = useCallback(async () => {
     if (!deletingCourse) return;
 
-    const { data: course, error: fetchError } = await supabase
-      .from("course")
-      .select("image_path, course_day(image_path, id)")
-      .eq("id", deletingCourse.id)
-      .single();
-
-    if (fetchError || !course) throw new Error("Failed to fetch course.");
-
-    if (course.course_day?.length) {
-      const paths = course.course_day
-        .filter((day) => day.image_path)
-        .map((day) => day.image_path!);
-      if (paths.length) {
-        const { error } = await supabase.storage.from("courses").remove(paths);
-        if (error) throw new Error("Failed to delete course day images.");
-      }
-    }
-
-    if (course.image_path) {
-      const { error } = await supabase.storage
-        .from("courses")
-        .remove([course.image_path]);
-      if (error) throw new Error("Failed to delete course image.");
-    }
-
     const { error } = await supabase
       .from("course")
       .delete()
       .eq("id", deletingCourse.id);
-    if (error) throw new Error("Failed to delete course.");
+
+    if (error) {
+      throw new Error(error.message || "Failed to update course session.");
+    }
   }, [deletingCourse]);
 
   // ── Open ──────────────────────────────────────────────────────────────────
@@ -122,9 +106,9 @@ const CoursesOverview = () => {
         isLoading={isLoading}
         defaultViewName="Courses"
         tableId={COURSES_OVERVIEW_KEY}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
         getRowId={(row) => row.id}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}
@@ -143,7 +127,7 @@ const CoursesOverview = () => {
           id={deletingCourse.id}
           title="Delete course"
           target="course"
-          queryKeys={[QUERY_KEY]}
+          queryKeys={[courseKeys.all]}
           confirmationMessage={
             <>
               You're about to delete the course{" "}

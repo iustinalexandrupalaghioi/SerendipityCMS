@@ -43,14 +43,15 @@ const CourseSessionPickup = ({
     initialFilters(PICKUP_COURSE_SESSION_KEY),
   );
 
-  const { data, isLoading, isError } = useOpenCourseSessions(
-    sorting,
-    filters,
-    course?.id,
-  );
-
-  const sessions = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: sessions,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useOpenCourseSessions(sorting, filters, course?.id);
 
   const handleSelect = useCallback(
     (session: CourseSession) => {
@@ -97,9 +98,9 @@ const CourseSessionPickup = ({
             initialColumnVisibility={pickupCourseSessionColumnVisibility}
             onSortingChange={setSorting}
             onFiltersChange={handleFiltersChange}
-            isFetchingNextPage={false}
-            hasNextPage={false}
-            fetchNextPage={() => {}}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
             height={450}
           />
         </div>

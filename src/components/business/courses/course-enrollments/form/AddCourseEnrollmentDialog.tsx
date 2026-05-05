@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import type { Course } from "@/types/Course";
 import CourseEnrollmentForm from "./CourseEnrollmentForm";
 import { EnrollmentSchema, type EnrollmentFormValues } from "./form-schema";
+import { enrollmentKeys } from "../overview/useEnrollments";
 
 interface AddCourseEnrollmentDialogProps {
   course?: Course;
@@ -68,7 +69,10 @@ const AddCourseEnrollmentDialog = ({
 
     onSuccess: () => {
       toast.success("Course enrollment added successfully!");
-      queryClient.refetchQueries({ queryKey: ["course_enrollments"] });
+      queryClient.invalidateQueries({ queryKey: enrollmentKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: enrollmentKeys.enrollmentsCount,
+      });
       reset();
       setOpen(false);
     },
@@ -76,7 +80,6 @@ const AddCourseEnrollmentDialog = ({
     onError: async (error: any) => {
       const body = await error?.context?.json().catch(() => null);
       const message = body?.error;
-      console.log(body);
 
       toast.error(message ?? "Something went wrong while enrolling.");
     },

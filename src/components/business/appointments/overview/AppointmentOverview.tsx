@@ -13,6 +13,7 @@ import { isAppointmentStatus } from "@/lib/utils";
 import type { Appointment } from "@/types/Appointment";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Row } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { useCallback, useMemo, useState } from "react";
 import { Navigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -25,7 +26,7 @@ import {
   createAppointmentColumns,
 } from "./AppointmentColumns";
 import { useAppointmentActions } from "./useAppointmentActions";
-import { QUERY_KEY, useAppointments } from "./useAppointments";
+import { appointmentKeys, useAppointments } from "./useAppointments";
 
 export const APPOINTMENTS_OVERVIEW_KEY = "appointments-overview";
 
@@ -75,7 +76,7 @@ const AppointmentOverview = () => {
         columnType: "date",
         columnName: "Date",
         operator: "equals",
-        value: new Date().toISOString(),
+        value: format(new Date(), "yyyy-MM-dd"),
       });
     }
     return pre;
@@ -98,12 +99,15 @@ const AppointmentOverview = () => {
     useState<Appointment | null>(null);
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data, isLoading, isError } = useAppointments(sorting, [
-    ...preFilters,
-    ...filters,
-  ]);
-  const appointments = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: appointments,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useAppointments(sorting, [...preFilters, ...filters]);
 
   const breadcrumbItems = useMemo(() => {
     const pathnames = location.pathname.split("/").filter(Boolean);
@@ -138,7 +142,10 @@ const AppointmentOverview = () => {
         }
 
         toast.success("Appointment successfully accepted.");
-        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
+        queryClient.invalidateQueries({
+          queryKey: appointmentKeys.count({ status: "pending" }),
+        });
       } catch (error: any) {
         toast.error(error.message || "Failed to accept appointment.");
       }
@@ -156,6 +163,9 @@ const AppointmentOverview = () => {
         if (error) throw error;
         toast.success("Appointment successfully completed.");
         queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        queryClient.invalidateQueries({
+          queryKey: ["appointments_count", "pending"],
+        });
       } catch (error: any) {
         toast.error(error.message || "Failed to complete appointment.");
       }
@@ -184,6 +194,10 @@ const AppointmentOverview = () => {
       .delete()
       .eq("id", deletingAppointment.id);
     if (error) throw new Error("Failed to delete appointment.");
+    queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
+    queryClient.invalidateQueries({
+      queryKey: appointmentKeys.count({ status: "pending" }),
+    });
   }, [deletingAppointment]);
 
   // ── Open ──────────────────────────────────────────────────────────────────
@@ -253,9 +267,9 @@ const AppointmentOverview = () => {
         initialColumnVisibility={appointmentColumnVisibility}
         onSortingChange={setSorting}
         onFiltersChange={handleFiltersChange}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage ?? false}
+        fetchNextPage={fetchNextPage}
         preFilters={preFilters}
       />
 
@@ -293,7 +307,10 @@ const AppointmentOverview = () => {
           id={deletingAppointment.id}
           title="Delete appointment"
           target="appointment"
-          queryKeys={[QUERY_KEY]}
+          queryKeys={[
+            appointmentKeys.all,
+            appointmentKeys.count({ status: deletingAppointment.status }),
+          ]}
           confirmationMessage={
             <>
               You're about to delete the appointment for{" "}

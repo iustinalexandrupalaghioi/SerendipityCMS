@@ -53,13 +53,15 @@ const CourseSessionOverview = ({
   // ── Actions ───────────────────────────────────────────────────────────────
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data, isLoading, isError } = useCourseSessions(
-    course.id,
-    sorting,
-    filters,
-  );
-  const sessions = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: sessions,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useCourseSessions(course.id, sorting, filters);
 
   // ── Delete ────────────────────────────────────────────────────────────────
   const handleDeleteOpen = useCallback((rows: Row<CourseSession>[]) => {
@@ -129,9 +131,9 @@ const CourseSessionOverview = ({
         isLoading={isLoading}
         defaultViewName="Sessions"
         tableId={COURSE_SESSIONS_OVERVIEW_KEY}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
         getRowId={(row) => row.id}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}

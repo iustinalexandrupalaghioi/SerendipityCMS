@@ -3,7 +3,6 @@ import DetailsScreen from "@/components/partials/DetailsScreen";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useCourse } from "@/hooks/useCourses";
 import { supabase } from "@/lib/supabaseClient";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +11,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
+import { courseKeys, useCourse } from "../../overview/useCourses";
+import { courseDayKeys } from "../nav-overview/useCourseDays";
 import CourseDayForm from "./CourseDayForm";
 import { CourseDaySchema, type CourseDayFormValues } from "./form-schema";
 
@@ -74,10 +75,14 @@ const AddCourseDayScreen = () => {
     },
     onSuccess: ({ courseDay }) => {
       toast.success("Course day added successfully");
-      queryClient.refetchQueries({ queryKey: ["courses"] });
-      queryClient.refetchQueries({ queryKey: ["course-days"] });
-      queryClient.refetchQueries({ queryKey: ["course", courseDay.course_id] });
-      queryClient.refetchQueries({ queryKey: ["course-day", courseDay.id] });
+      queryClient.invalidateQueries({ queryKey: courseKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: courseKeys.detail(courseDay.course_id),
+      });
+      queryClient.invalidateQueries({ queryKey: courseDayKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: courseDayKeys.detail(courseDay.id),
+      });
       reset();
       navigate(
         `/courses/update/${courseDay.course_id}/course-days/update/${courseDay.id}`,

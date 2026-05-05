@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import CourseForm from "./CourseForm";
 import { CourseSchema, type CourseFormValues } from "./form-schema";
+import { courseKeys } from "../overview/useCourses";
 
 const AddCourseScreen = () => {
   const [open, setOpen] = useState(true);
@@ -81,7 +82,7 @@ const AddCourseScreen = () => {
 
     onSuccess: ({ course }) => {
       toast.success("Course added successfully");
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: courseKeys.all });
       reset();
       navigate(`/courses/update/${course.id}`);
     },

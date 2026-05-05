@@ -15,10 +15,10 @@ import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { CollapsibleContent } from "@/components/ui/collapsible";
 import Loader from "@/components/ui/loader";
-import { useCourse } from "@/hooks/useCourses";
 import CourseForm from "./CourseForm";
 import CourseDetailsTabs from "./CourseTabs";
 import { CourseSchema, type CourseFormValues } from "./form-schema";
+import { courseKeys, useCourse } from "../overview/useCourses";
 
 const UpdateCourseScreen = () => {
   const queryClient = useQueryClient();
@@ -183,7 +183,7 @@ const UpdateCourseScreen = () => {
           </>
         }
         id={course.id}
-        queryKeys={[["courses"]]}
+        queryKeys={[courseKeys.all, courseKeys.detail(id!)]}
         open={isDeleteOpen}
         setOpen={setDeleteOpen}
         onSuccess={() => navigate("/courses")}

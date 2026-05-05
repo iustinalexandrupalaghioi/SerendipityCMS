@@ -30,6 +30,7 @@ import type {
 import CourseSessionPickup from "../../course-sessions/pickup/CourseSessionPickup";
 import CoursePickup from "../../pickup/CoursePickup";
 import type { EnrollmentFormValues } from "./form-schema";
+import { cn } from "@/lib/utils";
 
 interface CourseEnrollmentFormProps {
   control: Control<EnrollmentFormValues>;
@@ -121,7 +122,12 @@ const CourseEnrollmentForm = ({
 
       <SectionCard title="Enrollment">
         {mode === "Update" && (
-          <div className="grid grid-cols-1 md:grid-cols-4 space-y-4 items-start">
+          <div
+            className={cn(
+              "grid grid-cols-1 md:grid-cols-4 items-start space-y-4",
+              disabled && "gap-4",
+            )}
+          >
             <FormItem>
               <FormLabel>Enrollment date</FormLabel>
               <Input
@@ -151,7 +157,12 @@ const CourseEnrollmentForm = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-4 space-y-4 mt-4 items-start">
+        <div
+          className={cn(
+            "grid grid-cols-1 md:grid-cols-4 items-start space-y-4",
+            disabled && "gap-4 space-y-0",
+          )}
+        >
           <PickupFormInput
             disabled={disabled}
             displayKey="display_id"
@@ -189,7 +200,12 @@ const CourseEnrollmentForm = ({
       {/* ── Course ── */}
 
       <SectionCard title="Course and session">
-        <div className="grid grid-cols-1 md:grid-cols-4 space-y-4 items-start">
+        <div
+          className={cn(
+            "grid grid-cols-1 md:grid-cols-4 space-y-4 items-start",
+            disabled && "gap-4 space-y-0",
+          )}
+        >
           <PickupFormInput
             disabled={disabled}
             displayKey="display_id"

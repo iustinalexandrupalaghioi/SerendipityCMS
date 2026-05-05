@@ -52,10 +52,15 @@ const CoursePickup = ({ open, setOpen, onSelect }: CoursePickupProps) => {
     return initialFilters(PICKUP_COURSE_KEY);
   });
 
-  const { data, isLoading, isError } = useCourses(sorting, filters);
-
-  const courses = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: courses,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useCourses(sorting, filters);
 
   const handleSelect = useCallback(
     (course: Course) => {
@@ -104,9 +109,9 @@ const CoursePickup = ({ open, setOpen, onSelect }: CoursePickupProps) => {
             initialColumnVisibility={pickupCourseColumnVisibility}
             onSortingChange={setSorting}
             onFiltersChange={handleFiltersChange}
-            isFetchingNextPage={false}
-            hasNextPage={false}
-            fetchNextPage={() => {}}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
             height={450}
           />
         </div>
