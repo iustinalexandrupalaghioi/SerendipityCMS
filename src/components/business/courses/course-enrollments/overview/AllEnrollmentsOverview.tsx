@@ -109,7 +109,10 @@ const AllEnrollmentsOverview = () => {
             rows.map((r) => ({ original: r }) as Row<Enrollment>),
           )
         }
-        isDeleteEligible={() => selectedRows.length === 1}
+        isDeleteEligible={() =>
+          selectedRows.length === 1 &&
+          ["completed, cancelled, declined"].includes(selectedRows[0].status)
+        }
         setRowSelection={setRowSelection}
       />
 

@@ -231,7 +231,12 @@ const AppointmentOverview = () => {
             rows.map((r) => ({ original: r }) as Row<Appointment>),
           )
         }
-        isDeleteEligible={() => selectedRows.length === 1}
+        isDeleteEligible={() =>
+          selectedRows.length === 1 &&
+          ["completed", "cancelled", "declined"].includes(
+            selectedRows[0].status,
+          )
+        }
         setRowSelection={setRowSelection}
       />
 

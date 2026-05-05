@@ -1,3 +1,10 @@
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -5,15 +12,8 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import ToolbarActions from "./ToolbarActions";
 import { Link, useNavigate } from "react-router";
-import { Button } from "@/components/ui/button";
+import ToolbarActions from "./ToolbarActions";
 
 export interface TableAction<TData> {
   label: React.ReactNode;
@@ -63,6 +63,22 @@ export function Toolbar<TData>({
     ? selectedRows.filter(isDeleteEligible)
     : selectedRows;
 
+  const countEligibleActions = (
+    actions: TableAction<TData>[],
+    selectedRows: TData[],
+  ) => {
+    return actions.reduce((count, action) => {
+      const eligible = selectedRows.filter(
+        (r) => action.isEligible?.(r) ?? true,
+      );
+      return eligible.length > 0 ? count + 1 : count;
+    }, 0);
+  };
+
+  const eligibleCount = actions
+    ? countEligibleActions(actions, selectedRows)
+    : 0;
+
   return (
     <ToolbarActions slotId={slotId}>
       <div className="flex items-center gap-2">
@@ -95,7 +111,7 @@ export function Toolbar<TData>({
               <Button
                 size="lg"
                 variant="ghost"
-                disabled={selectedCount === 0 || isMulti}
+                disabled={selectedCount === 0 || isMulti || eligibleCount === 0}
                 title={
                   isMulti
                     ? "Actions are not available for multiple rows"
@@ -114,20 +130,22 @@ export function Toolbar<TData>({
                 const eligible = selectedRows.filter(
                   (r) => action.isEligible?.(r) ?? true,
                 );
-                return (
-                  <DropdownMenuItem
-                    key={i}
-                    disabled={eligible.length === 0}
-                    onSelect={() => action.onSelect(eligible)}
-                  >
-                    {action.label}
-                    {/* {selectedCount > 0 && (
+
+                if (eligible.length > 0)
+                  return (
+                    <DropdownMenuItem
+                      key={i}
+                      disabled={eligible.length === 0}
+                      onSelect={() => action.onSelect(eligible)}
+                    >
+                      {action.label}
+                      {/* {selectedCount > 0 && (
                       <span className="ml-1 text-muted-foreground">
                         ({eligible.length}/{selectedCount})
                       </span>
                     )} */}
-                  </DropdownMenuItem>
-                );
+                    </DropdownMenuItem>
+                  );
               })}
             </DropdownMenuContent>
           </DropdownMenu>

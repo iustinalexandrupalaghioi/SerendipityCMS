@@ -36,7 +36,12 @@ export function createCourseEnrollmentColumns(
 ): ColumnDef<Enrollment>[] {
   return [
     createSelectionColumn<Enrollment>(),
-    createActionsColumn<Enrollment>({ onOpen, onDelete }),
+    createActionsColumn<Enrollment>({
+      onOpen,
+      onDelete,
+      isDeleteEligible: (row) =>
+        ["completed, cancelled, declined"].includes(row.original.status),
+    }),
     {
       id: "display_id",
       accessorKey: "display_id",
