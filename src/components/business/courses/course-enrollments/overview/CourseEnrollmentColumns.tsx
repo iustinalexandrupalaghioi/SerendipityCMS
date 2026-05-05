@@ -1,6 +1,7 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
 import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
+import type { RowAction } from "@/components/data-table/core/types";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { Badge } from "@/components/ui/badge";
 import type { Enrollment } from "@/types/Course";
@@ -33,6 +34,7 @@ const statusVariantMap: Record<
 export function createCourseEnrollmentColumns(
   onOpen: (rows: Row<Enrollment>[]) => void,
   onDelete: (rows: Row<Enrollment>[]) => void,
+  actions: RowAction<Enrollment>[] = [],
 ): ColumnDef<Enrollment>[] {
   return [
     createSelectionColumn<Enrollment>(),
@@ -40,7 +42,8 @@ export function createCourseEnrollmentColumns(
       onOpen,
       onDelete,
       isDeleteEligible: (row) =>
-        ["completed, cancelled, declined"].includes(row.original.status),
+        ["completed", "cancelled", "declined"].includes(row.original.status),
+      actions: () => actions,
     }),
     {
       id: "display_id",

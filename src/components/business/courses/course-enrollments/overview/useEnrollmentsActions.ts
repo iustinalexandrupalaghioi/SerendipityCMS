@@ -5,12 +5,10 @@ import { useMemo } from "react";
 
 interface UseEnrollmentActionsProps {
   onComplete: (id: string) => void;
-  onCancel: (id: string) => void;
 }
 
 export function useEnrollmentActions({
   onComplete,
-  onCancel,
 }: UseEnrollmentActionsProps): RowAction<Enrollment>[] {
   return useMemo(
     () => [
@@ -23,17 +21,7 @@ export function useEnrollmentActions({
           onComplete(rows[0].original.id);
         },
       },
-      {
-        label: "Cancel",
-        isEligible: (row: Row<Enrollment>) =>
-          row.original.status === "confirmed" ||
-          row.original.status === "submitted",
-        onSelect: (rows: Row<Enrollment>[]) => {
-          if (rows.length !== 1) return;
-          onCancel(rows[0].original.id);
-        },
-      },
     ],
-    [onComplete, onCancel],
+    [onComplete],
   );
 }

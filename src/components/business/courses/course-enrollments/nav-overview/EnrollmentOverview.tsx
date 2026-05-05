@@ -17,7 +17,10 @@ import {
   courseEnrollmentColumnVisibility,
   createCourseEnrollmentColumns,
 } from "../overview/CourseEnrollmentColumns";
-import { useEnrollments } from "../overview/useEnrollments";
+import { enrollmentKeys, useEnrollments } from "../overview/useEnrollments";
+import { useEnrollmentActions } from "../overview/useEnrollmentsActions";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const COURSE_ENROLLMENT_KEY = "course-enrollment";
 
@@ -39,7 +42,7 @@ const EnrollmentOverview = ({
   const [filters, setFilters] = useState<FilterRule[]>(() =>
     initialFilters(COURSE_ENROLLMENT_KEY),
   );
-
+  const queryClient = useQueryClient();
   // ── Dialog state ──────────────────────────────────────────────────────────
   const [isAddOpen, setAddOpen] = useState(false);
   const [editingEnrollment, setEditingEnrollment] = useState<Enrollment | null>(
@@ -49,13 +52,16 @@ const EnrollmentOverview = ({
     useState<Enrollment | null>(null);
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data, error, isLoading } = useEnrollments(
-    sorting,
-    filters,
-    course.id,
-  );
-  const enrollments = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: enrollments,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useEnrollments(sorting, filters, course.id);
+
   // ── Delete ────────────────────────────────────────────────────────────────
   const handleDeleteOpen = useCallback((rows: Row<Enrollment>[]) => {
     if (rows.length !== 1) return;
@@ -71,6 +77,30 @@ const EnrollmentOverview = ({
     if (error) throw new Error("Failed to delete enrollment.");
   }, [deletingEnrollment]);
 
+  const handleComplete = useCallback(
+    async (id: string) => {
+      try {
+        const { error } = await supabase
+          .from("course_enrollment")
+          .update({ status: "completed" })
+          .eq("id", id);
+        if (error) throw error;
+        toast.success("Course enrollment successfully completed.");
+        queryClient.invalidateQueries({ queryKey: enrollmentKeys.all });
+        queryClient.invalidateQueries({
+          queryKey: enrollmentKeys.enrollmentsCount,
+        });
+      } catch (error: any) {
+        toast.error(error.message || "Failed to complete course enrollment.");
+      }
+    },
+    [queryClient],
+  );
+
+  const actions = useEnrollmentActions({
+    onComplete: handleComplete,
+  });
+
   // ── Open ──────────────────────────────────────────────────────────────────
   const handleOpen = useCallback((rows: Row<Enrollment>[]) => {
     const first = rows[0];
@@ -79,8 +109,8 @@ const EnrollmentOverview = ({
 
   // ── Columns ───────────────────────────────────────────────────────────────
   const columns = useMemo(
-    () => createCourseEnrollmentColumns(handleOpen, handleDeleteOpen),
-    [handleOpen, handleDeleteOpen],
+    () => createCourseEnrollmentColumns(handleOpen, handleDeleteOpen, actions),
+    [handleOpen, handleDeleteOpen, actions],
   );
 
   // ── Selection ─────────────────────────────────────────────────────────────
@@ -94,7 +124,7 @@ const EnrollmentOverview = ({
     setRowSelection({});
   }, []);
 
-  if (error) return <div>Error loading course enrollments</div>;
+  if (isError) return <div>Error loading course enrollments</div>;
 
   return (
     <div className="my-2 flex flex-1 min-h-0 w-full flex-col">
@@ -108,9 +138,18 @@ const EnrollmentOverview = ({
             rows.map((r) => ({ original: r }) as Row<Enrollment>),
           )
         }
+        actions={actions.map((a) => ({
+          label: a.label,
+          isEligible: (row: Enrollment) =>
+            a.isEligible?.({ original: row } as Row<Enrollment>) ?? true,
+          onSelect: (rows: Enrollment[]) =>
+            a.onSelect(rows.map((r) => ({ original: r }) as Row<Enrollment>)),
+        }))}
         isDeleteEligible={() =>
           selectedRows.length === 1 &&
-          ["completed, cancelled, declined"].includes(selectedRows[0].status)
+          ["completed", "cancelled", "declined"].includes(
+            selectedRows[0].status,
+          )
         }
         setRowSelection={setRowSelection}
       />
@@ -129,9 +168,9 @@ const EnrollmentOverview = ({
         initialColumnVisibility={courseEnrollmentColumnVisibility}
         onSortingChange={setSorting}
         onFiltersChange={handleFiltersChange}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
         height={isOpen ? 400 : undefined}
       />
 
@@ -158,7 +197,7 @@ const EnrollmentOverview = ({
           id={deletingEnrollment.id}
           title="Delete enrollment"
           target="course_enrollment"
-          queryKeys={[["course_enrollments"]]}
+          queryKeys={[enrollmentKeys.all, enrollmentKeys.enrollmentsCount]}
           confirmationMessage={
             <>
               You're about to delete the course enrollment for{" "}

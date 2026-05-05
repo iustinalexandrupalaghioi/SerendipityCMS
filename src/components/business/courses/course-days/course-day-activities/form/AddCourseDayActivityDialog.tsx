@@ -9,13 +9,13 @@ import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useCourseDay } from "@/hooks/useCourses";
 import { useParams } from "react-router";
 import CourseDayActivityForm from "./CourseDayActivityForm";
 import {
   CourseDayActivitySchema,
   type CourseDayActivityFormValues,
 } from "./form-schema";
+import { useCourseDay } from "../../nav-overview/useCourseDays";
 
 interface AddCourseDayActivityDialogProps {
   open: boolean;
@@ -39,16 +39,10 @@ const AddCourseDayActivityDialog = ({
 
   const { control, handleSubmit, formState, reset } = form;
 
-  /* =====================
-     RESET ON CLOSE
-  ====================== */
   useEffect(() => {
     if (!open) reset();
   }, [open, reset]);
 
-  /* =====================
-     MUTATION
-  ====================== */
   const addCourseDayActivityMutation = useMutation({
     mutationFn: async (values: CourseDayActivityFormValues) => {
       if (!values.course_day?.id) {
@@ -84,9 +78,6 @@ const AddCourseDayActivityDialog = ({
     },
   });
 
-  /* =====================
-     SUBMIT
-  ====================== */
   const onSubmit = handleSubmit((values) =>
     addCourseDayActivityMutation.mutate(values),
   );

@@ -14,6 +14,7 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
 import UpdateAndApproveForm from "./UpdateAndAcceptForm";
 import { Loader2Icon } from "lucide-react";
+import { appointmentKeys } from "../../overview/useAppointments";
 
 interface UpdateAndApproveDialogProps {
   appointment: Appointment;
@@ -83,7 +84,10 @@ const UpdateAndAcceptDialog = ({
     },
     onSuccess: async () => {
       toast.success("Appointment successfully accepted!");
-      await queryClient.refetchQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: appointmentKeys.count({ status: "pending" }),
+      });
       form.reset();
       setOpen(false);
     },

@@ -8,7 +8,6 @@ import { Loader2Icon } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { QUERY_KEY as COURSE_QUERY_KEY } from "../../overview/useCourses";
 import type { Course } from "@/types/Course";
 import CourseSessionForm from "./CourseSessionForm";
 import {
@@ -17,6 +16,7 @@ import {
 } from "./form-schema";
 import { QUERY_KEY } from "../nav-overview/useCourseSessions";
 import { format } from "date-fns/format";
+import { courseKeys } from "../../overview/useCourses";
 
 interface AddCourseSessionDialogProps {
   course: Course;
@@ -70,12 +70,9 @@ export const AddCourseSessionDialog = ({
 
     onSuccess: () => {
       toast.success("Course session added successfully!");
-      [[...QUERY_KEY], [COURSE_QUERY_KEY], ["course", course.id]].forEach(
-        (key) =>
-          queryClient.refetchQueries({
-            queryKey: key,
-          }),
-      );
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: courseKeys.all });
+      queryClient.invalidateQueries({ queryKey: courseKeys.detail(course.id) });
       reset();
       setOpen(false);
     },

@@ -14,6 +14,7 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import DeclineAppointmentForm from "./DeclineAppointmentForm";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
 import { Loader2Icon } from "lucide-react";
+import { appointmentKeys } from "../../overview/useAppointments";
 
 interface DeclineAppointmentDialogProps {
   appointment: Appointment;
@@ -66,7 +67,10 @@ const DeclineAppointmentDialog = ({
     },
     onSuccess: async () => {
       toast.success("Appointment successfully declined!");
-      await queryClient.refetchQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: appointmentKeys.count({ status: "pending" }),
+      });
       form.reset();
       setOpen(false);
     },

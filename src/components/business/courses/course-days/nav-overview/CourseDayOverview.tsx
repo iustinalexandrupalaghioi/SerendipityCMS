@@ -5,10 +5,10 @@ import {
   initialFilters,
   initialSorting,
 } from "@/components/data-table/hooks/useTableViews";
-import { Toolbar } from "@/components/toolbar/Toolbar";
 import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
-import type { Course, CourseDay } from "@/types/Course";
+import { Toolbar } from "@/components/toolbar/Toolbar";
 import { supabase } from "@/lib/supabaseClient";
+import type { Course, CourseDay } from "@/types/Course";
 import type { Row } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
@@ -16,7 +16,8 @@ import {
   courseDayColumnVisibility,
   createCourseDayColumns,
 } from "./CourseDayColumns";
-import { useCourseDays, QUERY_KEY } from "./useCourseDays";
+import { courseDayKeys, useCourseDays } from "./useCourseDays";
+import { courseKeys } from "../../overview/useCourses";
 
 export const COURSE_DAYS_OVERVIEW_KEY = "course-days-overview";
 
@@ -159,7 +160,7 @@ const CourseDayOverview = ({
           id={deletingCourseDay.id}
           title="Delete course day"
           target="course_day"
-          queryKeys={[QUERY_KEY, ["course", course.id]]}
+          queryKeys={[courseDayKeys.all, courseKeys.detail(course.id)]}
           confirmationMessage={
             <>
               You're about to delete{" "}

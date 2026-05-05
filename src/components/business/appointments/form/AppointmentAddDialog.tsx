@@ -11,6 +11,7 @@ import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
 
 import { addDays, format } from "date-fns";
+import { appointmentKeys } from "../overview/useAppointments";
 import AppointmentForm from "./AppointmentForm";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
 
@@ -83,9 +84,9 @@ export function AppointmentAddDialog({
     onSuccess: async () => {
       toast.success("Appointment booked successfully!");
       form.reset();
-      queryClient.refetchQueries({ queryKey: ["appointments"] });
-      queryClient.refetchQueries({
-        queryKey: ["appointments_count", "pending"],
+      queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: appointmentKeys.count({ status: "pending" }),
       });
 
       setOpen(false);

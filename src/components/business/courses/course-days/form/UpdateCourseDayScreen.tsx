@@ -15,10 +15,11 @@ import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
 import ToolbarActions from "@/components/toolbar/ToolbarActions";
 import { CollapsibleContent } from "@/components/ui/collapsible";
 import Loader from "@/components/ui/loader";
-import { useCourseDay } from "@/hooks/useCourses";
 import CourseDayForm from "./CourseDayForm";
 import CourseDayTabs from "./CourseDayTabs";
 import { CourseDaySchema, type CourseDayFormValues } from "./form-schema";
+import { courseDayKeys, useCourseDay } from "../nav-overview/useCourseDays";
+import { courseKeys } from "../../overview/useCourses";
 
 const UpdateCourseDayScreen = () => {
   const queryClient = useQueryClient();
@@ -91,10 +92,14 @@ const UpdateCourseDayScreen = () => {
     onSuccess: ({ courseDay }) => {
       toast.success(`Course day "${courseDay.title}" updated`);
       setExistingImageUrl(courseDay.image_url || "");
-      queryClient.refetchQueries({ queryKey: ["courses"] });
-      queryClient.refetchQueries({ queryKey: ["course-days"] });
-      queryClient.refetchQueries({ queryKey: ["course", courseDay.course_id] });
-      queryClient.refetchQueries({ queryKey: ["course-day", courseDay.id] });
+      queryClient.invalidateQueries({ queryKey: courseKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: courseKeys.detail(courseDay.course_id),
+      });
+      queryClient.invalidateQueries({ queryKey: courseDayKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: courseDayKeys.detail(courseDay.id),
+      });
     },
     onError: (err: any) => {
       toast.error(err.message ?? "Failed to update course day");

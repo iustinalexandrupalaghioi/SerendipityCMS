@@ -1,6 +1,6 @@
-import { useCourseEnrollmentsCount } from "@/hooks/useCourses";
 import type { ComponentType } from "react";
 import LiveTile, { type BaseTileProps } from "./LiveTile";
+import { useCourseEnrollmentsCount } from "@/components/business/courses/course-enrollments/overview/useEnrollments";
 
 export const createCourseEnrollmentsLiveTile =
   (): ComponentType<BaseTileProps> =>
