@@ -49,4 +49,5 @@ export type Appointment = {
   customerName: string;
   profile?: Profile;
   service: Service;
+  payment_intent_id?: string;
 };
