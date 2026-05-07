@@ -20,6 +20,8 @@ export const courseEnrollmentColumnVisibility: VisibilityState = {
   advance_price: true,
   payment_type: true,
   advance_payment_paid: true,
+  payment_intent_id: true,
+  notes: false,
 };
 
 const statusVariantMap: Record<
@@ -158,6 +160,41 @@ export function createCourseEnrollmentColumns(
       cell: ({ row }) => (
         <BooleanDisplay value={row.original.advance_payment_paid} />
       ),
+    },
+    {
+      id: "payment_intent_id",
+      accessorKey: "payment_intent_id",
+      header: undefined,
+      meta: {
+        columnName: "Stripe link",
+        columnType: "number",
+      },
+      cell: ({ row }) => {
+        const intentId = row.original.payment_intent_id;
+        if (!intentId) return <span className="text-muted-foreground">—</span>;
+
+        const account = import.meta.env.VITE_STRIPE_ACCOUNT_ID;
+        const mode = import.meta.env.DEV ? "test" : "live";
+
+        return (
+          <a
+            href={`https://dashboard.stripe.com/${account}/${mode}/payments/${intentId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-primary underline-offset-4 hover:underline"
+          >
+            View in Stripe
+          </a>
+        );
+      },
+      size: 85,
+    },
+    {
+      id: "notes",
+      accessorKey: "notes",
+      header: undefined,
+      meta: { columnName: "Notes", columnType: "text" },
+      size: 150,
     },
     createBufferColumn<Enrollment>(),
   ];

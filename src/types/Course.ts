@@ -66,6 +66,7 @@ export type Enrollment = {
   advance_payment_paid: boolean;
   created_at: string;
   course_session?: CourseSession;
+  payment_intent_id?: string;
 };
 
 export type CourseSession = {
