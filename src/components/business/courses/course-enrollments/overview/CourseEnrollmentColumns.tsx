@@ -174,11 +174,13 @@ export function createCourseEnrollmentColumns(
         if (!intentId) return <span className="text-muted-foreground">—</span>;
 
         const account = import.meta.env.VITE_STRIPE_ACCOUNT_ID;
-        const mode = import.meta.env.DEV ? "test" : "live";
+        const uri = import.meta.env.PROD
+          ? `https://dashboard.stripe.com/${account}/payments/`
+          : `https://dashboard.stripe.com/${account}/test/payments/`;
 
         return (
           <a
-            href={`https://dashboard.stripe.com/${account}/${mode}/payments/${intentId}`}
+            href={uri}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-primary underline-offset-4 hover:underline"
@@ -187,7 +189,7 @@ export function createCourseEnrollmentColumns(
           </a>
         );
       },
-      size: 85,
+      size: 120,
     },
     {
       id: "notes",
