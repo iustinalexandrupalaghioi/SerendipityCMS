@@ -10,6 +10,7 @@ import { ChevronLeftIcon } from "lucide-react";
 export const pickupServiceColumnVisibility: VisibilityState = {
   id: true,
   title: true,
+  display_id: true,
   description: true,
   image_public_url: true,
   "category.name": true,
@@ -44,11 +45,11 @@ export function createPickupServiceColumns(
       },
     },
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
       size: 45,
-      meta: { columnName: "Id", columnType: "text" },
+      meta: { columnName: "Id", columnType: "number" },
     },
 
     // ── Name ──

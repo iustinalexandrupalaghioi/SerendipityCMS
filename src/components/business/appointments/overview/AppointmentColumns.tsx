@@ -66,7 +66,7 @@ export function createAppointmentColumns(
       id: "display_id",
       accessorKey: "display_id",
       header: undefined,
-      meta: { columnName: "Id", columnType: "text" },
+      meta: { columnName: "Id", columnType: "number" },
       size: 45,
     },
     {

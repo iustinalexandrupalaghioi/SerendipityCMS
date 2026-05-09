@@ -12,6 +12,7 @@ import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 
 export const serviceColumnVisibility: VisibilityState = {
   image_public_url: true,
+  display_id: true,
   title: true,
   "category.name": true,
   description: true,
@@ -38,10 +39,10 @@ export function createServiceColumns(
     createActionsColumn<Service>({ onOpen, onDelete }),
 
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
-      meta: { columnName: "Id", columnType: "text" },
+      meta: { columnName: "Id", columnType: "number" },
       size: 45,
     },
     // ── Name ──
