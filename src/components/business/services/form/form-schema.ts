@@ -13,7 +13,7 @@ const imageFile = z
   .optional();
 
 export const ServiceSchema = z.object({
-  id: z.string().optional(),
+  display_id: z.number().optional(),
   category: z
     .custom<Category>()
     .refine(
@@ -38,6 +38,7 @@ export const ServiceSchema = z.object({
     .min(1, `Duration must be greater than 0`),
   is_active: z.boolean(),
   is_popular: z.boolean(),
+  image_path: z.string().optional(),
 });
 
 export type ServiceFormValues = z.infer<typeof ServiceSchema>;

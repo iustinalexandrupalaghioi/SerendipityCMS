@@ -36,11 +36,11 @@ export function createPickupCategoryColumns(
       meta: { className: "p-0" },
     },
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
       size: 45,
-      meta: { columnName: "Id", columnType: "text" },
+      meta: { columnName: "Id", columnType: "number" },
     },
     {
       id: "name",

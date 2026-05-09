@@ -34,7 +34,7 @@ const ShiftForm = ({ control, mode }: ShiftFormProps) => {
           {mode === "Update" && (
             <FormField
               control={control}
-              name="id"
+              name="display_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Id</FormLabel>

@@ -30,7 +30,7 @@ export function UpdateServiceDialog({
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(ServiceSchema),
     defaultValues: {
-      id: service.id,
+      display_id: service.display_id,
       title: service.title,
       description: service.description,
       duration: service.duration,
@@ -46,7 +46,7 @@ export function UpdateServiceDialog({
   useEffect(() => {
     if (open) {
       form.reset({
-        id: service.id,
+        display_id: service.display_id,
         title: service.title,
         description: service.description,
         duration: service.duration,
@@ -56,6 +56,7 @@ export function UpdateServiceDialog({
         is_active: service.is_active,
         is_popular: service.is_popular,
         image: undefined,
+        image_path: service.image_path,
       });
     }
   }, [open, service]);
@@ -142,6 +143,7 @@ export function UpdateServiceDialog({
               setValue={form.setValue}
               watch={form.watch}
               existingImageUrl={service.image_public_url}
+              defaultValues={service}
             />
           </div>
 

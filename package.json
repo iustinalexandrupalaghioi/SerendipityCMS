@@ -30,6 +30,8 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.23",
     "class-variance-authority": "^0.7.1",
+    "@fontsource-variable/noto-sans": "^5.2.10",
+    "@fontsource-variable/playfair-display": "^5.2.8",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",

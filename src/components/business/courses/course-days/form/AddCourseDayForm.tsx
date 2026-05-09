@@ -75,13 +75,21 @@ const AddCourseDayScreen = () => {
     },
     onSuccess: ({ courseDay }) => {
       toast.success("Course day added successfully");
-      queryClient.invalidateQueries({ queryKey: courseKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: courseKeys.all,
+        refetchType: "all",
+      });
       queryClient.invalidateQueries({
         queryKey: courseKeys.detail(courseDay.course_id),
+        refetchType: "all",
       });
-      queryClient.invalidateQueries({ queryKey: courseDayKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: courseDayKeys.all,
+        refetchType: "all",
+      });
       queryClient.invalidateQueries({
         queryKey: courseDayKeys.detail(courseDay.id),
+        refetchType: "all",
       });
       reset();
       navigate(

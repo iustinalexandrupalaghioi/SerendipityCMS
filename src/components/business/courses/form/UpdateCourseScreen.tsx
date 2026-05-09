@@ -34,7 +34,7 @@ const UpdateCourseScreen = () => {
   const breadcrumbItems = [
     { path: "/", label: "Home" },
     { path: "/courses", label: "Courses" },
-    { label: `Course ${course?.display_id ?? "Course"}` },
+    { label: course?.title ?? "Course" },
   ];
 
   const form = useForm<CourseFormValues>({

@@ -7,7 +7,15 @@ import { supabase } from "@/lib/supabaseClient";
 import type { CourseDayActivity } from "@/types/Course";
 import { useQuery } from "@tanstack/react-query";
 
-export const QUERY_KEY = ["course_day_activities"];
+export const activityKeys = {
+  all: ["course-day-activities"] as const,
+  byDay: (
+    courseDayId: string | undefined,
+    sorting: SortRule[],
+    filters: FilterRule[],
+  ) =>
+    ["course-day-activities", courseDayId ?? "all", sorting, filters] as const,
+};
 
 const fetchCourseDayActivities = async (
   sorting: SortRule[],
@@ -42,7 +50,7 @@ export const useCourseDayActivities = (
   courseDayId?: string,
 ) => {
   return useQuery({
-    queryKey: [...QUERY_KEY, courseDayId, sorting, filters],
+    queryKey: activityKeys.byDay(courseDayId, sorting, filters),
     queryFn: () => fetchCourseDayActivities(sorting, filters, courseDayId),
     staleTime: 1000 * 60 * 5,
   });

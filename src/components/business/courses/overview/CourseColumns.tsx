@@ -59,18 +59,6 @@ export function createCourseColumns(
       size: 45,
     },
     {
-      id: "display_order",
-      header: undefined,
-      accessorKey: "display_order",
-      meta: {
-        columnName: "Order",
-        columnType: "select",
-        selectOptions: ["beginner", "intermediate", "advanced"],
-      },
-
-      size: 65,
-    },
-    {
       id: "title",
       header: undefined,
       accessorKey: "title",
@@ -95,6 +83,7 @@ export function createCourseColumns(
         />
       ),
       enableSorting: false,
+      enableColumnFilter: false,
       size: 220,
     },
     {
@@ -120,6 +109,18 @@ export function createCourseColumns(
         columnType: "text",
       },
       size: 250,
+    },
+    {
+      id: "display_order",
+      header: undefined,
+      accessorKey: "display_order",
+      meta: {
+        columnName: "Order",
+        columnType: "select",
+        selectOptions: ["beginner", "intermediate", "advanced"],
+      },
+
+      size: 65,
     },
     {
       id: "location",

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const shiftSchema = z.object({
-  id: z.string().optional(),
+  display_id: z.number().optional(),
   day_start_time: z
     .string()
     .refine((val) => /^([0-9]{0,2}:?[0-9]{0,2})?$/.test(val), {

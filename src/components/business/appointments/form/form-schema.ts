@@ -4,6 +4,7 @@ import type { Profile } from "@/types/User";
 import { z } from "zod";
 
 export const AppointmentSchema = z.object({
+  display_id: z.number().optional(),
   id: z.string().optional(),
   service: z
     .custom<Service>()

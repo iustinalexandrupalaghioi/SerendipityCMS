@@ -7,8 +7,18 @@ import { useInfiniteTable } from "@/hooks/useInfiniteQuery";
 import { supabase } from "@/lib/supabaseClient";
 import type { CourseSession } from "@/types/Course";
 
-export const QUERY_KEY = ["course-sessions"];
-export const OPEN_SESSIONS_QUERY_KEY = ["course-sessions", "open"];
+export const sessionKeys = {
+  all: ["course-sessions"] as const,
+  open: ["course-sessions", "open"] as const,
+  byCourse: (courseId: string, sorting: SortRule[], filters: FilterRule[]) =>
+    ["course-sessions", courseId, sorting, filters] as const,
+  openByCourse: (
+    courseId: string | undefined,
+    sorting: SortRule[],
+    filters: FilterRule[],
+  ) =>
+    ["course-sessions", "open", courseId ?? "all", sorting, filters] as const,
+};
 
 const PAGE_SIZE = 50;
 
@@ -22,7 +32,7 @@ export const useCourseSessions = (
   filters: FilterRule[] = [],
 ) =>
   useInfiniteTable<CourseSession>({
-    queryKey: [...QUERY_KEY, courseId, sorting, filters],
+    queryKey: sessionKeys.byCourse(courseId, sorting, filters),
     pageSize: PAGE_SIZE,
     fetchPage: async (pageParam) => {
       const from = pageParam * PAGE_SIZE;
@@ -67,7 +77,7 @@ export const useOpenCourseSessions = (
   courseId?: string,
 ) =>
   useInfiniteTable<CourseSession>({
-    queryKey: [...OPEN_SESSIONS_QUERY_KEY, courseId ?? "all", sorting, filters],
+    queryKey: sessionKeys.openByCourse(courseId, sorting, filters),
     pageSize: PAGE_SIZE,
     fetchPage: async (pageParam) => {
       const from = pageParam * PAGE_SIZE;

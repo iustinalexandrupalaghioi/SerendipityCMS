@@ -25,6 +25,7 @@ const AppointmentUpdateDialog = ({
   const form = useForm<AppointmentFormValues>({
     resolver: zodResolver(AppointmentSchema),
     defaultValues: {
+      display_id: appointment.display_id,
       id: appointment.id,
       service: appointment.service,
       user: appointment.profile,

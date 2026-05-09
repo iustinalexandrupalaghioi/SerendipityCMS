@@ -30,7 +30,7 @@ export function UpdateShiftDialog({
   const form = useForm<ShiftFormValues>({
     resolver: zodResolver(shiftSchema),
     defaultValues: {
-      id: shift.id,
+      display_id: shift.display_id,
       day_start_time: formatTime(shift.day_start_time),
       day_end_time: formatTime(shift.day_end_time),
       interval: shift.interval,
@@ -49,7 +49,7 @@ export function UpdateShiftDialog({
   useEffect(() => {
     if (open) {
       form.reset({
-        id: shift.id,
+        display_id: shift.display_id,
         day_start_time: formatTime(shift.day_start_time),
         day_end_time: formatTime(shift.day_end_time),
         interval: shift.interval,

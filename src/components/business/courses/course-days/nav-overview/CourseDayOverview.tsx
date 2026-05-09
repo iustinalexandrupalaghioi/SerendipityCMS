@@ -160,7 +160,11 @@ const CourseDayOverview = ({
           id={deletingCourseDay.id}
           title="Delete course day"
           target="course_day"
-          queryKeys={[courseDayKeys.all, courseKeys.detail(course.id)]}
+          queryKeys={[
+            courseDayKeys.all,
+            courseKeys.all,
+            courseKeys.detail(course.id),
+          ]}
           confirmationMessage={
             <>
               You're about to delete{" "}

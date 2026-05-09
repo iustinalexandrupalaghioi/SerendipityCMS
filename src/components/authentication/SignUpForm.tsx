@@ -34,7 +34,7 @@ import {
 
 const signUpSchema = z
   .object({
-    firstName: z.string().min(2, "First name is required"),
+    fullName: z.string().min(2, "Full name is required"),
     lastName: z.string().min(2, "Last name is required"),
     email: z.email("Please enter a valid email"),
     password: z
@@ -64,8 +64,7 @@ export function SignUpForm({
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -91,8 +90,7 @@ export function SignUpForm({
         password: values.password,
         options: {
           data: {
-            first_name: values.firstName,
-            last_name: values.lastName,
+            full_name: values.fullName,
           },
           emailRedirectTo: `${window.location.origin}`,
         },
@@ -135,39 +133,22 @@ export function SignUpForm({
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col gap-6"
             >
-              {/* First name */}
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First name</FormLabel>
-                    <FormControl>
-                      <InputGroup>
-                        <InputGroupAddon>
-                          <User className="h-4 w-4 text-gray-500" />
-                        </InputGroupAddon>
-                        <InputGroupInput placeholder="John" {...field} />
-                      </InputGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* Last name */}
               <FormField
                 control={form.control}
-                name="lastName"
+                name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last name</FormLabel>
+                    <FormLabel>Full name</FormLabel>
                     <FormControl>
                       <InputGroup>
                         <InputGroupAddon>
                           <User className="h-4 w-4 text-gray-500" />
                         </InputGroupAddon>
-                        <InputGroupInput placeholder="Doe" {...field} />
+                        <InputGroupInput
+                          placeholder="e.g. John Doe"
+                          {...field}
+                        />
                       </InputGroup>
                     </FormControl>
                     <FormMessage />
@@ -189,7 +170,7 @@ export function SignUpForm({
                         </InputGroupAddon>
                         <InputGroupInput
                           type="email"
-                          placeholder="john.doe@example.com"
+                          placeholder="e.g. john.doe@example.com"
                           {...field}
                         />
                       </InputGroup>
@@ -284,11 +265,10 @@ export function SignUpForm({
               </Button>
 
               {/* Divider */}
-              <div className="relative text-center text-sm">
-                <span className="bg-background px-2 text-muted-foreground relative z-10">
-                  or
-                </span>
-                <div className="absolute inset-0 top-1/2 border-t"></div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-muted-foreground">or</span>
+                <div className="h-px flex-1 bg-border" />
               </div>
 
               {/* Google Login */}

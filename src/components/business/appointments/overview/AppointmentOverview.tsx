@@ -13,9 +13,9 @@ import { isAppointmentStatus } from "@/lib/utils";
 import type { Appointment } from "@/types/Appointment";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Row } from "@tanstack/react-table";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import { useCallback, useMemo, useState } from "react";
-import { Navigate, useParams } from "react-router";
+import { Navigate, useParams, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import DeclineAppointmentDialog from "../actions/decline/DeclineAppointmentDialog";
 import UpdateAndAcceptDialog from "../actions/update-and-accept/UpdateAndAcceptDialog";
@@ -37,7 +37,7 @@ TODAY_END.setHours(23, 59, 59, 999);
 
 const LABEL_MAP: Record<string, string> = {
   appointments: "Appointments",
-  confirmed: "Today",
+  confirmed: "Confirmed",
   pending: "Pending",
   accepted: "Accepted",
   declined: "Declined",
@@ -47,20 +47,25 @@ const LABEL_MAP: Record<string, string> = {
 const AppointmentOverview = () => {
   const queryClient = useQueryClient();
   const { status } = useParams();
+  const [searchParams] = useSearchParams();
+  const day = searchParams.get("day");
 
   if (status && !isAppointmentStatus(status)) {
     toast.error("Invalid appointment status");
     return <Navigate to="/" />;
   }
 
-  const isToday = status === "confirmed";
-
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [sorting, setSorting] = useState<SortRule[]>(() =>
     initialSorting(APPOINTMENTS_OVERVIEW_KEY),
   );
+
+  const isToday = day === "today";
+  const isTomorrow = day === "tomorrow";
+
   const preFilters = useMemo<FilterRule[]>(() => {
     const pre: FilterRule[] = [];
+
     if (status) {
       pre.push({
         columnId: "status",
@@ -70,6 +75,7 @@ const AppointmentOverview = () => {
         value: status,
       });
     }
+
     if (isToday) {
       pre.push({
         columnId: "date",
@@ -79,8 +85,19 @@ const AppointmentOverview = () => {
         value: format(new Date(), "yyyy-MM-dd"),
       });
     }
+
+    if (isTomorrow) {
+      pre.push({
+        columnId: "date",
+        columnType: "date",
+        columnName: "Date",
+        operator: "equals",
+        value: format(addDays(new Date(), 1), "yyyy-MM-dd"),
+      });
+    }
+
     return pre;
-  }, [status, isToday]);
+  }, [status, isToday, isTomorrow]);
 
   // Keep filters state only for the query — but initialise it simply:
   const [filters, setFilters] = useState<FilterRule[]>(() =>
@@ -109,22 +126,29 @@ const AppointmentOverview = () => {
     fetchNextPage,
   } = useAppointments(sorting, [...preFilters, ...filters]);
 
+  const DAY_LABEL_MAP: Record<string, string> = {
+    today: "Today",
+    tomorrow: "Tomorrow",
+  };
+
   const breadcrumbItems = useMemo(() => {
     const pathnames = location.pathname.split("/").filter(Boolean);
 
-    const crumbs = pathnames.map((segment, index) => {
-      const path = "/" + pathnames.slice(0, index + 1).join("/");
+    const crumbs = pathnames.map((segment, index) => ({
+      path: "/" + pathnames.slice(0, index + 1).join("/"),
+      label:
+        LABEL_MAP[segment] ??
+        segment.charAt(0).toUpperCase() + segment.slice(1),
+    }));
 
-      return {
-        path,
-        label:
-          LABEL_MAP[segment] ??
-          segment.charAt(0).toUpperCase() + segment.slice(1),
-      };
-    });
+    const items = [{ path: "/", label: "Home" }, ...crumbs];
 
-    return [{ path: "/", label: "Home" }, ...crumbs];
-  }, [location.pathname]);
+    if (day) {
+      items.push({ path: "", label: DAY_LABEL_MAP[day] ?? day });
+    }
+
+    return items;
+  }, [location.pathname, day]);
 
   const handleAccept = useCallback(
     async (id: string) => {

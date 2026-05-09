@@ -78,6 +78,7 @@ export const useAppointments = (
 export interface AppointmentFilters {
   status?: AppointmentStatus;
   today?: boolean;
+  tomorrow?: boolean;
 }
 
 const fetchAppointmentsCount = async (
@@ -92,6 +93,11 @@ const fetchAppointmentsCount = async (
   }
 
   if (filters?.today) {
+    const today = format(new Date(), "yyyy-MM-dd");
+    query = query.eq("date", today);
+  }
+
+  if (filters?.tomorrow) {
     const today = format(new Date(), "yyyy-MM-dd");
     query = query.eq("date", today);
   }

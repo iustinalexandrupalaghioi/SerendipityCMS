@@ -11,7 +11,7 @@ import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 // ─────────────────────────────────────────────
 
 export const shiftColumnVisibility: VisibilityState = {
-  id: true,
+  display_id: true,
   day_start_time: true,
   day_end_time: true,
   is_active: true,
@@ -42,6 +42,16 @@ export function createShiftColumns(
       onOpen,
       onDelete,
     }),
+    {
+      id: "display_id",
+      accessorKey: "display_id",
+      header: undefined,
+      size: 45,
+      meta: {
+        columnName: "Id",
+        columnType: "number",
+      },
+    },
 
     // ── Start time ──
     {

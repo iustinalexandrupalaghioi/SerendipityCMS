@@ -30,9 +30,8 @@ export function UpdateUserProfileDialog({
   const form = useForm<UserProfileFormValues>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
-      id: userProfile.id,
-      first_name: userProfile.first_name,
-      last_name: userProfile.last_name,
+      id: userProfile.display_id,
+      full_name: userProfile.full_name,
       email: userProfile.email,
       role: userProfile.role,
     },
@@ -42,9 +41,8 @@ export function UpdateUserProfileDialog({
   useEffect(() => {
     if (open) {
       form.reset({
-        id: userProfile.id,
-        first_name: userProfile.first_name,
-        last_name: userProfile.last_name,
+        id: userProfile.display_id,
+        full_name: userProfile.full_name,
         email: userProfile.email,
         role: userProfile.role,
       });
@@ -56,9 +54,6 @@ export function UpdateUserProfileDialog({
       const { data, error } = await supabase
         .from("profile")
         .update({
-          first_name: values.first_name,
-          last_name: values.last_name,
-          email: values.email,
           role: values.role,
         })
         .eq("id", userProfile.id)

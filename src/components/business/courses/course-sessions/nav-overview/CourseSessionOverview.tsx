@@ -17,8 +17,9 @@ import {
   courseSessionColumnVisibility,
   createCourseSessionColumns,
 } from "./CourseSessionColumns";
-import { useCourseSessions, QUERY_KEY } from "./useCourseSessions";
+import { sessionKeys, useCourseSessions } from "./useCourseSessions";
 import { format } from "date-fns/format";
+import { courseKeys } from "../../overview/useCourses";
 
 export const COURSE_SESSIONS_OVERVIEW_KEY = "course-sessions-overview";
 
@@ -125,7 +126,6 @@ const CourseSessionOverview = ({
         isDeleteEligible={() => selectedRows.length === 1}
         setRowSelection={setRowSelection}
       />
-
       <DataTable
         slotId={slotId}
         isLoading={isLoading}
@@ -145,14 +145,12 @@ const CourseSessionOverview = ({
         onFiltersChange={handleFiltersChange}
         height={isOpen ? 400 : undefined}
       />
-
       {/* ── Dialogs ── */}
       <AddCourseSessionDialog
         course={course}
         open={isAddOpen}
         setOpen={setAddOpen}
       />
-
       {editingSession && (
         <UpdateCourseSessionDialog
           open={!!editingSession}
@@ -161,24 +159,6 @@ const CourseSessionOverview = ({
         />
       )}
 
-      {/* ── Dialogs ── */}
-      {/* {openEnrollmentCourse && (
-        <OpenCourseEnrollmentDialog
-          open={!!openEnrollmentCourse}
-          setOpen={(open) => !open && setOpenEnrollmentCourse(null)}
-          course={openEnrollmentCourse}
-        />
-      )}
-
-      {closeEnrollmentCourse && (
-        <CloseCourseEnrollmentDialog
-          open={!!closeEnrollmentCourse}
-          setOpen={(open) => !open && setCloseEnrollmentCourse(null)}
-          courseId={closeEnrollmentCourse.id}
-          courseTitle={closeEnrollmentCourse.title}
-        />
-      )} */}
-
       {deletingSession && (
         <DeleteDialog
           open={!!deletingSession}
@@ -186,7 +166,7 @@ const CourseSessionOverview = ({
           id={deletingSession.id}
           title="Delete course session"
           target="course_session"
-          queryKeys={[QUERY_KEY, ["course", course.id]]}
+          queryKeys={[sessionKeys.all, courseKeys.detail(course.id)]}
           confirmationMessage={
             <>
               You're about to delete the session starting on{" "}

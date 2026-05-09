@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const freeDaySchema = z.object({
-  id: z.string().optional(),
+  display_id: z.number().optional(),
   date_from: z.string(),
   date_until: z.string(),
 });

@@ -15,7 +15,8 @@ import {
   CourseDayActivitySchema,
   type CourseDayActivityFormValues,
 } from "./form-schema";
-import { useCourseDay } from "../../nav-overview/useCourseDays";
+import { courseDayKeys, useCourseDay } from "../../nav-overview/useCourseDays";
+import { activityKeys } from "../nav-overview/useDayActivities";
 
 interface AddCourseDayActivityDialogProps {
   open: boolean;
@@ -67,8 +68,18 @@ const AddCourseDayActivityDialog = ({
 
     onSuccess: () => {
       toast.success("Course day activity added successfully!");
-      queryClient.refetchQueries({ queryKey: ["course-days"] });
-      queryClient.refetchQueries({ queryKey: ["course-day", id] });
+      queryClient.invalidateQueries({
+        queryKey: activityKeys.all,
+        refetchType: "all",
+      });
+      queryClient.invalidateQueries({
+        queryKey: courseDayKeys.all,
+        refetchType: "all",
+      });
+      queryClient.invalidateQueries({
+        queryKey: courseDayKeys.detail(id!),
+        refetchType: "all",
+      });
       reset();
       setOpen(false);
     },

@@ -16,7 +16,9 @@ import {
   courseDayActivityColumnVisibility,
   createCourseDayActivityColumns,
 } from "./ActivityColumns";
-import { useCourseDayActivities } from "./useDayActivities";
+import { activityKeys, useCourseDayActivities } from "./useDayActivities";
+import { courseDayKeys } from "../../nav-overview/useCourseDays";
+import { courseKeys } from "../../../overview/useCourses";
 
 export const COURSE_DAY_ACTIVITIES_OVERVIEW_KEY =
   "course-day-activities-overview";
@@ -142,7 +144,12 @@ const CourseDayActivitiesOverview = ({
           id={deletingActivity.id}
           title="Delete activity"
           target="course_day_activity"
-          queryKeys={[["course-days"], ["course-day", courseDay.id]]}
+          queryKeys={[
+            activityKeys.all,
+            courseDayKeys.all,
+            courseKeys.all,
+            courseKeys.detail(courseDay.course_id),
+          ]}
           confirmationMessage={
             <>
               You're about to delete{" "}

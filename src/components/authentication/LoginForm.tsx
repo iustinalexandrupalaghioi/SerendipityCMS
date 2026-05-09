@@ -205,11 +205,10 @@ export function LoginForm({
               </Button>
 
               {/* Divider */}
-              <div className="relative text-center text-sm">
-                <span className="bg-background px-2 text-muted-foreground relative z-10">
-                  or
-                </span>
-                <div className="absolute inset-0 top-1/2 border-t"></div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-muted-foreground">or</span>
+                <div className="h-px flex-1 bg-border" />
               </div>
 
               {/* Google Login */}

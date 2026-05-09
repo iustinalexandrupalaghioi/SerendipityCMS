@@ -206,7 +206,7 @@ function DataTable<TData, TValue>({
 
             <FilterChips />
           </div>
-          <div className="flex shrink-0 items-center justify-end bg-background px-2 py-1 text-sm text-primary">
+          <div className="flex shrink-0 items-center justify-end px-2 py-1 text-sm text-primary">
             {Object.keys(rowSelection).length} / {totalCount}
           </div>
         </div>
