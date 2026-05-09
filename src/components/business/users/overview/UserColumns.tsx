@@ -10,10 +10,8 @@ import { format } from "date-fns";
 // ─────────────────────────────────────────────
 
 export const userColumnVisibility: VisibilityState = {
-  id: true,
+  display_id: true,
   full_name: true,
-  first_name: false,
-  last_name: false,
   email: true,
   date_of_birth: false,
   role: true,
@@ -37,36 +35,16 @@ export function createUserColumns(
     }),
 
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
       meta: {
         columnName: "Id",
-        columnType: "text",
+        columnType: "number",
       },
       size: 45,
     },
 
-    {
-      id: "first_name",
-      accessorKey: "first_name",
-      header: undefined,
-      meta: {
-        columnName: "First name",
-        columnType: "text",
-      },
-      size: 180,
-    },
-    {
-      id: "last_name",
-      accessorKey: "last_name",
-      header: undefined,
-      meta: {
-        columnName: "Last name",
-        columnType: "text",
-      },
-      size: 180,
-    },
     {
       id: "full_name",
       accessorKey: "full_name",
@@ -78,7 +56,6 @@ export function createUserColumns(
       size: 180,
     },
 
-    // ── Email ──
     {
       id: "email",
       accessorKey: "email",
@@ -90,7 +67,6 @@ export function createUserColumns(
       size: 220,
     },
 
-    // ── Date of birth ──
     {
       id: "date_of_birth",
       accessorKey: "date_of_birth",
@@ -108,7 +84,6 @@ export function createUserColumns(
       },
     },
 
-    // ── Role ──
     {
       id: "role",
       accessorKey: "role",

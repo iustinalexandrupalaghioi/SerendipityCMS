@@ -71,7 +71,7 @@ const fetchCourseEnrollmentsCount = async (): Promise<number> => {
   const { count, error } = await supabase
     .from("course_enrollment")
     .select("id", { count: "exact", head: true })
-    .in("status", ["submitted", "confirmed"]);
+    .in("status", ["confirmed"]);
 
   if (error) {
     console.error("Error fetching course enrollments count:", error);

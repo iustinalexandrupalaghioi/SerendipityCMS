@@ -27,11 +27,10 @@ export type User = {
 
 export type Profile = {
   id: string;
+  display_id: number;
   email: string;
   role: string;
   created_at: string;
-  first_name: string;
-  last_name: string;
   full_name: string;
   date_of_birth: string;
 };

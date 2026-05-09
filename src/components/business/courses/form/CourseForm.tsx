@@ -143,18 +143,22 @@ const CourseForm = ({
             control={control}
             name="price"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price (EUR)</FormLabel>
+              <FormItem className="w-full">
+                <FormLabel>Price</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Full price"
-                    disabled={disabled}
-                    aria-invalid={!!errors.price}
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      className="pr-12"
+                      placeholder="e.g. 950"
+                      aria-invalid={!!errors.price}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      EUR
+                    </span>
+                  </div>
                 </FormControl>
                 <FormMessage>{errors.price?.message}</FormMessage>
               </FormItem>
@@ -165,18 +169,22 @@ const CourseForm = ({
             control={control}
             name="advance_price"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Deposit (EUR)</FormLabel>
+              <FormItem className="w-full">
+                <FormLabel>Deposit</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Deposit amount"
-                    disabled={disabled}
-                    aria-invalid={!!errors.advance_price}
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      className="pr-12"
+                      placeholder="e.g. 950"
+                      aria-invalid={!!errors.advance_price}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      EUR
+                    </span>
+                  </div>
                 </FormControl>
                 <FormMessage>{errors.advance_price?.message}</FormMessage>
               </FormItem>

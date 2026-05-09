@@ -117,6 +117,7 @@ const AddServiceDialog = ({ open, setOpen }: AddServiceDialogProps) => {
               errors={formState.errors}
               setValue={setValue}
               watch={watch}
+              defaultValues={{} as ServiceFormValues}
             />
           </div>
 

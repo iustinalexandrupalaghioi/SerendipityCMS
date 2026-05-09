@@ -10,8 +10,6 @@ export const createAppointmentsLiveTile =
   ({ name, path, title, icon }: BaseTileProps) => {
     const { data: count } = useAppointmentsCount(filters);
 
-    console.log(count);
-
     return (
       <LiveTile
         name={name}
@@ -19,7 +17,6 @@ export const createAppointmentsLiveTile =
         title={title}
         icon={icon}
         liveNumber={count ?? 0}
-        className={filters.today ? "text-xs" : undefined}
       />
     );
   };

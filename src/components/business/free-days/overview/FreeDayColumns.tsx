@@ -10,7 +10,7 @@ import { format } from "date-fns";
 // ─────────────────────────────────────────────
 
 export const freeDayColumnVisibility: VisibilityState = {
-  id: true,
+  display_id: true,
   date_from: true,
   date_until: true,
   created_at: false,
@@ -36,15 +36,14 @@ export function createFreeDayColumns(
 
     // ── Data ──
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
-
+      size: 45,
       meta: {
         columnName: "Id",
-        columnType: "text",
+        columnType: "number",
       },
-      size: 60,
     },
     {
       id: "date_from",

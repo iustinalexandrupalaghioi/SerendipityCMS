@@ -2,7 +2,7 @@ import UpdateCourseScreen from "@/components/business/courses/form/UpdateCourseS
 import { useDocumentTitle } from "@/lib/utils";
 
 const UpdateCourse = () => {
-  useDocumentTitle("Update course");
+  useDocumentTitle("Course");
 
   return <UpdateCourseScreen />;
 };

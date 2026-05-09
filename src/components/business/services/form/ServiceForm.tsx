@@ -21,6 +21,8 @@ import type {
 } from "react-hook-form";
 import CategoryPickup from "../../categories/pickup/CategoryPickup";
 import type { ServiceFormValues } from "./form-schema";
+import { Label } from "@/components/ui/label";
+import { ImagePreview } from "@/components/partials/ImagePreview";
 
 interface ServiceFormProps {
   control: Control<ServiceFormValues>;
@@ -29,6 +31,7 @@ interface ServiceFormProps {
   mode: "Add" | "Update";
   existingImageUrl?: string;
   watch: UseFormWatch<ServiceFormValues>;
+  defaultValues: ServiceFormValues;
 }
 
 const ServiceForm = ({
@@ -38,6 +41,7 @@ const ServiceForm = ({
   mode,
   existingImageUrl,
   watch,
+  defaultValues,
 }: ServiceFormProps) => {
   const { selectedCategory, setSelectedCategory } = useCategoryStore();
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
@@ -70,14 +74,14 @@ const ServiceForm = ({
           {mode === "Update" && (
             <FormField
               control={control}
-              name="id"
+              name="display_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Id</FormLabel>
                   <FormControl>
                     <Input disabled {...field} />
                   </FormControl>
-                  <FormMessage>{errors.id?.message}</FormMessage>
+                  <FormMessage>{errors.display_id?.message}</FormMessage>
                 </FormItem>
               )}
             />
@@ -131,41 +135,6 @@ const ServiceForm = ({
               setOpen={setOpenCategoryDialog}
             />
           )}
-
-          <div className="flex gap-6">
-            <FormField
-              control={control}
-              name="is_active"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Active</FormLabel>
-                  <FormControl>
-                    <YesNoSwitch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.is_active?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="is_popular"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Popular</FormLabel>
-                  <FormControl>
-                    <YesNoSwitch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.is_popular?.message}</FormMessage>
-                </FormItem>
-              )}
-            />
-          </div>
         </div>
       </SectionCard>
 
@@ -201,21 +170,23 @@ const ServiceForm = ({
             name="price"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Price (EUR)</FormLabel>
+                <FormLabel>Price</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Price"
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                {errors.price && (
-                  <div className="min-h-5">
-                    <FormMessage>{errors.price?.message}</FormMessage>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      className="pr-12"
+                      placeholder="e.g. 950"
+                      aria-invalid={!!errors.price}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      EUR
+                    </span>
                   </div>
-                )}
+                </FormControl>
+                <FormMessage>{errors.price?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -225,30 +196,43 @@ const ServiceForm = ({
             name="advance_price"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Advance price (EUR)</FormLabel>
+                <FormLabel>Deposit</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Advance price"
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                {errors.advance_price && (
-                  <div className="min-h-5">
-                    <FormMessage>{errors.advance_price?.message}</FormMessage>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      className="pr-12"
+                      placeholder="e.g. 950"
+                      aria-invalid={!!errors.advance_price}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      EUR
+                    </span>
                   </div>
-                )}
+                </FormControl>
+                <FormMessage>{errors.advance_price?.message}</FormMessage>
               </FormItem>
             )}
           />
         </div>
       </SectionCard>
 
-      {/* ── Service image ── */}
-      <SectionCard title="Service image">
+      {/* ── Media & display ── */}
+      <SectionCard title="Media & display">
         <div className="grid grid-cols-1 gap-6">
+          {existingImageUrl && (
+            <div className="flex flex-col gap-2">
+              <Label>Current image</Label>
+              <ImagePreview
+                src={existingImageUrl}
+                alt="Current service image"
+                filename={defaultValues.image_path?.split("/").pop() ?? "image"}
+              />
+            </div>
+          )}
+
           <FormField
             control={control}
             name="image"
@@ -270,17 +254,40 @@ const ServiceForm = ({
               </FormItem>
             )}
           />
-
-          {existingImageUrl && (
-            <div className="flex flex-col gap-2">
-              <img
-                src={existingImageUrl}
-                alt="Current service image"
-                className="h-36 w-auto rounded-md border object-cover shadow-sm"
-              />
-              <p className="text-sm text-muted-foreground">Current image</p>
-            </div>
-          )}
+          <div className="flex gap-6">
+            <FormField
+              control={control}
+              name="is_active"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Active</FormLabel>
+                  <FormControl>
+                    <YesNoSwitch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage>{errors.is_active?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="is_popular"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Popular</FormLabel>
+                  <FormControl>
+                    <YesNoSwitch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage>{errors.is_popular?.message}</FormMessage>
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
       </SectionCard>
     </div>

@@ -30,10 +30,10 @@ const AddCourseEnrollmentDialog = ({
     resolver: zodResolver(EnrollmentSchema),
     defaultValues: {
       course: course ?? undefined,
-      courseSession: course?.course_session?.[0] ?? undefined,
+      courseSession: undefined,
       user: undefined,
-      price: course?.course_session?.[0].price ?? 0,
-      advance_price: course?.course_session?.[0].advance_price ?? 0,
+      price: 0,
+      advance_price: 0,
       date_of_birth: "",
     },
   });

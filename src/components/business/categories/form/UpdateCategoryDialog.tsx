@@ -28,7 +28,7 @@ export function UpdateCategoryDialog({
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
-      id: category.id,
+      display_id: category.display_id,
       name: category.name,
       description: category.description,
       is_active: category.is_active,
@@ -39,7 +39,7 @@ export function UpdateCategoryDialog({
   useEffect(() => {
     if (open) {
       form.reset({
-        id: category.id,
+        display_id: category.display_id,
         name: category.name,
         description: category.description,
         is_active: category.is_active,

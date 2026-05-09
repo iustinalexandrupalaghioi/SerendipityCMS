@@ -2,7 +2,7 @@ import AddCourseDayScreen from "@/components/business/courses/course-days/form/A
 import { useDocumentTitle } from "@/lib/utils";
 
 const AddCourseDay = () => {
-  useDocumentTitle("Add course day");
+  useDocumentTitle("Course day");
 
   return <AddCourseDayScreen />;
 };

@@ -23,14 +23,14 @@ const FreeDayForm = ({ control, errors, mode }: FreeDayFormProps) => {
       {mode === "Update" && (
         <FormField
           control={control}
-          name="id"
+          name="display_id"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Id</FormLabel>
               <FormControl>
                 <Input disabled {...field} />
               </FormControl>
-              <FormMessage>{errors.id?.message}</FormMessage>
+              <FormMessage>{errors.display_id?.message}</FormMessage>
             </FormItem>
           )}
         />

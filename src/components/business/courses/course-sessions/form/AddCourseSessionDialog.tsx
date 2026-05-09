@@ -14,9 +14,9 @@ import {
   CourseSessionSchema,
   type CourseSessionFormValues,
 } from "./form-schema";
-import { QUERY_KEY } from "../nav-overview/useCourseSessions";
 import { format } from "date-fns/format";
 import { courseKeys } from "../../overview/useCourses";
+import { sessionKeys } from "../nav-overview/useCourseSessions";
 
 interface AddCourseSessionDialogProps {
   course: Course;
@@ -70,7 +70,10 @@ export const AddCourseSessionDialog = ({
 
     onSuccess: () => {
       toast.success("Course session added successfully!");
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({
+        queryKey: sessionKeys.all,
+        refetchType: "all",
+      });
       queryClient.invalidateQueries({ queryKey: courseKeys.all });
       queryClient.invalidateQueries({ queryKey: courseKeys.detail(course.id) });
       reset();

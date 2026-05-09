@@ -29,7 +29,7 @@ export function UpdateFreeDayDialog({
   const form = useForm<FreeDayFormValues>({
     resolver: zodResolver(freeDaySchema),
     defaultValues: {
-      id: freeDay.id,
+      display_id: freeDay.display_id,
       date_from: freeDay.date_from,
       date_until: freeDay.date_until,
     },
@@ -39,7 +39,7 @@ export function UpdateFreeDayDialog({
   useEffect(() => {
     if (open) {
       form.reset({
-        id: freeDay.id,
+        display_id: freeDay.display_id,
         date_from: freeDay.date_from,
         date_until: freeDay.date_until,
       });

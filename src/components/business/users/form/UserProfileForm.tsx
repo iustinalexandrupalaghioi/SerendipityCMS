@@ -44,36 +44,17 @@ const UserProfileForm = ({ control, mode, disabled }: UserProfileFormProps) => {
           )}
         />
       )}
+
       <FormField
         control={control}
-        name="first_name"
+        name="full_name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>First name</FormLabel>
+            <FormLabel>Full name</FormLabel>
             <FormControl>
               <InputGroup>
                 <InputGroupInput
-                  placeholder="First name"
-                  type="text"
-                  disabled
-                  {...field}
-                />
-              </InputGroup>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name="last_name"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Last name</FormLabel>
-            <FormControl>
-              <InputGroup>
-                <InputGroupInput
-                  placeholder="Last name"
+                  placeholder="Full name"
                   type="text"
                   disabled
                   {...field}

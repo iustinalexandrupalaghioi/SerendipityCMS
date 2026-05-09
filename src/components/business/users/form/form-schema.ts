@@ -1,10 +1,9 @@
 import { z } from "zod";
 
 export const userProfileSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   role: z.string(),
-  first_name: z.string(),
-  last_name: z.string(),
+  full_name: z.string(),
   email: z.string(),
 });
 

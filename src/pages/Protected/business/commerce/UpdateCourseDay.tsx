@@ -2,7 +2,7 @@ import UpdateCourseDayScreen from "@/components/business/courses/course-days/for
 import { useDocumentTitle } from "@/lib/utils";
 
 const UpdateCourseDay = () => {
-  useDocumentTitle("Update course day");
+  useDocumentTitle("Course day");
 
   return <UpdateCourseDayScreen />;
 };

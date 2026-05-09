@@ -5,13 +5,16 @@ import {
   initialFilters,
   initialSorting,
 } from "@/components/data-table/hooks/useTableViews";
+import Breadcrumb from "@/components/partials/Breadcrumb";
 import DeleteDialog from "@/components/partials/dialog/DeleteDialog";
 import { Toolbar } from "@/components/toolbar/Toolbar";
 import { supabase } from "@/lib/supabaseClient";
 import type { Enrollment } from "@/types/Course";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Row } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router";
+import { toast } from "sonner";
 import AddCourseEnrollmentDialog from "../form/AddCourseEnrollmentDialog";
 import { UpdateCourseEnrollmentDialog } from "../form/UpdateCourseEnrollmentDialog";
 import {
@@ -19,34 +22,44 @@ import {
   createCourseEnrollmentColumns,
 } from "./CourseEnrollmentColumns";
 import { enrollmentKeys, useEnrollments } from "./useEnrollments";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import { useEnrollmentActions } from "./useEnrollmentsActions";
 
 export const ENROLLMENT_LIST_KEY = "enrollment-list";
 
-const ONGOING_FILTER: FilterRule = {
-  columnId: "status",
-  columnType: "select",
-  columnName: "Status",
-  operator: "is_any_of",
-  value: ["submitted", "confirmed"],
+const LABEL_MAP: Record<string, string> = {
+  enrollments: "Enrollments",
+  submitted: "Submitted",
+  confirmed: "Confirmed",
+  cancelled: "Cancelled",
+  completed: "Completed",
 };
 
 const AllEnrollmentsOverview = () => {
   const { status } = useParams();
-  const isOngoing = status === "ongoing";
   const queryClient = useQueryClient();
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [sorting, setSorting] = useState<SortRule[]>(() =>
     initialSorting(ENROLLMENT_LIST_KEY),
   );
-  const [filters, setFilters] = useState<FilterRule[]>(() => {
-    const saved = initialFilters(ENROLLMENT_LIST_KEY);
-    if (!isOngoing) return saved;
-    const hasStatusFilter = saved.some((f) => f.columnId === "status");
-    return hasStatusFilter ? saved : [ONGOING_FILTER, ...saved];
-  });
+
+  // ── Pre-filters (locked, from URL) ────────────────────────────────────────
+  const preFilters = useMemo<FilterRule[]>(() => {
+    if (!status) return [];
+    return [
+      {
+        columnId: "status",
+        columnType: "select",
+        columnName: "Status",
+        operator: "equals",
+        value: status,
+      },
+    ];
+  }, [status]);
+
+  // ── User filters (editable) ───────────────────────────────────────────────
+  const [filters, setFilters] = useState<FilterRule[]>(() =>
+    initialFilters(ENROLLMENT_LIST_KEY),
+  );
 
   // ── Dialog state ──────────────────────────────────────────────────────────
   const [isAddOpen, setAddOpen] = useState(false);
@@ -65,7 +78,24 @@ const AllEnrollmentsOverview = () => {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useEnrollments(sorting, filters);
+  } = useEnrollments(sorting, [...preFilters, ...filters]);
+
+  const breadcrumbItems = useMemo(() => {
+    const pathnames = location.pathname.split("/").filter(Boolean);
+
+    const crumbs = pathnames.map((segment, index) => {
+      const path = "/" + pathnames.slice(0, index + 1).join("/");
+
+      return {
+        path,
+        label:
+          LABEL_MAP[segment] ??
+          segment.charAt(0).toUpperCase() + segment.slice(1),
+      };
+    });
+
+    return [{ path: "/", label: "Home" }, ...crumbs];
+  }, [location.pathname]);
 
   // ── Delete ────────────────────────────────────────────────────────────────
   const handleDeleteOpen = useCallback((rows: Row<Enrollment>[]) => {
@@ -133,6 +163,7 @@ const AllEnrollmentsOverview = () => {
 
   return (
     <div className="my-2 flex flex-1 min-h-0 w-full flex-col">
+      <Breadcrumb items={breadcrumbItems} />
       <Toolbar
         selectedRows={selectedRows}
         selectedCount={Object.keys(rowSelection).length}
@@ -174,6 +205,7 @@ const AllEnrollmentsOverview = () => {
         isFetchingNextPage={isFetchingNextPage}
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}
+        preFilters={preFilters}
       />
 
       {/* ── Dialogs ── */}
@@ -199,8 +231,7 @@ const AllEnrollmentsOverview = () => {
             <>
               You're about to delete the course enrollment for{" "}
               <span className="font-semibold">
-                {deletingEnrollment.profile?.first_name}{" "}
-                {deletingEnrollment.profile?.last_name}
+                {deletingEnrollment.profile?.full_name}
               </span>
               .<br /> Once deleted, the data cannot be recovered.
             </>

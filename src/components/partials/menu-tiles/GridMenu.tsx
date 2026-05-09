@@ -43,11 +43,11 @@ export interface MenuSection {
 
 const menuItems: MenuSection[] = [
   {
-    module: "Booking & enrollments management",
+    module: "Appointments",
     links: [
       {
         type: "live",
-        name: "New appointments",
+        name: "New",
         path: "/appointments/pending",
         title: "View new appointments",
         icon: CalendarClockIcon,
@@ -56,9 +56,9 @@ const menuItems: MenuSection[] = [
 
       {
         type: "live",
-        name: "Confirmed appointments today",
-        path: "/appointments/confirmed",
-        title: "View confirmed appointments",
+        name: "Confirmed today",
+        path: "/appointments/confirmed?day=today",
+        title: "View confirmed appointments for today",
         icon: CalendarCheck2Icon,
         component: createAppointmentsLiveTile({
           status: "confirmed",
@@ -67,23 +67,39 @@ const menuItems: MenuSection[] = [
       },
 
       {
+        type: "live",
+        name: "Confirmed tomorrow",
+        path: "/appointments/confirmed?day=tomorrow",
+        title: "View confirmed appointments for tomorrow",
+        icon: CalendarCheck2Icon,
+        component: createAppointmentsLiveTile({
+          status: "confirmed",
+          tomorrow: true,
+        }),
+      },
+      {
         type: "link",
-        name: "All appointments",
+        name: "All",
         path: "/appointments",
         title: "View all appointments",
         icon: CalendarIcon,
       },
+    ],
+  },
+  {
+    module: "Course enrollments",
+    links: [
       {
         type: "live",
-        name: "Ongoing enrollments",
-        path: "/enrollments/ongoing",
-        title: "View all ongoing course enrollments",
+        name: "Confirmed",
+        path: "/enrollments/confirmed",
+        title: "View all confirmed course enrollments",
         icon: BookOpenIcon,
         component: createCourseEnrollmentsLiveTile(),
       },
       {
         type: "link",
-        name: "All course enrollments",
+        name: "All",
         path: "/enrollments",
         title: "View all course enrollments",
         icon: BookMarked,

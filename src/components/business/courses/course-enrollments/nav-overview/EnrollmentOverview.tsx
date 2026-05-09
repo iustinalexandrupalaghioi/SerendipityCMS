@@ -202,8 +202,7 @@ const EnrollmentOverview = ({
             <>
               You're about to delete the course enrollment for{" "}
               <span className="font-semibold">
-                {deletingEnrollment.profile?.first_name}{" "}
-                {deletingEnrollment.profile?.last_name}
+                {deletingEnrollment.profile?.full_name}{" "}
               </span>
               .<br /> Once deleted, the data cannot be recovered.
             </>

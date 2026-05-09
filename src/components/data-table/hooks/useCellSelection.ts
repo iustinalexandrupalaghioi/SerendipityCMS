@@ -4,6 +4,7 @@ import { format } from "date-fns";
 
 export type CellAddress = { rowId: string; columnId: string };
 
+// Columns excluded from copy/TSV export (still by name — these are data-less)
 const EXCLUDED_COLUMNS = ["select", "columns"];
 
 const cellKey = (rowId: string, columnId: string) => `${rowId}::${columnId}`;
@@ -29,6 +30,14 @@ export function useCellSelection<TData>(table: Table<TData>) {
   const anchorRef = useRef<CellAddress | null>(null);
   const tableRef = useRef(table);
   tableRef.current = table;
+
+  /** First two visible columns are action/select columns — never selectable. */
+  const isActionColumn = useCallback((columnId: string): boolean => {
+    const idx = tableRef.current
+      .getVisibleLeafColumns()
+      .findIndex((c) => c.id === columnId);
+    return idx < 2;
+  }, []);
 
   const getSelectionTsv = useCallback((): string => {
     if (selection.size === 0) return "";
@@ -76,13 +85,17 @@ export function useCellSelection<TData>(table: Table<TData>) {
 
   const handleCellClick = useCallback(
     (e: React.MouseEvent, cell: Cell<TData, unknown>) => {
+      // Ignore clicks on action columns entirely
+      if (isActionColumn(cell.column.id)) return;
+
       const key = cellKey(cell.row.id, cell.column.id);
 
       if (e.shiftKey && anchorRef.current) {
         const rows = tableRef.current.getRowModel().rows;
+        // Exclude first two columns from range selection as well
         const cols = tableRef.current
           .getVisibleLeafColumns()
-          .filter((c) => !EXCLUDED_COLUMNS.includes(c.id));
+          .filter((_, idx) => idx >= 2);
 
         const anchorRowIdx = rows.findIndex(
           (r) => r.id === anchorRef.current!.rowId,
@@ -116,7 +129,7 @@ export function useCellSelection<TData>(table: Table<TData>) {
         setSelection(new Set([key]));
       }
     },
-    [],
+    [isActionColumn],
   );
 
   const clearSelection = useCallback(() => {
@@ -126,8 +139,8 @@ export function useCellSelection<TData>(table: Table<TData>) {
 
   const isCellSelected = useCallback(
     (rowId: string, columnId: string) =>
-      selection.has(cellKey(rowId, columnId)),
-    [selection],
+      !isActionColumn(columnId) && selection.has(cellKey(rowId, columnId)),
+    [selection, isActionColumn],
   );
 
   return {

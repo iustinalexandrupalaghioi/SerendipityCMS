@@ -35,7 +35,7 @@ const UpdateCourseDayScreen = () => {
     { path: "/courses", label: "Courses" },
     {
       path: `/courses/update/${courseDay?.course?.id}`,
-      label: `Course ${courseDay?.course?.display_id ?? "Course"}`,
+      label: `Course ${courseDay?.course?.title ?? "Course"}`,
     },
     { label: `Day ${courseDay?.day_number ?? "Update course day"}` },
   ];
@@ -185,9 +185,9 @@ const UpdateCourseDayScreen = () => {
         }
         id={courseDay.id}
         queryKeys={[
-          ["courses"],
-          ["course", courseDay.course_id],
-          ["course-days", courseDay.id],
+          courseDayKeys.all,
+          courseKeys.all,
+          courseKeys.detail(courseDay.course!.id),
         ]}
         open={isDeleteOpen}
         setOpen={setDeleteOpen}

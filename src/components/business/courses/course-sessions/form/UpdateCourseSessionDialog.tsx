@@ -2,21 +2,21 @@ import UpdateDialog from "@/components/partials/dialog/UpdateDialog";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/lib/supabaseClient";
+import type { CourseSession } from "@/types/Course";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns/format";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import type { CourseSession } from "@/types/Course";
-import { format } from "date-fns/format";
-import { QUERY_KEY } from "../nav-overview/useCourseSessions";
+import { courseKeys } from "../../overview/useCourses";
+import { sessionKeys } from "../nav-overview/useCourseSessions";
 import CourseSessionForm from "./CourseSessionForm";
 import {
   CourseSessionSchema,
   type CourseSessionFormValues,
 } from "./form-schema";
-import { courseKeys } from "../../overview/useCourses";
 
 interface UpdateCourseSessionDialogProps {
   session: CourseSession;
@@ -82,7 +82,10 @@ export const UpdateCourseSessionDialog = ({
 
     onSuccess: () => {
       toast.success("Course session updated successfully!");
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({
+        queryKey: sessionKeys.all,
+        refetchType: "all",
+      });
       queryClient.invalidateQueries({ queryKey: courseKeys.all });
       queryClient.invalidateQueries({
         queryKey: courseKeys.detail(session.course_id),

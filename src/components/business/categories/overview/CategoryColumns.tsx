@@ -10,7 +10,7 @@ import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 // ─────────────────────────────────────────────
 
 export const categoryColumnVisibility: VisibilityState = {
-  id: true,
+  display_id: true,
   name: true,
   description: true,
   is_active: true,
@@ -37,12 +37,12 @@ export function createCategoryColumns(
 
     // ── Data columns ──
     {
-      id: "id",
-      accessorKey: "id",
+      id: "display_id",
+      accessorKey: "display_id",
       header: undefined,
       meta: {
         columnName: "Id",
-        columnType: "text",
+        columnType: "number",
       },
       size: 45,
     },
