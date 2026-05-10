@@ -1,6 +1,7 @@
 import type { Cell, Row } from "@tanstack/react-table";
 import type { ColumnType } from "@/components/data-table/features/filtering/filters";
 import type { ReactNode, RefObject } from "react";
+import type { Enum } from "@/types/EnumType";
 
 // ─────────────────────────────────────────────
 // Public action type (used in column meta)
@@ -42,7 +43,7 @@ export interface ContextMenuState<TData> {
   columnId: string;
   columnType: ColumnType | null;
   columnName: string;
-  selectOptions?: string[];
+  selectOptions?: Enum[];
   origin?: string;
 }
 

@@ -3,7 +3,7 @@ import { createBufferColumn } from "@/components/data-table/core/createBufferCol
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { ImagePreview } from "@/components/partials/ImagePreview";
-import type { Course } from "@/types/Course";
+import { COURSE_LEVEL_OPTIONS, type Course } from "@/types/Course";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 
 // ─────────────────────────────────────────────
@@ -93,7 +93,7 @@ export function createCourseColumns(
       meta: {
         columnName: "Level",
         columnType: "select",
-        selectOptions: ["beginner", "intermediate", "advanced"],
+        selectOptions: COURSE_LEVEL_OPTIONS,
       },
       cell: ({ row }) => (
         <span className="capitalize">{row.original.level}</span>
@@ -117,7 +117,7 @@ export function createCourseColumns(
       meta: {
         columnName: "Order",
         columnType: "select",
-        selectOptions: ["beginner", "intermediate", "advanced"],
+        selectOptions: COURSE_LEVEL_OPTIONS,
       },
 
       size: 65,
