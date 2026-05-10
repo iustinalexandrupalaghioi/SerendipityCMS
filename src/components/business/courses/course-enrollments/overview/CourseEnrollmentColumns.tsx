@@ -183,12 +183,12 @@ export function createCourseEnrollmentColumns(
 
         const account = import.meta.env.VITE_STRIPE_ACCOUNT_ID;
         const uri = import.meta.env.PROD
-          ? `https://dashboard.stripe.com/${account}/payments/`
-          : `https://dashboard.stripe.com/${account}/test/payments/`;
+          ? `https://dashboard.stripe.com/${account}/payments`
+          : `https://dashboard.stripe.com/${account}/test/payments`;
 
         return (
           <a
-            href={uri}
+            href={`${uri}/${row.original.payment_intent_id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-primary underline-offset-4 hover:underline"
