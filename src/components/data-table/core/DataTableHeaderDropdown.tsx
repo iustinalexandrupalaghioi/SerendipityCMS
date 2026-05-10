@@ -14,6 +14,7 @@ import {
   FilterIcon,
   X,
 } from "lucide-react";
+import type { Enum } from "@/types/EnumType";
 
 interface DataTableHeaderDropdownProps {
   columnId: string;
@@ -31,11 +32,11 @@ interface DataTableHeaderDropdownProps {
   handleOpenFilterDrawer: (
     columnId: string,
     columnType: ColumnType | null,
-    selectOptions?: string[],
+    selectOptions?: Enum[],
     columnName?: string | null,
     origin?: string,
   ) => void;
-  selectOptions?: string[];
+  selectOptions?: Enum[];
   canFilter?: boolean;
   locked?: boolean;
 }

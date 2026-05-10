@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useDataTableContext } from "../DataTableContext";
 import { DataTableHeaderDropdown } from "./DataTableHeaderDropdown";
 import { FilterPanel } from "../features/filtering/FilterPanel";
+import type { Enum } from "@/types/EnumType";
 
 // No props — everything comes from context.
 // The only reason to pass props here in the future would be
@@ -35,7 +36,7 @@ export function DataTableHeader<TData>() {
     string | undefined
   >("");
   const [filterDrawerSelectOptions, setFilterDrawerSelectOptions] = useState<
-    string[]
+    Enum[]
   >([]);
 
   // ── Handlers ──
@@ -43,7 +44,7 @@ export function DataTableHeader<TData>() {
   const handleOpenFilterDrawer = (
     columnId: string,
     columnType: ColumnType | null,
-    selectOptions?: string[],
+    selectOptions?: Enum[],
     columnName?: string | null,
     origin?: string,
   ) => {

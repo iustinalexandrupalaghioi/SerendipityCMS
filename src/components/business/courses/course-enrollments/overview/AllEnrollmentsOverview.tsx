@@ -132,7 +132,7 @@ const AllEnrollmentsOverview = () => {
     [queryClient],
   );
 
-  const handleNowShow = useCallback(
+  const handleNoShow = useCallback(
     async (id: string) => {
       try {
         const { error } = await supabase
@@ -156,7 +156,7 @@ const AllEnrollmentsOverview = () => {
 
   const actions = useEnrollmentActions({
     onComplete: handleComplete,
-    onNoShow: handleNowShow,
+    onNoShow: handleNoShow,
   });
 
   // ── Open ──────────────────────────────────────────────────────────────────
