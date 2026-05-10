@@ -31,6 +31,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { YesNoSwitch } from "@/components/ui/yes-no-switch";
+import type { Enum } from "@/types/EnumType";
 import { format, isValid } from "date-fns";
 import { ChevronDownIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -41,7 +42,7 @@ interface FilterPanelProps {
   columnId: string | null;
   columnType: ColumnType | null;
   columnName: string | null;
-  selectOptions?: string[];
+  selectOptions?: Enum[];
   onApply: (rule: FilterRule) => void;
   initialValue?: FilterRule | null;
   origin?: string;
@@ -151,7 +152,7 @@ function ValueInput({
   columnType: ColumnType;
   value: string | string[];
   onChange: (v: string | string[]) => void;
-  selectOptions?: string[];
+  selectOptions?: Enum[];
 }) {
   const noValueNeeded =
     operator === "is_empty" ||
@@ -193,17 +194,17 @@ function ValueInput({
     return (
       <div className="flex flex-col gap-2">
         {(selectOptions ?? []).map((opt) => (
-          <div key={opt} className="grid grid-cols-2 gap-2">
+          <div key={opt.value} className="grid grid-cols-2 gap-2">
             <Label
               htmlFor={`opt-${opt}`}
-              className="cursor-pointer font-normal capitalize"
+              className="cursor-pointer font-normal"
             >
-              {opt}
+              {opt.label}
             </Label>
             <YesNoSwitch
               id={`opt-${opt}`}
-              checked={selected.includes(opt)}
-              onCheckedChange={() => toggle(opt)}
+              checked={selected.includes(opt.value)}
+              onCheckedChange={() => toggle(opt.value)}
             />
           </div>
         ))}
@@ -224,10 +225,10 @@ function ValueInput({
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select value..." />
         </SelectTrigger>
-        <SelectContent className="capitalize">
+        <SelectContent>
           {(selectOptions ?? []).map((opt) => (
-            <SelectItem key={opt} value={opt}>
-              {opt}
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
             </SelectItem>
           ))}
         </SelectContent>

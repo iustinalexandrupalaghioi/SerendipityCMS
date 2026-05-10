@@ -78,7 +78,7 @@ export function LoginForm({
 
   useEffect(() => {
     // Wait until loading finishes
-    if (!loading && user && user.profile.role === "admin") {
+    if (!loading && user && user.role === "admin") {
       navigate("/", { replace: true });
     }
   }, [user, loading, navigate]);

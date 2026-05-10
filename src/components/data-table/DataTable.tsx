@@ -25,6 +25,7 @@ import { FilterChips } from "./features/filtering/FilterChips";
 import { TableViewsBar } from "./features/views/DataTableViewBar";
 import { useAvailableHeight } from "./hooks/useAvailableHeight";
 import { useScrollFreeze } from "./hooks/useScrollFreeze";
+import type { Enum } from "@/types/EnumType";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends unknown, TValue> {
@@ -32,7 +33,7 @@ declare module "@tanstack/react-table" {
     columnName?: string;
     origin?: string;
     columnType?: ColumnType | null;
-    selectOptions?: string[];
+    selectOptions?: Enum[];
   }
   interface ColumnSort {
     origin?: string;

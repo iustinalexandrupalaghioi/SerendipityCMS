@@ -9,6 +9,7 @@ interface UseAppointmentActionsProps {
   setDecliningAppointment: Dispatch<SetStateAction<Appointment | null>>;
   onAccept: (id: string) => void;
   onComplete: (id: string) => void;
+  onNoShow: (id: string) => void;
 }
 
 export function useAppointmentActions({
@@ -17,6 +18,7 @@ export function useAppointmentActions({
   setDecliningAppointment,
   onAccept,
   onComplete,
+  onNoShow,
 }: UseAppointmentActionsProps): RowAction<Appointment>[] {
   return useMemo(
     () => [
@@ -56,6 +58,15 @@ export function useAppointmentActions({
           onComplete(rows[0].original.id);
         },
       },
+      {
+        label: "Mark as no show",
+        isEligible: (row: Row<Appointment>) =>
+          row.original.status === "confirmed",
+        onSelect: (rows: Row<Appointment>[]) => {
+          if (rows.length !== 1) return;
+          onNoShow(rows[0].original.id);
+        },
+      },
     ],
     [
       setEditingAppointment,
@@ -63,6 +74,7 @@ export function useAppointmentActions({
       setDecliningAppointment,
       onAccept,
       onComplete,
+      onNoShow,
     ],
   );
 }

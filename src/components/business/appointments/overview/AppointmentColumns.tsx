@@ -3,7 +3,11 @@ import { createSelectionColumn } from "@/components/data-table/core/createSelect
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { Badge } from "@/components/ui/badge";
 import type { RowAction } from "@/components/data-table/core/types";
-import type { Appointment } from "@/types/Appointment";
+import {
+  APPOINTMENT_STATUS_LABELS,
+  APPOINTMENT_STATUS_OPTIONS,
+  type Appointment,
+} from "@/types/Appointment";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { format } from "date-fns";
@@ -39,7 +43,9 @@ const statusVariantMap: Record<
   confirmed: "secondary",
   accepted: "secondary",
   pending: "outline",
-  cancelled: "destructive",
+  cancelled: "outline",
+  expired: "destructive",
+  no_show: "destructive",
   declined: "destructive",
   completed: "default",
 };
@@ -76,21 +82,14 @@ export function createAppointmentColumns(
       meta: {
         columnName: "Status",
         columnType: "select",
-        selectOptions: [
-          "pending",
-          "accepted",
-          "confirmed",
-          "completed",
-          "declined",
-          "cancelled",
-        ],
+        selectOptions: APPOINTMENT_STATUS_OPTIONS,
       },
       cell: ({ row }) => (
         <Badge
-          className="capitalize font-medium"
+          className="font-medium"
           variant={statusVariantMap[row.original.status]}
         >
-          {row.original.status}
+          {APPOINTMENT_STATUS_LABELS[row.original.status]}
         </Badge>
       ),
       size: 100,

@@ -8,6 +8,8 @@ export const APPOINTMENT_STATUSES = [
   "declined",
   "completed",
   "cancelled",
+  "expired",
+  "no_show",
 ] as const;
 
 export type AppointmentStatus = (typeof APPOINTMENT_STATUSES)[number];
@@ -19,6 +21,8 @@ export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
   declined: "Declined",
   completed: "Completed",
   cancelled: "Cancelled",
+  expired: "Expired",
+  no_show: "No show",
 };
 
 export const APPOINTMENT_STATUS_OPTIONS = APPOINTMENT_STATUSES.map(

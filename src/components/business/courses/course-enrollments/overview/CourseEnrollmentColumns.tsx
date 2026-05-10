@@ -4,7 +4,12 @@ import { createSelectionColumn } from "@/components/data-table/core/createSelect
 import type { RowAction } from "@/components/data-table/core/types";
 import BooleanDisplay from "@/components/partials/BooleanDisplay";
 import { Badge } from "@/components/ui/badge";
-import type { Enrollment } from "@/types/Course";
+import {
+  ENROLLMENT_STATUS_LABELS,
+  ENROLLMENT_STATUS_OPTIONS,
+  PAYMENT_TYPE_OPTIONS,
+  type Enrollment,
+} from "@/types/Course";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 import { format } from "date-fns";
 
@@ -28,9 +33,12 @@ const statusVariantMap: Record<
   string,
   "default" | "secondary" | "destructive" | "outline"
 > = {
-  confirmed: "secondary",
-  submitted: "outline",
-  cancelled: "destructive",
+  confirmed: "default",
+  submitted: "secondary",
+  cancelled: "outline",
+  declined: "destructive",
+  no_show: "destructive",
+  expired: "destructive",
 };
 
 export function createCourseEnrollmentColumns(
@@ -94,14 +102,14 @@ export function createCourseEnrollmentColumns(
       meta: {
         columnName: "Status",
         columnType: "select",
-        selectOptions: ["submitted", "confirmed", "cancelled", "completed"],
+        selectOptions: ENROLLMENT_STATUS_OPTIONS,
       },
       cell: ({ row }) => (
         <Badge
-          className="capitalize font-medium"
+          className="font-medium"
           variant={statusVariantMap[row.original.status]}
         >
-          {row.original.status}
+          {ENROLLMENT_STATUS_LABELS[row.original.status]}
         </Badge>
       ),
       size: 110,
@@ -124,7 +132,7 @@ export function createCourseEnrollmentColumns(
       meta: {
         columnName: "Payment type",
         columnType: "select",
-        selectOptions: ["deposit", "full"],
+        selectOptions: PAYMENT_TYPE_OPTIONS,
       },
       cell: ({ row }) => (
         <span className="capitalize">{row.original.payment_type}</span>

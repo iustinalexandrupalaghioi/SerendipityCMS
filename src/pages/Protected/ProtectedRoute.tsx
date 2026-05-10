@@ -10,7 +10,7 @@ export default function ProtectedRoute() {
 
   useEffect(() => {
     if (!loading && user) {
-      if (user.profile?.role !== "admin") {
+      if (user?.role !== "admin") {
         (async () => {
           await supabase.auth.signOut();
           navigate("/auth/login", { replace: true });
