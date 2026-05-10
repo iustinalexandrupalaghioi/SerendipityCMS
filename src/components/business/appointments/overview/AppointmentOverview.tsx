@@ -197,12 +197,35 @@ const AppointmentOverview = () => {
     [queryClient],
   );
 
+  const handleNoShow = useCallback(
+    async (id: string) => {
+      try {
+        const { error } = await supabase
+          .from("appointment")
+          .update({ status: "no_show" })
+          .eq("id", id);
+        if (error) throw error;
+        toast.success("Appointment successfully marked as 'no show'.");
+        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        queryClient.invalidateQueries({
+          queryKey: ["appointments_count", "pending"],
+        });
+      } catch (error: any) {
+        toast.error(
+          error.message || "Failed to mark appointment as 'no show'.",
+        );
+      }
+    },
+    [queryClient],
+  );
+
   const actions = useAppointmentActions({
     setEditingAppointment,
     setUpdateAndAcceptAppointment,
     setDecliningAppointment,
     onAccept: handleAccept,
     onComplete: handleComplete,
+    onNoShow: handleNoShow,
   });
 
   // ── Delete ────────────────────────────────────────────────────────────────

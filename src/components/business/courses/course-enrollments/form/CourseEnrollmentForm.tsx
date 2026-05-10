@@ -16,9 +16,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { YesNoSwitch } from "@/components/ui/yes-no-switch";
+import { cn } from "@/lib/utils";
 import useCourseSessionStore from "@/stores/CourseSessionStore";
 import useCourseStore from "@/stores/CourseStore";
-import type { Enrollment } from "@/types/Course";
+import {
+  ENROLLMENT_STATUS_OPTIONS,
+  PAYMENT_TYPE_OPTIONS,
+  type Enrollment,
+} from "@/types/Course";
 import { format } from "date-fns/format";
 import { useEffect, useMemo, useState } from "react";
 import type {
@@ -30,7 +35,6 @@ import type {
 import CourseSessionPickup from "../../course-sessions/pickup/CourseSessionPickup";
 import CoursePickup from "../../pickup/CoursePickup";
 import type { EnrollmentFormValues } from "./form-schema";
-import { cn } from "@/lib/utils";
 
 interface CourseEnrollmentFormProps {
   control: Control<EnrollmentFormValues>;
@@ -40,18 +44,6 @@ interface CourseEnrollmentFormProps {
   mode: "Add" | "Update";
   enrollment?: Enrollment;
 }
-
-const statusEnum = [
-  { label: "Submitted", value: "submitted" },
-  { label: "Confirmed", value: "confirmed" },
-  { label: "Completed", value: "completed" },
-  { label: "Cancelled", value: "cancelled" },
-];
-
-const paymentTypeEnum = [
-  { label: "Deposit", value: "deposit" },
-  { label: "Full Payment", value: "full" },
-];
 
 const CourseEnrollmentForm = ({
   control,
@@ -140,7 +132,7 @@ const CourseEnrollmentForm = ({
             <FormItem className="col-span-2">
               <FormLabel>Status</FormLabel>
               <Combobox
-                items={statusEnum}
+                items={ENROLLMENT_STATUS_OPTIONS}
                 value={enrollment?.status ?? "submitted"}
                 placeholder="Enrollment status"
                 disabled
@@ -257,7 +249,7 @@ const CourseEnrollmentForm = ({
               <FormItem className="sm:col-span-2">
                 <FormLabel>Payment type</FormLabel>
                 <Combobox
-                  items={paymentTypeEnum}
+                  items={PAYMENT_TYPE_OPTIONS}
                   placeholder="Payment type"
                   disabled={mode === "Update"}
                   className="w-full capitalize"

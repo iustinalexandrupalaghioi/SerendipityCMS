@@ -51,12 +51,13 @@ const DeleteDialog = ({
         const { error } = await supabase.from(target).delete().eq("id", id);
 
         if (error) {
-          throw new Error(error.message);
+          throw error;
         }
-
-        return true;
       }
-      await deleteFn();
+
+      if (deleteFn) {
+        await deleteFn();
+      }
     },
     onSuccess: async () => {
       toast.success("Item deleted successfully!");
