@@ -83,7 +83,7 @@ export function UpdateUserProfileDialog({
     <UpdateDialog
       open={open}
       setOpen={setOpen}
-      title={user?.user_metadata.full_name ?? "User profile"}
+      title={user?.full_name ?? "User profile"}
       description="Modify the selected user profile."
     >
       <Form {...form}>
