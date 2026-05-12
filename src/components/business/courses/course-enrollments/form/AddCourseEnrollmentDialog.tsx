@@ -62,7 +62,10 @@ const AddCourseEnrollmentDialog = ({
         },
       );
 
-      if (error) throw error;
+      if (error) {
+        const body = await error?.context?.json().catch(() => null);
+        throw new Error(body?.error ?? "Failed to decline appointment as");
+      }
 
       return data;
     },
@@ -78,10 +81,7 @@ const AddCourseEnrollmentDialog = ({
     },
 
     onError: async (error: any) => {
-      const body = await error?.context?.json().catch(() => null);
-      const message = body?.error;
-
-      toast.error(message ?? "Something went wrong while enrolling.");
+      toast.error(error.message ?? "Something went wrong while enrolling.");
     },
   });
 

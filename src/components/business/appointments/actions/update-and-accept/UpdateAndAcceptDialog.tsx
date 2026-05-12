@@ -80,7 +80,10 @@ const UpdateAndAcceptDialog = ({
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        const body = await error?.context?.json().catch(() => null);
+        throw new Error(body?.error ?? "Failed to accept appointment.");
+      }
     },
     onSuccess: async () => {
       toast.success("Appointment successfully accepted!");
@@ -92,16 +95,7 @@ const UpdateAndAcceptDialog = ({
       setOpen(false);
     },
     onError: async (error: any) => {
-      const status = error?.context?.status;
-      const body = await error?.context?.json().catch(() => null);
-      const message = body?.error;
-
-      if (status === 409) {
-        toast.error(message ?? "Appointment has already been accepted.");
-        return;
-      }
-
-      toast.error(message ?? "Failed to accept appointment.");
+      toast.error(error.message ?? "Failed to accept appointment.");
     },
   });
 

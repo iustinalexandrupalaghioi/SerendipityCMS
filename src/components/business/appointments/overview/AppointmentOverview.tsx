@@ -171,7 +171,7 @@ const AppointmentOverview = () => {
           queryKey: appointmentKeys.count({ status: "pending" }),
         });
       } catch (error: any) {
-        toast.error(error.message || "Failed to accept appointment.");
+        toast.error(error.message);
       }
     },
     [queryClient],
@@ -184,14 +184,17 @@ const AppointmentOverview = () => {
           .from("appointment")
           .update({ status: "completed" })
           .eq("id", id);
-        if (error) throw error;
+
+        if (error)
+          throw new Error(error.message ?? "Failed to complete appointment");
+
         toast.success("Appointment successfully completed.");
         queryClient.invalidateQueries({ queryKey: ["appointments"] });
         queryClient.invalidateQueries({
           queryKey: ["appointments_count", "pending"],
         });
       } catch (error: any) {
-        toast.error(error.message || "Failed to complete appointment.");
+        toast.error(error.message);
       }
     },
     [queryClient],
@@ -200,20 +203,24 @@ const AppointmentOverview = () => {
   const handleNoShow = useCallback(
     async (id: string) => {
       try {
-        const { error } = await supabase
-          .from("appointment")
-          .update({ status: "no_show" })
-          .eq("id", id);
-        if (error) throw error;
-        toast.success("Appointment successfully marked as 'no show'.");
+        const { error } = await supabase.functions.invoke("mark-no-show", {
+          body: { id, reference: "appointment" },
+        });
+
+        if (error) {
+          const body = await error?.context?.json().catch(() => null);
+          throw new Error(
+            body?.error ?? "Failed to mark appointment as 'No show'.",
+          );
+        }
+
+        toast.success("Appointment successfully marked as 'No show'.");
         queryClient.invalidateQueries({ queryKey: ["appointments"] });
         queryClient.invalidateQueries({
           queryKey: ["appointments_count", "pending"],
         });
       } catch (error: any) {
-        toast.error(
-          error.message || "Failed to mark appointment as 'no show'.",
-        );
+        toast.error(error.message);
       }
     },
     [queryClient],

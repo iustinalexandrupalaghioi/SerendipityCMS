@@ -79,7 +79,10 @@ export function AppointmentAddDialog({
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        const body = await error?.context?.json().catch(() => null);
+        throw new Error(body?.error ?? "Failed to book appointment");
+      }
     },
     onSuccess: async () => {
       toast.success("Appointment booked successfully!");
@@ -92,20 +95,6 @@ export function AppointmentAddDialog({
       setOpen(false);
     },
     onError: async (error: any) => {
-      const status = error?.context?.status;
-      const body = await error?.context?.json().catch(() => null);
-      const message = body?.error;
-
-      if (status === 409) {
-        toast.error(message ?? "An active appointment already exists.");
-        return;
-      }
-
-      if (status === 400) {
-        toast.error(message ?? "Invalid booking details.");
-        return;
-      }
-
       toast.error(error.message || "Failed to book appointment.");
     },
   });

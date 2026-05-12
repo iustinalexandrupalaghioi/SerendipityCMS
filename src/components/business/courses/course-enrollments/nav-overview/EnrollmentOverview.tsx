@@ -100,20 +100,22 @@ const EnrollmentOverview = ({
   const handleNoShow = useCallback(
     async (id: string) => {
       try {
-        const { error } = await supabase
-          .from("course_enrollment")
-          .update({ status: "no_show" })
-          .eq("id", id);
-        if (error) throw error;
+        const { error } = await supabase.functions.invoke("mark-no-show", {
+          body: { id, reference: "enrollment" },
+        });
+
+        if (error)
+          throw new Error(
+            error.message ?? "Failed to mark enrollment as 'No show'",
+          );
+
         toast.success("Course enrollment successfully marked as 'No show'.");
         queryClient.invalidateQueries({ queryKey: enrollmentKeys.all });
         queryClient.invalidateQueries({
           queryKey: enrollmentKeys.enrollmentsCount,
         });
       } catch (error: any) {
-        toast.error(
-          error.message || "Failed to mark course enrollment as 'No show'.",
-        );
+        toast.error(error.message);
       }
     },
     [queryClient],
