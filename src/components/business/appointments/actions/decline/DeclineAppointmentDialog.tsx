@@ -63,7 +63,10 @@ const DeclineAppointmentDialog = ({
         },
       });
 
-      if (error) throw new Error(error.message);
+      if (error) {
+        const body = await error?.context?.json().catch(() => null);
+        throw new Error(body?.error ?? "Failed to decline appointment.");
+      }
     },
     onSuccess: async () => {
       toast.success("Appointment successfully declined!");
@@ -75,7 +78,7 @@ const DeclineAppointmentDialog = ({
       setOpen(false);
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to decline appointment.");
+      toast.error(error.message);
     },
   });
 
