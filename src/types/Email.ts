@@ -36,6 +36,7 @@ export type EmailTemplate = {
 
 export type Email = {
   appointment_id?: string;
+  resend_id: string;
   id: string;
   bcc: string;
   body: JSON;

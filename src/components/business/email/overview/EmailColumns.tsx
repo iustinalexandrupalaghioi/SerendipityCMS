@@ -3,6 +3,7 @@ import { createBufferColumn } from "@/components/data-table/core/createBufferCol
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
 import TypedCell from "@/components/data-table/core/TableCell";
 import type { RowAction } from "@/components/data-table/core/types";
+import { ResendLink } from "@/components/partials/ResendLink";
 import { EMAIL_TYPES_OPTIONS, type Email } from "@/types/Email";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
 
@@ -18,6 +19,7 @@ export const emailColumnVisibility: VisibilityState = {
   appointment_id: true,
   course_enrollment_id: true,
   created_at: false,
+  resend_id: true,
 };
 
 export function createEmailColumns(
@@ -124,6 +126,16 @@ export function createEmailColumns(
       header: undefined,
       meta: { columnName: "Enrollment id", columnType: "number" },
       size: 120,
+    },
+    {
+      id: "resend_id",
+      accessorKey: "resend_id",
+      header: undefined,
+      meta: { columnName: "Email", columnType: "text" },
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => <ResendLink resendId={row.original.resend_id} />,
+      size: 110,
     },
     {
       id: "created_at",
