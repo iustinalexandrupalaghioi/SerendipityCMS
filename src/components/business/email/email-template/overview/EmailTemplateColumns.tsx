@@ -38,7 +38,7 @@ export function createEmailTemplateColumns(
       header: undefined,
       meta: {
         columnName: "Email type",
-        columnType: "text",
+        columnType: "select",
         selectOptions: EMAIL_TYPES_OPTIONS,
       },
       cell: TypedCell("select", EMAIL_TYPES_OPTIONS),

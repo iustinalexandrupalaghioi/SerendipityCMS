@@ -188,7 +188,7 @@ export function createCourseColumns(
       header: undefined,
       meta: {
         columnName: "Open",
-        columnType: "number",
+        columnType: "boolean",
       },
       cell: ({ row }) => <BooleanDisplay value={row.original.is_open} />,
       size: 130,
