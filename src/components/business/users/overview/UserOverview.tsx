@@ -26,10 +26,15 @@ const UserOverview = () => {
 
   const [editingUser, setEditingUser] = useState<Profile | null>(null);
 
-  const { data, isLoading, isError } = useUserProfiles(sorting, filters);
-
-  const users = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: users,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useUserProfiles(sorting, filters);
 
   const handleOpen = useCallback((rows: Row<Profile>[]) => {
     const first = rows[0];
@@ -62,9 +67,9 @@ const UserOverview = () => {
         isLoading={isLoading}
         defaultViewName="Users"
         tableId={USERS_OVERVIEW_KEY}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage ?? false}
+        fetchNextPage={fetchNextPage}
         getRowId={(row) => row.id}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}

@@ -1,4 +1,4 @@
-import ServiceOverview from "@/components/business/services/overview/ServiceOVerview";
+import ServiceOverview from "@/components/business/services/overview/ServiceOverview";
 import Breadcrumb from "@/components/partials/Breadcrumb";
 import { useDocumentTitle } from "@/lib/utils";
 

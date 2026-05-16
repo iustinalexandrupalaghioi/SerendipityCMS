@@ -38,11 +38,15 @@ const ServicePickup = ({ open, setOpen, onSelect }: ServicePickupProps) => {
     initialFilters(PICKUP_SERVICE_KEY),
   );
 
-  const { data, isLoading, isError } = useServices(sorting, filters);
-
-  const services = data?.items ?? [];
-  const total = data?.total ?? 0;
-
+  const {
+    allItems: services,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useServices(sorting, filters);
   const handleSelect = useCallback(
     (service: Service) => {
       onSelect(service);
@@ -88,9 +92,9 @@ const ServicePickup = ({ open, setOpen, onSelect }: ServicePickupProps) => {
             initialColumnVisibility={pickupServiceColumnVisibility}
             onSortingChange={setSorting}
             onFiltersChange={handleFiltersChange}
-            isFetchingNextPage={false}
-            hasNextPage={false}
-            fetchNextPage={() => {}}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage ?? false}
+            fetchNextPage={fetchNextPage}
             height={450}
           />
         </div>

@@ -37,9 +37,15 @@ const CategoryOverview = () => {
   );
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data, isLoading, isError } = useCategories(sorting, filters);
-  const categories = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: categories,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useCategories(sorting, filters);
 
   // ── Open (edit) ───────────────────────────────────────────────────────────
   const handleOpen = useCallback((rows: Row<Category>[]) => {
@@ -88,9 +94,9 @@ const CategoryOverview = () => {
         isLoading={isLoading}
         defaultViewName="Categories"
         tableId={CATEGORIES_OVERVIEW_KEY}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage ?? false}
+        fetchNextPage={fetchNextPage}
         getRowId={(row) => row.id}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}

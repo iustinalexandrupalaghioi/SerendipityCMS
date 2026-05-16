@@ -37,10 +37,15 @@ const CategoryPickup = ({ open, setOpen, onSelect }: CategoryPickupProps) => {
     initialFilters(PICKUP_CATEGORY_KEY),
   );
 
-  const { data, isLoading, isError } = useCategories(sorting, filters);
-
-  const categories = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: categories,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useCategories(sorting, filters);
 
   const handleSelect = useCallback(
     (category: Category) => {
@@ -87,9 +92,9 @@ const CategoryPickup = ({ open, setOpen, onSelect }: CategoryPickupProps) => {
             initialColumnVisibility={pickupCategoryColumnVisibility}
             onSortingChange={setSorting}
             onFiltersChange={handleFiltersChange}
-            isFetchingNextPage={false}
-            hasNextPage={false}
-            fetchNextPage={() => {}}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage ?? false}
+            fetchNextPage={fetchNextPage}
             height={450}
           />
         </div>

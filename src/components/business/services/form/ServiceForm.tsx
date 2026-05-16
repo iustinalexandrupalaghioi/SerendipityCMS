@@ -46,6 +46,7 @@ const ServiceForm = ({
   const { selectedCategory, setSelectedCategory } = useCategoryStore();
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const price = watch("price");
+  const category = watch("category");
 
   useEffect(() => {
     if (selectedCategory) {
@@ -118,23 +119,33 @@ const ServiceForm = ({
             )}
           />
 
-          <PickupFormInput
-            displayKey="name"
-            control={control}
-            name="category"
-            label="Category"
-            placeholder="Select a category"
-            error={errors.category?.message}
-            setOpen={setOpenCategoryDialog}
-          />
-
-          {openCategoryDialog && (
-            <CategoryPickup
-              onSelect={setSelectedCategory}
-              open={openCategoryDialog}
+          <div className="grid grid-cols-1 md:grid-cols-4">
+            <PickupFormInput
+              displayKey="display_id"
+              control={control}
+              name="category"
+              label="Category"
+              placeholder="Select a category"
+              error={errors.category?.message}
               setOpen={setOpenCategoryDialog}
             />
-          )}
+
+            <FormItem className="col-span-3">
+              <FormLabel>Category name</FormLabel>
+              <Input
+                disabled
+                placeholder="category name..."
+                value={category.name ?? ""}
+              />
+            </FormItem>
+            {openCategoryDialog && (
+              <CategoryPickup
+                onSelect={setSelectedCategory}
+                open={openCategoryDialog}
+                setOpen={setOpenCategoryDialog}
+              />
+            )}
+          </div>
         </div>
       </SectionCard>
 

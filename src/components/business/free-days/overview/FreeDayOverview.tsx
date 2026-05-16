@@ -37,9 +37,15 @@ const FreeDayOverview = () => {
   const [deletingFreeDay, setDeletingFreeDay] = useState<FreeDay | null>(null);
 
   // ── Data ──
-  const { data, isLoading, isError } = useFreeDays(sorting, filters);
-  const freeDays = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: freeDays,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useFreeDays(sorting, filters);
 
   // ── Open (edit) ──
   const handleOpen = useCallback((rows: Row<FreeDay>[]) => {
@@ -88,9 +94,9 @@ const FreeDayOverview = () => {
         isLoading={isLoading}
         defaultViewName="Free days"
         tableId={FREE_DAYS_OVERVIEW_KEY}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage ?? false}
+        fetchNextPage={fetchNextPage}
         getRowId={(row) => row.id}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}

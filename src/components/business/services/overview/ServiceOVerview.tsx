@@ -57,10 +57,15 @@ const ServiceOverview = () => {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [deletingService, setDeletingService] = useState<Service | null>(null);
 
-  const { data, isLoading, isError } = useServices(sorting, filters);
-
-  const services = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: services,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useServices(sorting, filters);
 
   const handleOpen = useCallback((rows: Row<Service>[]) => {
     const first = rows[0];
@@ -114,9 +119,9 @@ const ServiceOverview = () => {
         initialColumnVisibility={serviceColumnVisibility}
         onSortingChange={setSorting}
         onFiltersChange={handleFiltersChange}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage ?? false}
+        fetchNextPage={fetchNextPage}
       />
 
       <AddServiceDialog open={isAddOpen} setOpen={setAddOpen} />

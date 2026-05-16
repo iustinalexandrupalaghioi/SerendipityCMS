@@ -8,6 +8,9 @@ import {
   CalendarOffIcon,
   Clock2Icon,
   FolderOpenIcon,
+  LayoutTemplateIcon,
+  MailsIcon,
+  MailWarningIcon,
   Settings2Icon,
   Users2Icon,
   type LucideIcon,
@@ -18,6 +21,7 @@ import { Card, CardContent } from "../../ui/card";
 import { createAppointmentsLiveTile } from "./AppointmentsLiveTile";
 import { createCourseEnrollmentsLiveTile } from "./CourseEnrollmentsLiveTile";
 import { type BaseTileProps } from "./LiveTile";
+import { createEmailsLiveTile } from "./EmailsLiveTile";
 
 export type MenuLink =
   | {
@@ -53,10 +57,9 @@ const menuItems: MenuSection[] = [
         icon: CalendarClockIcon,
         component: createAppointmentsLiveTile({ status: "pending" }),
       },
-
       {
         type: "live",
-        name: "Confirmed today",
+        name: "Today",
         path: "/appointments/confirmed?day=today",
         title: "View confirmed appointments for today",
         icon: CalendarCheck2Icon,
@@ -65,10 +68,9 @@ const menuItems: MenuSection[] = [
           today: true,
         }),
       },
-
       {
         type: "live",
-        name: "Confirmed tomorrow",
+        name: "Tomorrow",
         path: "/appointments/confirmed?day=tomorrow",
         title: "View confirmed appointments for tomorrow",
         icon: CalendarCheck2Icon,
@@ -87,19 +89,26 @@ const menuItems: MenuSection[] = [
     ],
   },
   {
-    module: "Course enrollments",
+    module: "Courses & Enrollments",
     links: [
       {
+        type: "link",
+        name: "Courses",
+        path: "/courses",
+        title: "View all courses",
+        icon: BookOpenTextIcon,
+      },
+      {
         type: "live",
-        name: "Confirmed",
+        name: "Confirmed enrollments",
         path: "/enrollments/confirmed",
-        title: "View all confirmed course enrollments",
+        title: "View confirmed course enrollments",
         icon: BookOpenIcon,
         component: createCourseEnrollmentsLiveTile(),
       },
       {
         type: "link",
-        name: "All",
+        name: "All enrollments",
         path: "/enrollments",
         title: "View all course enrollments",
         icon: BookMarked,
@@ -107,7 +116,34 @@ const menuItems: MenuSection[] = [
     ],
   },
   {
-    module: "Time management",
+    module: "Mailing",
+    links: [
+      {
+        type: "link",
+        name: "Emails",
+        path: "/emails",
+        title: "View all emails",
+        icon: MailsIcon,
+      },
+      {
+        type: "live",
+        name: "Errors",
+        path: "/emails?error=true",
+        title: "View all email errors",
+        icon: MailWarningIcon,
+        component: createEmailsLiveTile({ error: true }),
+      },
+      {
+        type: "link",
+        name: "Templates",
+        path: "/email-templates",
+        title: "View all email templates",
+        icon: LayoutTemplateIcon,
+      },
+    ],
+  },
+  {
+    module: "Configuration",
     links: [
       {
         type: "link",
@@ -123,14 +159,9 @@ const menuItems: MenuSection[] = [
         title: "View all free days",
         icon: CalendarOffIcon,
       },
-    ],
-  },
-  {
-    module: "Reference data",
-    links: [
       {
         type: "link",
-        name: "Service categories",
+        name: "Categories",
         path: "/categories",
         title: "View all service categories",
         icon: FolderOpenIcon,
@@ -142,14 +173,6 @@ const menuItems: MenuSection[] = [
         title: "View all services",
         icon: Settings2Icon,
       },
-      {
-        type: "link",
-        name: "Courses",
-        path: "/courses",
-        title: "View all courses",
-        icon: BookOpenTextIcon,
-      },
-
       {
         type: "link",
         name: "Users",
