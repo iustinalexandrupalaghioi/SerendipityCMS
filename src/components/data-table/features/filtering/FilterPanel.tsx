@@ -258,48 +258,105 @@ function ValueInput({
     );
   }
 
-  // Date
-  if (columnType === "date") {
-    const selectedDate =
-      typeof value === "string" && value ? new Date(value) : undefined;
+  // Date / Datetime
+  if (columnType === "date" || columnType === "datetime") {
+    const strValue = Array.isArray(value) ? "" : value;
+    const [datePart, timePart] = strValue.split("T");
+    const selectedDate = datePart ? new Date(datePart) : undefined;
     const effectiveEndMonth = new Date(
       new Date().getFullYear() + 100,
       new Date().getMonth(),
     );
+
+    const isTimeInvalid = (t: string) => t !== "" && !/^\d{2}:\d{2}$/.test(t);
+
+    const handleDateChange = (date: Date | undefined) => {
+      if (!date) {
+        onChange("");
+        return;
+      }
+      const dateStr = format(date, "yyyy-MM-dd");
+      onChange(
+        columnType === "datetime"
+          ? `${dateStr}T${timePart ?? "00:00"}`
+          : dateStr,
+      );
+    };
+
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(
+        `${datePart ?? format(new Date(), "yyyy-MM-dd")}T${e.target.value}`,
+      );
+    };
+
     return (
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            className="justify-between font-normal"
-          >
-            {selectedDate && isValid(selectedDate)
-              ? format(selectedDate, "dd-MM-yyyy")
-              : "Select date"}
-            <ChevronDownIcon className="ml-2 h-4 w-4" />
-          </Button>
-        </PopoverTrigger>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1 justify-between font-normal"
+              >
+                {selectedDate && isValid(selectedDate)
+                  ? format(selectedDate, "dd-MM-yyyy")
+                  : "Select date"}
+                <ChevronDownIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                startMonth={selectedDate}
+                endMonth={effectiveEndMonth}
+                captionLayout="dropdown"
+                onSelect={handleDateChange}
+              />
+            </PopoverContent>
+          </Popover>
 
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            startMonth={selectedDate}
-            endMonth={effectiveEndMonth}
-            captionLayout="dropdown"
-            onSelect={(date) => {
-              if (!date) {
-                onChange("");
-                return;
-              }
+          {columnType === "datetime" && (
+            <Input
+              className={`w-24 ${isTimeInvalid(timePart ?? "") ? "border-destructive focus-visible:ring-destructive" : ""}`}
+              placeholder="HH:mm"
+              value={timePart ?? ""}
+              maxLength={5}
+              onChange={handleTimeChange}
+            />
+          )}
+        </div>
 
-              const iso = format(date, "yyyy-MM-dd");
-              onChange(iso);
-            }}
-          />
-        </PopoverContent>
-      </Popover>
+        {columnType === "datetime" && isTimeInvalid(timePart ?? "") && (
+          <p className="text-xs text-destructive">Must be HH:mm</p>
+        )}
+      </div>
+    );
+  }
+
+  // Time
+  if (columnType === "time") {
+    const timeValue = Array.isArray(value) ? "" : value;
+    const isTimeInvalid = (t: string) => t !== "" && !/^\d{2}:\d{2}$/.test(t);
+
+    return (
+      <div className="flex flex-col gap-1">
+        <Input
+          className={
+            isTimeInvalid(timeValue)
+              ? "border-destructive focus-visible:ring-destructive"
+              : ""
+          }
+          placeholder="HH:mm"
+          value={timeValue}
+          maxLength={5}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        {isTimeInvalid(timeValue) && (
+          <p className="text-xs text-destructive">Must be HH:mm</p>
+        )}
+      </div>
     );
   }
 
@@ -357,6 +414,24 @@ export function FilterPanel({
       );
     }
   }, [open, columnId, columnType]);
+  const isValid = () => {
+    if (!operator || !columnId || !columnType) return false;
+    if (noValueNeeded) return true;
+
+    const strValue = Array.isArray(value) ? "" : value;
+
+    if (columnType === "number")
+      return strValue === "" || !isNaN(Number(strValue));
+    if (columnType === "time") return /^\d{2}:\d{2}$/.test(strValue);
+    if (columnType === "datetime") {
+      const [, timePart] = strValue.split("T");
+      return !!strValue && (!timePart || /^\d{2}:\d{2}$/.test(timePart));
+    }
+    if (columnType === "date") return !!strValue;
+
+    return true;
+  };
+
   const handleSave = () => {
     if (!operator || !columnId || !columnType) return;
     if (columnType === "number" && !noValueNeeded) {
@@ -443,7 +518,12 @@ export function FilterPanel({
         )}
 
         <SheetFooter className="mt-6 flex-col gap-2 px-1">
-          <Button size="sm" className="w-full" onClick={handleSave}>
+          <Button
+            size="sm"
+            className="w-full"
+            onClick={handleSave}
+            disabled={!isValid()}
+          >
             Apply
           </Button>
           <Button

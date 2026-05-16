@@ -1,4 +1,11 @@
-export type ColumnType = "text" | "number" | "date" | "boolean" | "select";
+export type ColumnType =
+  | "text"
+  | "number"
+  | "date"
+  | "boolean"
+  | "select"
+  | "datetime"
+  | "time";
 
 export type FilterOperator =
   | "contains"
@@ -30,7 +37,7 @@ export const OPERATORS_BY_TYPE: Record<ColumnType, FilterOperator[]> = {
     "not_contains",
     "equals",
     "not_equals",
-    "is_any_of", // ← add
+    "is_any_of",
     "is_empty",
     "is_not_empty",
   ],
@@ -47,6 +54,29 @@ export const OPERATORS_BY_TYPE: Record<ColumnType, FilterOperator[]> = {
   ],
   date: [
     "equals",
+    "not_equals",
+    "is_any_of",
+    "gt",
+    "gte",
+    "lt",
+    "lte",
+    "is_empty",
+    "is_not_empty",
+  ],
+  datetime: [
+    "equals",
+    "not_equals",
+    "is_any_of",
+    "gt",
+    "gte",
+    "lt",
+    "lte",
+    "is_empty",
+    "is_not_empty",
+  ],
+  time: [
+    "equals",
+    "not_equals",
     "is_any_of",
     "gt",
     "gte",
@@ -88,10 +118,22 @@ export const applyFilters = <T>(query: T, filters: FilterRule[]): T => {
         query = (query as any).not(col, "ilike", `%${value}%`);
         break;
       case "equals":
-        query = (query as any).eq(col, value);
+        if (columnType === "datetime" && typeof value === "string") {
+          query = (query as any)
+            .gte(col, `${value}:00`)
+            .lte(col, `${value}:59.999`);
+        } else {
+          query = (query as any).eq(col, value);
+        }
         break;
       case "not_equals":
-        query = (query as any).neq(col, value);
+        if (columnType === "datetime" && typeof value === "string") {
+          query = (query as any).or(
+            `${col}.lt.${value}:00,${col}.gt.${value}:59.999`,
+          );
+        } else {
+          query = (query as any).neq(col, value);
+        }
         break;
       case "gt":
         query = (query as any).gt(col, value);

@@ -1,12 +1,14 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { supabase } from "./supabaseClient";
-import { format, parse } from "date-fns";
+import type { ColumnType } from "@/components/data-table/features/filtering/filters";
 import {
   APPOINTMENT_STATUSES,
   type AppointmentStatus,
 } from "@/types/Appointment";
+import { clsx, type ClassValue } from "clsx";
+import { format, parse, parseISO } from "date-fns";
 import { useEffect } from "react";
+import { twMerge } from "tailwind-merge";
+import { supabase } from "./supabaseClient";
+import type { Enum } from "@/types/EnumType";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -44,6 +46,32 @@ export const formatTime = (timeString?: string) => {
 
   // format as HH:mm
   return format(parsed, "HH:mm");
+};
+
+export const formatDate = (value: string | null) => {
+  if (!value) return "";
+  return format(parseISO(value), "dd-MM-yyyy");
+};
+
+export const formatDateTime = (value: string | null) => {
+  if (!value) return "";
+  return format(parseISO(value), "dd-MM-yyyy HH:mm");
+};
+
+export const formatByType = (
+  value: unknown,
+  type: ColumnType,
+  options?: Enum[],
+): string => {
+  if (value == null || value === "") return "";
+  if (type === "boolean") return value ? "Yes" : "No";
+  if (type === "select")
+    return options?.find((o) => o.value === value)?.label ?? String(value);
+  if (type === "date") return format(new Date(value as string), "dd-MM-yyyy");
+  if (type === "datetime")
+    return format(new Date(value as string), "dd-MM-yyyy HH:mm");
+  if (type === "time") return (value as string).slice(0, 5);
+  return String(value);
 };
 
 export const isAppointmentStatus = (

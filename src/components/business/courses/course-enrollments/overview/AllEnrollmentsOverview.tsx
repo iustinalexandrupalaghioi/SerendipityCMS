@@ -207,7 +207,7 @@ const AllEnrollmentsOverview = () => {
         }))}
         isDeleteEligible={() =>
           selectedRows.length === 1 &&
-          ["completed", "cancelled", "declined"].includes(
+          ["completed", "cancelled", "declined", "no_show", "expired"].includes(
             selectedRows[0].status,
           )
         }

@@ -5,13 +5,17 @@ import {
 } from "@/components/data-table/features/filtering/filters";
 import { X } from "lucide-react";
 import { useDataTableContext } from "../../DataTableContext";
-import { format } from "date-fns";
+import { formatByType } from "@/lib/utils";
+import type { Enum } from "@/types/EnumType";
 
 // ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
 
-function formatChipValue(rule: FilterRule): string | null {
+function formatChipValue(
+  rule: FilterRule,
+  selectOptions?: Enum[],
+): string | null {
   const { showValue, valueWrap, fixedValue } = getOperatorDisplay(
     rule.operator,
   );
@@ -19,30 +23,21 @@ function formatChipValue(rule: FilterRule): string | null {
   if (showValue === false) return null;
   if (fixedValue) return fixedValue;
 
-  if (rule.columnType === "date" && rule.value) {
-    try {
-      const raw = Array.isArray(rule.value)
-        ? rule.value.map((v) => format(new Date(v), "dd-MM-yyyy")).join(", ")
-        : format(new Date(rule.value as string), "dd-MM-yyyy");
-      return valueWrap === "brackets" ? `[${raw}]` : raw;
-    } catch {
-      /* fall through to generic path */
-    }
+  if (rule.value) {
+    const raw = Array.isArray(rule.value)
+      ? rule.value
+          .map((v) => formatByType(v, rule.columnType, selectOptions))
+          .join(", ")
+      : formatByType(rule.value as string, rule.columnType, selectOptions);
+
+    return valueWrap === "quotes"
+      ? `"${raw}"`
+      : valueWrap === "brackets"
+        ? `[${raw}]`
+        : raw;
   }
 
-  const raw = Array.isArray(rule.value)
-    ? rule.value.join(", ")
-    : rule.value != null
-      ? String(rule.value)
-      : "";
-
-  if (!raw) return null;
-
-  return valueWrap === "quotes"
-    ? `"${raw}"`
-    : valueWrap === "brackets"
-      ? `[${raw}]`
-      : raw;
+  return null;
 }
 
 // ─────────────────────────────────────────────
@@ -54,14 +49,16 @@ function FilterChip({
   onRemove,
   onEdit,
   locked = false,
+  selectOptions,
 }: {
   rule: FilterRule;
   onRemove: () => void;
   onEdit: () => void;
   locked?: boolean;
+  selectOptions?: Enum[];
 }) {
   const { symbol } = getOperatorDisplay(rule.operator);
-  const value = formatChipValue(rule);
+  const value = formatChipValue(rule, selectOptions);
 
   return (
     <Badge
@@ -95,7 +92,7 @@ function FilterChip({
 // ─────────────────────────────────────────────
 
 export function FilterChips() {
-  const { views, preFilters } = useDataTableContext();
+  const { views, preFilters, table } = useDataTableContext();
   const { filters, setFilters } = views;
 
   const isLocked = (filter: FilterRule) =>
@@ -119,15 +116,21 @@ export function FilterChips() {
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      {filters.map((rule) => (
-        <FilterChip
-          key={rule.columnId}
-          rule={rule}
-          onRemove={() => handleRemove(rule.columnId)}
-          onEdit={() => handleEdit(rule.columnId)}
-          locked={isLocked(rule)}
-        />
-      ))}
+      {filters.map((rule) => {
+        const meta = table.getColumn(rule.columnId)?.columnDef?.meta;
+        const selectOptions = meta?.selectOptions;
+
+        return (
+          <FilterChip
+            key={rule.columnId}
+            rule={rule}
+            selectOptions={selectOptions}
+            onRemove={() => handleRemove(rule.columnId)}
+            onEdit={() => handleEdit(rule.columnId)}
+            locked={isLocked(rule)}
+          />
+        );
+      })}
       {removableCount > 1 && (
         <button
           onClick={() => setFilters([])}

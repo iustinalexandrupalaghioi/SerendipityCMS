@@ -1,17 +1,15 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
 import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
+import TypedCell from "@/components/data-table/core/TableCell";
 import type { RowAction } from "@/components/data-table/core/types";
-import BooleanDisplay from "@/components/partials/BooleanDisplay";
-import { Badge } from "@/components/ui/badge";
+import { StripeLink } from "@/components/partials/StripeLink";
 import {
-  ENROLLMENT_STATUS_LABELS,
   ENROLLMENT_STATUS_OPTIONS,
   PAYMENT_TYPE_OPTIONS,
   type Enrollment,
 } from "@/types/Course";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
-import { format } from "date-fns";
 
 export const courseEnrollmentColumnVisibility: VisibilityState = {
   display_id: true,
@@ -27,18 +25,9 @@ export const courseEnrollmentColumnVisibility: VisibilityState = {
   advance_payment_paid: true,
   payment_intent_id: true,
   notes: false,
-};
-
-const statusVariantMap: Record<
-  string,
-  "default" | "secondary" | "destructive" | "outline"
-> = {
-  confirmed: "default",
-  submitted: "secondary",
-  cancelled: "outline",
-  declined: "destructive",
-  no_show: "destructive",
-  expired: "destructive",
+  created_at: false,
+  expired_at: false,
+  declined_at: false,
 };
 
 export function createCourseEnrollmentColumns(
@@ -52,7 +41,9 @@ export function createCourseEnrollmentColumns(
       onOpen,
       onDelete,
       isDeleteEligible: (row) =>
-        ["completed", "cancelled", "declined"].includes(row.original.status),
+        ["completed", "cancelled", "declined", "no_show", "expired"].includes(
+          row.original.status,
+        ),
       actions: () => actions,
     }),
     {
@@ -104,14 +95,7 @@ export function createCourseEnrollmentColumns(
         columnType: "select",
         selectOptions: ENROLLMENT_STATUS_OPTIONS,
       },
-      cell: ({ row }) => (
-        <Badge
-          className="font-medium"
-          variant={statusVariantMap[row.original.status]}
-        >
-          {ENROLLMENT_STATUS_LABELS[row.original.status]}
-        </Badge>
-      ),
+      cell: TypedCell("select", ENROLLMENT_STATUS_OPTIONS),
       size: 110,
     },
     {
@@ -119,10 +103,7 @@ export function createCourseEnrollmentColumns(
       accessorKey: "enrollment_date",
       header: undefined,
       meta: { columnName: "Enrolled on", columnType: "date" },
-      cell: ({ row }) =>
-        row.original.enrollment_date
-          ? format(new Date(row.original.enrollment_date), "dd-MM-yyyy")
-          : "—",
+      cell: TypedCell("date"),
       size: 90,
     },
     {
@@ -165,9 +146,7 @@ export function createCourseEnrollmentColumns(
       accessorKey: "advance_payment_paid",
       header: undefined,
       meta: { columnName: "Deposit paid", columnType: "boolean" },
-      cell: ({ row }) => (
-        <BooleanDisplay value={row.original.advance_payment_paid} />
-      ),
+      cell: TypedCell("boolean"),
     },
     {
       id: "payment_intent_id",
@@ -177,26 +156,9 @@ export function createCourseEnrollmentColumns(
         columnName: "Stripe link",
         columnType: "number",
       },
-      cell: ({ row }) => {
-        const intentId = row.original.payment_intent_id;
-        if (!intentId) return <span className="text-muted-foreground">—</span>;
-
-        const account = import.meta.env.VITE_STRIPE_ACCOUNT_ID;
-        const uri = import.meta.env.PROD
-          ? `https://dashboard.stripe.com/${account}/payments`
-          : `https://dashboard.stripe.com/${account}/test/payments`;
-
-        return (
-          <a
-            href={`${uri}/${row.original.payment_intent_id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-primary underline-offset-4 hover:underline"
-          >
-            View in Stripe
-          </a>
-        );
-      },
+      cell: ({ row }) => (
+        <StripeLink paymentIntentId={row.original.payment_intent_id} />
+      ),
       size: 120,
     },
     {
@@ -205,6 +167,30 @@ export function createCourseEnrollmentColumns(
       header: undefined,
       meta: { columnName: "Notes", columnType: "text" },
       size: 150,
+    },
+    {
+      id: "created_at",
+      accessorKey: "created_at",
+      header: undefined,
+      meta: { columnName: "Add time", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
+    },
+    {
+      id: "expired_at",
+      accessorKey: "expired_at",
+      header: undefined,
+      meta: { columnName: "Expired time", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
+    },
+    {
+      id: "declined_at",
+      accessorKey: "declined_at",
+      header: undefined,
+      meta: { columnName: "Declined time", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
     },
     createBufferColumn<Enrollment>(),
   ];
