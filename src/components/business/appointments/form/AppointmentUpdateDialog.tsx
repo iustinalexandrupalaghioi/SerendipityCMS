@@ -10,6 +10,7 @@ import type { Appointment } from "@/types/Appointment";
 import { DialogClose } from "@radix-ui/react-dialog";
 import AppointmentForm from "./AppointmentForm";
 import { AppointmentSchema, type AppointmentFormValues } from "./form-schema";
+import { formatTime } from "@/lib/utils";
 
 interface AppointmentUpdateDialogProps {
   appointment: Appointment;
@@ -32,7 +33,7 @@ const AppointmentUpdateDialog = ({
       name: appointment.name,
       email: appointment.email,
       date: appointment.date,
-      start_time: appointment.start_time.slice(0, 5),
+      start_time: formatTime(appointment.start_time),
       duration: Number(appointment.duration) || undefined,
       price: Number(appointment.price) || undefined,
       advance_payment: Number(appointment.advance_payment),

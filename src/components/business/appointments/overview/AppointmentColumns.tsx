@@ -1,16 +1,14 @@
 import { createActionsColumn } from "@/components/data-table/core/createActionsColumn";
+import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
 import { createSelectionColumn } from "@/components/data-table/core/createSelectionColumn";
-import BooleanDisplay from "@/components/partials/BooleanDisplay";
-import { Badge } from "@/components/ui/badge";
+import TypedCell from "@/components/data-table/core/TableCell";
 import type { RowAction } from "@/components/data-table/core/types";
+import { StripeLink } from "@/components/partials/StripeLink";
 import {
-  APPOINTMENT_STATUS_LABELS,
   APPOINTMENT_STATUS_OPTIONS,
   type Appointment,
 } from "@/types/Appointment";
 import type { ColumnDef, Row, VisibilityState } from "@tanstack/react-table";
-import { createBufferColumn } from "@/components/data-table/core/createBufferColumn";
-import { format } from "date-fns";
 
 // ─────────────────────────────────────────────
 // Column visibility defaults
@@ -22,6 +20,7 @@ export const appointmentColumnVisibility: VisibilityState = {
   title: true,
   date: true,
   start_time: true,
+  duration: true,
   end_time: true,
   name: true,
   email: true,
@@ -30,25 +29,17 @@ export const appointmentColumnVisibility: VisibilityState = {
   advance_payment_paid: true,
   notes: false,
   payment_intent_id: true,
+  created_at: false,
+  expires_at: false,
+  starts_at: false,
+  expired_at: false,
+  accepted_at: false,
+  declined_at: false,
 };
 
 // ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
-
-const statusVariantMap: Record<
-  string,
-  "default" | "secondary" | "destructive" | "outline"
-> = {
-  confirmed: "secondary",
-  accepted: "secondary",
-  pending: "outline",
-  cancelled: "outline",
-  expired: "destructive",
-  no_show: "destructive",
-  declined: "destructive",
-  completed: "default",
-};
 
 // ─────────────────────────────────────────────
 // Column definitions
@@ -65,7 +56,9 @@ export function createAppointmentColumns(
       onOpen,
       onDelete,
       isDeleteEligible: (row) =>
-        ["completed", "cancelled", "declined"].includes(row.original.status),
+        ["completed", "cancelled", "declined", "expired", "no_show"].includes(
+          row.original.status,
+        ),
       actions: () => actions,
     }),
     {
@@ -84,14 +77,7 @@ export function createAppointmentColumns(
         columnType: "select",
         selectOptions: APPOINTMENT_STATUS_OPTIONS,
       },
-      cell: ({ row }) => (
-        <Badge
-          className="font-medium"
-          variant={statusVariantMap[row.original.status]}
-        >
-          {APPOINTMENT_STATUS_LABELS[row.original.status]}
-        </Badge>
-      ),
+      cell: TypedCell("select", APPOINTMENT_STATUS_OPTIONS),
       size: 100,
     },
 
@@ -107,27 +93,31 @@ export function createAppointmentColumns(
       accessorKey: "date",
       header: undefined,
       meta: { columnName: "Date", columnType: "date" },
-      cell: ({ row }) =>
-        row.original.date
-          ? format(new Date(row.original.date), "dd-MM-yyyy")
-          : "—",
+      cell: TypedCell("date"),
       size: 100,
     },
     {
       id: "start_time",
       accessorKey: "start_time",
       header: undefined,
-      meta: { columnName: "Start time", columnType: "text" },
+      meta: { columnName: "Start time", columnType: "time" },
       size: 90,
-      cell: ({ row }) => <span>{row.original.start_time.slice(0, 5)}</span>,
+      cell: TypedCell("time"),
+    },
+    {
+      id: "duration",
+      accessorKey: "duration",
+      header: undefined,
+      meta: { columnName: "Duration", columnType: "number" },
+      size: 90,
     },
     {
       id: "end_time",
       accessorKey: "end_time",
       header: undefined,
-      meta: { columnName: "End time", columnType: "text" },
+      meta: { columnName: "End time", columnType: "time" },
       size: 90,
-      cell: ({ row }) => <span>{row.original.end_time.slice(0, 5)}</span>,
+      cell: TypedCell("time"),
     },
     {
       id: "name",
@@ -164,9 +154,7 @@ export function createAppointmentColumns(
       header: undefined,
       meta: { columnName: "Deposit paid", columnType: "boolean" },
       size: 100,
-      cell: ({ row }) => (
-        <BooleanDisplay value={row.original.advance_payment_paid} />
-      ),
+      cell: TypedCell("boolean"),
     },
     {
       id: "payment_intent_id",
@@ -174,29 +162,15 @@ export function createAppointmentColumns(
       header: undefined,
       meta: {
         columnName: "Stripe link",
-        columnType: "number",
+        columnType: "text",
       },
-      cell: ({ row }) => {
-        const intentId = row.original.payment_intent_id;
-        if (!intentId) return <span className="text-muted-foreground">—</span>;
+      cell: ({ row }) => (
+        <StripeLink paymentIntentId={row.original.payment_intent_id} />
+      ),
 
-        const account = import.meta.env.VITE_STRIPE_ACCOUNT_ID;
-
-        const uri = import.meta.env.PROD
-          ? `https://dashboard.stripe.com/${account}/payments`
-          : `https://dashboard.stripe.com/${account}/test/payments`;
-        return (
-          <a
-            href={`${uri}/${row.original.payment_intent_id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-primary underline-offset-4 hover:underline"
-          >
-            View in Stripe
-          </a>
-        );
-      },
       size: 120,
+      enableColumnFilter: false,
+      enableSorting: false,
     },
     {
       id: "notes",
@@ -204,6 +178,54 @@ export function createAppointmentColumns(
       header: undefined,
       meta: { columnName: "Notes", columnType: "text" },
       size: 150,
+    },
+    {
+      id: "created_at",
+      accessorKey: "created_at",
+      header: undefined,
+      meta: { columnName: "Add time", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
+    },
+    {
+      id: "starts_at",
+      accessorKey: "starts_at",
+      header: undefined,
+      meta: { columnName: "Start time", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
+    },
+    {
+      id: "expires_at",
+      accessorKey: "expires_at",
+      header: undefined,
+      meta: { columnName: "Payment due", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
+    },
+    {
+      id: "expired_at",
+      accessorKey: "expired_at",
+      header: undefined,
+      meta: { columnName: "Expired time", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
+    },
+    {
+      id: "accepted_at",
+      accessorKey: "accepted_at",
+      header: undefined,
+      meta: { columnName: "Accepted time", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
+    },
+    {
+      id: "declined_at",
+      accessorKey: "declined_at",
+      header: undefined,
+      meta: { columnName: "Declined time", columnType: "datetime" },
+      cell: TypedCell("datetime"),
+      size: 125,
     },
     createBufferColumn<Appointment>(),
   ];

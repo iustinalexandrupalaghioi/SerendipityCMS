@@ -301,7 +301,7 @@ const AppointmentOverview = () => {
         }
         isDeleteEligible={() =>
           selectedRows.length === 1 &&
-          ["completed", "cancelled", "declined"].includes(
+          ["completed", "cancelled", "declined", "expired", "no_show"].includes(
             selectedRows[0].status,
           )
         }

@@ -85,6 +85,8 @@ export type Enrollment = {
   created_at: string;
   course_session?: CourseSession;
   payment_intent_id?: string;
+  declined_at?: string;
+  expired_at?: string;
 };
 
 export const ENROLLMENT_STATUSES = [

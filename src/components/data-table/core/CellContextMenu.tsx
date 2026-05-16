@@ -70,12 +70,23 @@ function buildFilterRule(
     };
   }
 
+  // For datetime/time, normalize the value to match what FilterPanel stores
+  let filterValue = String(copyValue);
+  if (columnType === "datetime") {
+    // "2026-05-14T10:30:00" → "2026-05-14T10:30"
+    filterValue = filterValue.slice(0, 16);
+  }
+  if (columnType === "time") {
+    // "10:30:00" → "10:30"
+    filterValue = filterValue.slice(0, 5);
+  }
+
   return {
     columnId,
     columnType,
     columnName,
     operator,
-    value: String(copyValue),
+    value: filterValue,
     origin,
   };
 }
