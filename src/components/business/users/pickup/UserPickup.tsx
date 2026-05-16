@@ -37,10 +37,15 @@ const UserPickup = ({ open, setOpen, onSelect }: UserPickupProps) => {
     initialFilters(PICKUP_USER_KEY),
   );
 
-  const { data, isLoading, isError } = useUserProfiles(sorting, filters);
-
-  const users = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: users,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useUserProfiles(sorting, filters);
 
   const handleSelect = useCallback(
     (user: Profile) => {
@@ -87,9 +92,9 @@ const UserPickup = ({ open, setOpen, onSelect }: UserPickupProps) => {
             initialColumnVisibility={pickupUserColumnVisibility}
             onSortingChange={setSorting}
             onFiltersChange={handleFiltersChange}
-            isFetchingNextPage={false}
-            hasNextPage={false}
-            fetchNextPage={() => {}}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage ?? false}
+            fetchNextPage={fetchNextPage}
             height={450}
           />
         </div>

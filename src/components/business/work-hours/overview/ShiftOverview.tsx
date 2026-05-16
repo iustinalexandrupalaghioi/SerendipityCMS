@@ -29,10 +29,15 @@ const ShiftOverview = () => {
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
   const [deletingShift, setDeletingShift] = useState<Shift | null>(null);
 
-  const { data, isLoading, isError } = useShifts(sorting, filters);
-
-  const shifts = data?.items ?? [];
-  const total = data?.total ?? 0;
+  const {
+    allItems: shifts,
+    total,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useShifts(sorting, filters);
 
   const handleOpen = useCallback((rows: Row<Shift>[]) => {
     const first = rows[0];
@@ -86,9 +91,9 @@ const ShiftOverview = () => {
         initialColumnVisibility={shiftColumnVisibility}
         onSortingChange={setSorting}
         onFiltersChange={handleFiltersChange}
-        isFetchingNextPage={false}
-        hasNextPage={false}
-        fetchNextPage={() => {}}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage ?? false}
+        fetchNextPage={fetchNextPage}
       />
 
       <AddShiftDialog open={isAddOpen} setOpen={setAddOpen} />

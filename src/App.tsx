@@ -22,6 +22,8 @@ import Shift from "./pages/Protected/business/time-management/Shift";
 import ProtectedRoute from "./pages/Protected/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
 import Enrollment from "./pages/Protected/business/commerce/Enrollment";
+import EmailTemplate from "./pages/Protected/business/email/EmailTemplate";
+import Email from "./pages/Protected/business/email/Email";
 
 function App() {
   return (
@@ -60,9 +62,11 @@ function App() {
             path="/courses/update/:courseId/course-days/update/:id"
             element={<UpdateCourseDay />}
           />
+          <Route path="/enrollments" element={<Enrollment />} />
+          <Route path="/enrollments/:status" element={<Enrollment />} />
+          <Route path="/email-templates" element={<EmailTemplate />} />
+          <Route path="/emails" element={<Email />} />
         </Route>
-        <Route path="/enrollments" element={<Enrollment />} />
-        <Route path="/enrollments/:status" element={<Enrollment />} />
       </Route>
 
       <Route path="*" element={<ErrorPage />} />
