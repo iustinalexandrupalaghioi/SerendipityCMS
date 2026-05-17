@@ -72,7 +72,7 @@ export const formatByType = (
     return options?.find((o) => o.value === value)?.label ?? String(value);
   if (type === "date") return format(new Date(value as string), "dd-MM-yyyy");
   if (type === "datetime")
-    return  return formatInTimeZone(parseISO(value), TZ ?? "Europe/Dublin", "dd-MM-yyyy HH:mm")
+    return formatInTimeZone(parseISO(value), TZ ?? "Europe/Dublin", "dd-MM-yyyy HH:mm")
   if (type === "time") return (value as string).slice(0, 5);
   return String(value);
 };
