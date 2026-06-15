@@ -1,4 +1,5 @@
 import Logo from "@/assets/logo.png";
+import DarkLogo from "@/assets/logo-dark.png";
 import { AuthButton } from "@/components/authentication/AuthButton";
 import UserMenu from "@/components/user/UserMenu";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,7 +14,12 @@ const NavigationBar = () => {
         <a href="/" className="flex gap-1 items-center">
           <img
             src={Logo}
-            className="w-16 h-auto object-cover"
+            className="w-16 h-auto object-cover dark:hidden"
+            alt="GTA Nail Salon & Training Centre Logo"
+          />
+          <img
+            src={DarkLogo}
+            className="w-16 h-auto object-cover hidden dark:block"
             alt="GTA Nail Salon & Training Centre Logo"
           />
         </a>
