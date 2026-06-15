@@ -29,6 +29,7 @@ import { Link, useNavigate } from "react-router";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
 import { useState } from "react";
 import Logo from "@/assets/logo.png";
+import DarkLogo from "@/assets/logo-dark.png";
 
 const formSchema = z
   .object({
@@ -74,7 +75,7 @@ export function UpdatePasswordForm({
       });
 
       if (error) throw error;
-      navigate("/app");
+      navigate("/");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -98,7 +99,12 @@ export function UpdatePasswordForm({
           <Link to="/">
             <img
               src={Logo}
-              className="w-24 h-auto object-cover"
+              className="w-24 h-auto object-cover dark:hidden"
+              alt="Serendipity Nail Lab & Training Center by Georgiana Talpan Logo"
+            />
+            <img
+              src={DarkLogo}
+              className="w-24 h-auto object-cover hidden dark:block"
               alt="Serendipity Nail Lab & Training Center by Georgiana Talpan Logo"
             />
           </Link>

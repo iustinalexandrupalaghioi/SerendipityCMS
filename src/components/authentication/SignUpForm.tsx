@@ -31,6 +31,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import DarkLogo from "@/assets/logo-dark.png";
 
 const signUpSchema = z
   .object({
@@ -121,8 +122,13 @@ export function SignUpForm({
           <Link to="/">
             <img
               src={Logo}
-              className="w-24 h-auto object-cover"
-              alt="Serendipity Nail Lab & Training Center by Georgiana Talpan Logo"
+              className="w-28 h-auto object-cover dark:hidden"
+              alt="Serendipity Nail Lab & Training Center Logo"
+            />
+            <img
+              src={DarkLogo}
+              className="w-28 h-auto object-cover hidden dark:block"
+              alt="Serendipity Nail Lab & Training Center Logo"
             />
           </Link>
         </CardHeader>
